@@ -121,6 +121,6 @@ public class UserController {
         logger.info(String.format("Deleting user with id <%s>.", id));
         userService.deleteUserById(id);
         
-        return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<User>(HttpStatus.OK);
     }
 }
