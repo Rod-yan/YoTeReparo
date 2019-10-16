@@ -4,6 +4,6 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		Application Index
+		Yo Te Reparo - Landing page! :)
 	</body>
 </html>
