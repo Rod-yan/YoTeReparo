@@ -34,7 +34,7 @@ public class UserController {
 	@Autowired
     MessageSource messageSource;
 	
-	@RequestMapping(value = { "/user/" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/users/" }, method = RequestMethod.GET)
 	public ResponseEntity<List<User>> listUsers() {
 		
 		logger.info("Fetching all users.");
@@ -46,7 +46,7 @@ public class UserController {
         return new ResponseEntity<List<User>>(users, HttpStatus.OK);
     }
 	
-	@RequestMapping(value = { "/user/{id}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/users/{id}" }, method = RequestMethod.GET)
 	public ResponseEntity<?> getUser(@PathVariable("id") String id) {
 		
 		logger.info(String.format("Fetching User with id <%s>.", id));
@@ -63,7 +63,7 @@ public class UserController {
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 	
-	@RequestMapping(value = { "/user/" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/users/" }, method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody User clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
 		
 		if (ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
@@ -85,7 +85,7 @@ public class UserController {
 		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
     }
 	
-	@RequestMapping(value = { "/user/{id}" }, method = RequestMethod.PUT)
+	@RequestMapping(value = { "/users/{id}" }, method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody User clientInput, BindingResult result) {
 		
 		clientInput.setId(id);
@@ -107,7 +107,7 @@ public class UserController {
 		return new ResponseEntity<User>(userService.getUserById(id), HttpStatus.OK);
     }
 	
-	@RequestMapping(value = { "/user/{id}" }, method = RequestMethod.DELETE)
+	@RequestMapping(value = { "/users/{id}" }, method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
         
         if (!userService.exist(id)) {
