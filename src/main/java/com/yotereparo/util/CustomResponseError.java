@@ -1,13 +1,13 @@
 package com.yotereparo.util;
 
-public class CustomRequestError {
+public class CustomResponseError {
 	private String field;
 	private String defaultMessage;
 	private String objectName;
 
-	public CustomRequestError() { }
+	public CustomResponseError() { }
 
-	public CustomRequestError(String objectName, String field, String defaultMessage) {
+	public CustomResponseError(String objectName, String field, String defaultMessage) {
 	    this.objectName = objectName;
 		this.field = field;
 	    this.defaultMessage = defaultMessage;

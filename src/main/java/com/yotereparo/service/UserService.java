@@ -16,6 +16,8 @@ public interface UserService {
      
     User getUserById(String id);
     
+    void updateUserPhotoById(String id, byte[] b64photo);
+    
     boolean exist(String id);
  
     boolean hasUniqueId(String id);

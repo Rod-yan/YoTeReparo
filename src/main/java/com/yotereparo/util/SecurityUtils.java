@@ -6,6 +6,12 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
 
+/**
+ * Clase utilitaria para métodos accesorios cuyo objetivo esté vinculado con la implementación de modelos de seguridad. 
+ * 
+ * @author Rodrigo Yanis
+ * 
+ */
 public class SecurityUtils {
 	
 	public static String encryptPassword(String input) {

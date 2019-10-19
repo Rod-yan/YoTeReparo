@@ -1,7 +1,5 @@
 package com.yotereparo.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -14,6 +12,12 @@ import org.springframework.validation.FieldError;
 
 import com.yotereparo.model.User;
 
+/**
+ * Clase utilitaria para métodos accesorios cuyo objetivo esté vinculado con la validación de entidades. 
+ * 
+ * @author Rodrigo Yanis
+ * 
+ */
 public class ValidationUtils {
 	
 	public static BindingResult userInputValidation(User user, BindingResult result) {
@@ -30,13 +34,4 @@ public class ValidationUtils {
 		
 		return result;
 	}
-	
-	public static List<CustomRequestError> getFormatedRequestErrorList(BindingResult result) {
-	    List<CustomRequestError> errors = new ArrayList<>(result.getErrorCount());
-	    for (FieldError fieldWithError : result.getFieldErrors()) {
-	        errors.add(new CustomRequestError(fieldWithError.getObjectName(), fieldWithError.getField(), fieldWithError.getDefaultMessage()));
-	    }
-	    return errors;
-	}
-	
 }

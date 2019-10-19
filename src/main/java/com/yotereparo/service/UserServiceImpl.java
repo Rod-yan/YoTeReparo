@@ -1,7 +1,19 @@
 package com.yotereparo.service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Method;
+import org.imgscalr.Scalr.Mode;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -12,9 +24,20 @@ import com.yotereparo.dao.UserDaoImpl;
 import com.yotereparo.model.User;
 import com.yotereparo.util.SecurityUtils;
 
+/**
+ * Capa de servicio para Usuarios. El objetivo de la misma es servir de interfaz entre el modelo y la capa de acceso a datos, 
+ * abstrayendo métodos para servir al controlador.
+ * 
+ * Implementa lógica de negocio donde correspondiera.
+ * 
+ * @author Rodrigo Yanis
+ * 
+ */
 @Service("userService")
 @Transactional 
 public class UserServiceImpl implements UserService {
+	
+	private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
 	
 	@Autowired
 	private UserDaoImpl dao;
@@ -31,7 +54,7 @@ public class UserServiceImpl implements UserService {
 		user.setIntentosIngreso(0);
 		// Unstable
 		user.setMembresia("GRATUITA");
-		dao.createUser(user);		
+		dao.createUser(user);
 	}
 
 	public void updateUser(User user) {
@@ -54,10 +77,6 @@ public class UserServiceImpl implements UserService {
 		if (user.getTelefonoAlternativo() != entity.getTelefonoAlternativo()) {
 			entity.setTelefonoAlternativo(user.getTelefonoAlternativo());
 		}
-		if (user.getFoto() != entity.getFoto()) {
-			entity.setFoto(user.getFoto());
-			entity.setThumbnail(user.getThumbnail());
-		}
 		if (user.getDescripcion() != entity.getDescripcion()) {
 			entity.setDescripcion(user.getDescripcion());
 		}
@@ -70,7 +89,10 @@ public class UserServiceImpl implements UserService {
 					new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days")))
 					);
 		}
-			
+		
+		/* Para update de imagenes ver método updateUserPhotoById
+		entity.setFoto(user.getFoto());
+		entity.setThumbnail(user.getThumbnail()); */
 		/* El estado lo calculamos con reglas un poco más complejas que aun no definimos.
 		entity.setEstado(user.getEstado()); */
 		/* La membresía la vamos a calcular de acuerdo a los roles que tenga el usuario.
@@ -93,6 +115,41 @@ public class UserServiceImpl implements UserService {
 
 	public User getUserById(String id) {
 		return dao.getUserById(id);
+	}
+	
+	/*
+	 *  Actualiza la foto y el thumbnail del Usuario haciendo un resize de la foto suscripta,
+	 *  si el procesamiento del thumbnail levanta excepcion, no suscribe la actualizacion
+	 *  de la foto.
+	 */
+	public void updateUserPhotoById(String id, byte[] photo) {
+		User entity = dao.getUserById(id);
+		if (photo != null) {
+	        try {
+	        	logger.info(String.format("UpdateUserPhotoById - Updating user's <%s> photo.",id));
+				entity.setFoto(photo);
+				
+				// arma el thumbnail a partir de la foto suscripta
+	        	InputStream is = new ByteArrayInputStream(photo);
+		        BufferedImage img = ImageIO.read(is);
+		        BufferedImage thumbImg = Scalr.resize(img, Method.ULTRA_QUALITY,
+	                    Mode.AUTOMATIC, 100, 100);
+		        
+		        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        	ImageIO.write(thumbImg, "png", baos);
+	        	
+	        	logger.info(String.format("UpdateUserPhotoById - Updating user's <%s> thumbnail.",id));
+		        entity.setThumbnail(baos.toByteArray());
+		        
+		        img.flush();
+		        thumbImg.flush();
+		        baos.close();
+	        }
+	        catch (IOException e) {
+	        	logger.error("UpdateUserPhotoById - IOException: "+e.getMessage());
+		        throw new RuntimeException(e.getMessage());
+	        }
+		}
 	}
 	
 	public boolean exist(String id) {

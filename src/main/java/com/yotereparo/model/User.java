@@ -102,6 +102,10 @@ public class User
 
 	public User() {	}
 	
+	public void hashContrasena() {
+		this.contrasena = SecurityUtils.encryptPassword(this.contrasena.concat(this.salt));
+	}
+	
 	/* Getters & Setters */
 	public String getId() {
 		return id;
@@ -234,10 +238,6 @@ public class User
 	}
 	public void setMembresia(String membresia) {
 		this.membresia = membresia;
-	}
-	
-	public void hashContrasena() {
-		this.contrasena = SecurityUtils.encryptPassword(this.contrasena.concat(this.salt));
 	}
 
 	@Override
