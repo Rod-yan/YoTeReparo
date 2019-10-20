@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.model.User;
@@ -156,30 +157,46 @@ public class UserController {
         }
     }
 	
-	@RequestMapping(value = { "/users/{id}/photo" }, method = RequestMethod.GET)
+	/*
+	 * Obtiene mediante HTTP GET la foto del usuario, o el thumbnail de la misma, 
+	 * de acuerdo con el URI path al que se suscriba el request.
+	 */
+	@RequestMapping(value = { "/users/{id}/photo", "/users/{id}/photo/thumbnail" }, method = RequestMethod.GET)
     public ResponseEntity<?> getUserPhoto(@PathVariable("id") String id) {
 		logger.info(String.format("GetUserPhoto - GET - Processing request for user's <%s> photo.", id));
-		
+
 		if (userService.exist(id)) {
-			byte[] userPhoto = userService.getUserById(id).getFoto();
-			if (userPhoto != null) {
+			// evaluamos el uri path del request para determinar si vamos a estar trabajando con la foto o con el thumbnail
+			String requestUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
+			byte[] userPhoto;
+ 			if (requestUri.contains("thumbnail")) {
+ 				userPhoto = userService.getUserById(id).getThumbnail();
+ 			}
+			else {
+				userPhoto = userService.getUserById(id).getFoto();
+			}
+ 			// procesamos el request
+ 			if (userPhoto != null) {
 				ByteArrayOutputStream bao = new ByteArrayOutputStream();
 				try {
 			        InputStream is = new ByteArrayInputStream(userPhoto);
 			        BufferedImage img = ImageIO.read(is);
 			        ImageIO.write(img, "png", bao);
-			        img.flush();
+			        
+			        HttpHeaders headers = new HttpHeaders();
+					headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+					headers.setContentType(MediaType.IMAGE_PNG);
+					
+					userPhoto = bao.toByteArray();
+					bao.close();
+					img.flush();
+					
+					logger.debug("GetUserPhoto - GET - Exiting method, providing response resource to client.");
+					return new ResponseEntity<byte[]>(userPhoto, headers, HttpStatus.OK);
 			    } catch (IOException e) {
 			        logger.error("GetUserPhoto - GET - IOException: "+e.getMessage());
 			        throw new RuntimeException(e.getMessage());
 			    }
-				
-				HttpHeaders headers = new HttpHeaders();
-				headers.setCacheControl(CacheControl.noCache().getHeaderValue());
-				headers.setContentType(MediaType.IMAGE_PNG);
-				
-				logger.debug("GetUserPhoto - GET - Exiting method, providing response resource to client.");
-				return new ResponseEntity<byte[]>(bao.toByteArray(), headers, HttpStatus.OK);
 			}
 			else {
 				logger.error(String.format("GetUserPhoto - GET - Unable to fetch user's photo. No photo was found for user <%s>.", id));
@@ -202,6 +219,7 @@ public class UserController {
 	
 	@RequestMapping(value = { "/users/{id}/photo" }, consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody String photoPayload) {
+		logger.info(String.format("UpdateUserPhoto - PUT - Processing request for user's <%s> photo.", id));
 		
 		// parseamos el json object recibido y generamos el byte array validando la estructura del request al mismo tiempo.
 		try { 
@@ -226,7 +244,7 @@ public class UserController {
 		catch (JSONException e) {
 			logger.error("UpdateUserPhoto - PUT - Received malformed request, returning error to client.");
         	FieldError error =new FieldError("user","error",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
-            return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
+        	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
             		error.getField(), 
             		error.getDefaultMessage()), 
             		HttpStatus.BAD_REQUEST);

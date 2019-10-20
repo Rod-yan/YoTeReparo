@@ -104,7 +104,6 @@ public class UserServiceImplTest {
         testUser1.setEmail("testuser7@yotereparo.com");
         testUser1.setContrasena("test2001");
         testUser1.setSalt(SecurityUtils.saltGenerator());
-        testUser1.hashContrasena();
         testUser1.setEstado("TEST");
         testUser1.setMembresia("TEST");
         testUser1.setIntentosIngreso(0);
@@ -116,7 +115,6 @@ public class UserServiceImplTest {
         testUser2.setEmail("testuser2@yotereparo.com");
         testUser2.setContrasena("test2002");
         testUser2.setSalt(SecurityUtils.saltGenerator());
-        testUser2.hashContrasena();
         testUser2.setEstado("TEST");
         testUser2.setMembresia("TEST");
         testUser2.setIntentosIngreso(0);

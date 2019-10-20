@@ -14,4 +14,12 @@
 <p style="padding-left: 30px;"><em>GET</em>: Devuelve el usuario {id} si es que existe. (application/json)</p>
 <p style="padding-left: 30px;"><em>PUT</em>: Actualiza los atributos del usuario {id} si es que existe, mandatorios: {id, nombre, apellido, email, contrasena}. Devuelve el usuario actualizado. (application/json)</p>
 <p style="padding-left: 30px;"><em>DELETE</em>: Elimina el usuario {id} si es que existe. (application/json)</p>
-<p><strong>&nbsp;</strong></p>
+<ul>
+    <li><strong>/yotereparo/users/{id}/photo</strong></li>
+</ul>
+<p style="padding-left: 30px;"><em>GET</em>: Devuelve la foto del usuario {id}. (image/png)</p>
+<p style="padding-left: 30px;"><em>PUT</em>: Actualiza la foto (y el thumbnail generado a partir de esta) del usuario {id}. (application/json)</p>
+<ul>
+    <li><strong>/yotereparo/users/{id}/photo/thumbnail</strong></li>
+</ul>
+<p style="padding-left: 30px;"><em>GET</em>: Devuelve el thumbnail del usuario {id}. (image/png)</p>

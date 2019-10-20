@@ -46,14 +46,18 @@ public class UserServiceImpl implements UserService {
 
 	public void createUser(User user) {
 		user.setSalt(SecurityUtils.saltGenerator());
-		user.hashContrasena();
+		user.setContrasena(SecurityUtils.encryptPassword(user.getContrasena().concat(user.getSalt())));
 		user.setFechaExpiracionContrasena(new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days"))));
 		user.setFechaCreacion(new DateTime());
-		// Unstable
+		// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
+		user.setFoto(null);
+		user.setThumbnail(null);
+		// Unstable:
 		user.setEstado("TEST");
 		user.setIntentosIngreso(0);
-		// Unstable
+		// Unstable:
 		user.setMembresia("GRATUITA");
+		
 		dao.createUser(user);
 	}
 
@@ -90,7 +94,7 @@ public class UserServiceImpl implements UserService {
 					);
 		}
 		
-		/* Para update de imagenes ver método updateUserPhotoById
+		/* Para update de imagenes usar metodo dedicado
 		entity.setFoto(user.getFoto());
 		entity.setThumbnail(user.getThumbnail()); */
 		/* El estado lo calculamos con reglas un poco más complejas que aun no definimos.
@@ -129,7 +133,7 @@ public class UserServiceImpl implements UserService {
 	        	logger.info(String.format("UpdateUserPhotoById - Updating user's <%s> photo.",id));
 				entity.setFoto(photo);
 				
-				// arma el thumbnail a partir de la foto suscripta
+				// construye y guarda el thumbnail a partir de la foto suscripta
 	        	InputStream is = new ByteArrayInputStream(photo);
 		        BufferedImage img = ImageIO.read(is);
 		        BufferedImage thumbImg = Scalr.resize(img, Method.ULTRA_QUALITY,

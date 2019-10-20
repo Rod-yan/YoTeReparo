@@ -61,7 +61,6 @@ public class UserDaoImplTest extends EntityDaoImplTest {
         user.setEmail("testuser0@yotereparo.com");
         user.setContrasena("test2000");
         user.setSalt(SecurityUtils.saltGenerator());
-        user.hashContrasena();
         user.setFechaNacimiento(new LocalDate());
         user.setTelefonoPrincipal("123123123123");
         user.setTelefonoAlternativo("123123123123");

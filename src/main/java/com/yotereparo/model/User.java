@@ -16,8 +16,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.yotereparo.util.SecurityUtils;
-
 @Entity
 @Table(name="usuario") 
 public class User
@@ -101,10 +99,6 @@ public class User
 	private String membresia;
 
 	public User() {	}
-	
-	public void hashContrasena() {
-		this.contrasena = SecurityUtils.encryptPassword(this.contrasena.concat(this.salt));
-	}
 	
 	/* Getters & Setters */
 	public String getId() {
