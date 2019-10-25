@@ -70,7 +70,7 @@ public class UserDaoImplTest extends EntityDaoImplTest {
         user.setFechaUltimoIngreso(new DateTime());
 		user.setFechaCreacion(new DateTime());
         user.setEstado("TEST");
-        user.setMembresia("TEST");
+        user.setMembresia(null);
         user.setIntentosIngreso(0);
         return user;
     }

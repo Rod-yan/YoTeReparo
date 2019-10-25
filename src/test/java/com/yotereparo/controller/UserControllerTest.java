@@ -229,7 +229,7 @@ public class UserControllerTest {
         testUser1.setContrasena("test2001");
         testUser1.setSalt(SecurityUtils.saltGenerator());
         testUser1.setEstado("TEST");
-        testUser1.setMembresia("TEST");
+        testUser1.setMembresia(null);
         testUser1.setIntentosIngreso(0);
          
         User testUser2 = new User();
@@ -240,7 +240,7 @@ public class UserControllerTest {
         testUser2.setContrasena("test2002");
         testUser2.setSalt(SecurityUtils.saltGenerator());
         testUser2.setEstado("TEST");
-        testUser2.setMembresia("TEST");
+        testUser2.setMembresia(null);
         testUser2.setIntentosIngreso(0);
          
         users.add(testUser1);

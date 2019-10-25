@@ -1,17 +1,24 @@
 package com.yotereparo.model;
 
 import java.util.Arrays;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.JoinColumn;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -95,8 +102,16 @@ public class User
 	private DateTime fechaCreacion;
 	
 	@Size(max=10)
-	@Column(name = "membresia", nullable = false)
+	@Column(name = "membresia", nullable = true)
 	private String membresia;
+	
+	@ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+    @JoinTable(name="usuario_rol",
+        joinColumns = {@JoinColumn(name="id_usuario", referencedColumnName="id_usuario")},
+        inverseJoinColumns = {@JoinColumn(name="id_rol", referencedColumnName="id_rol")}    
+    )
+	@Where(clause = "estado <> 'INACTIVO'")
+	private Set<Role> roles;
 
 	public User() {	}
 	
@@ -232,6 +247,13 @@ public class User
 	}
 	public void setMembresia(String membresia) {
 		this.membresia = membresia;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 
 	@Override

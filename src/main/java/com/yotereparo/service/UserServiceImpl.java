@@ -5,7 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -21,12 +23,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yotereparo.dao.UserDaoImpl;
+import com.yotereparo.model.Role;
 import com.yotereparo.model.User;
 import com.yotereparo.util.SecurityUtils;
 
 /**
- * Capa de servicio para Usuarios. El objetivo de la misma es servir de interfaz entre el modelo y la capa de acceso a datos, 
- * abstrayendo métodos para servir al controlador.
+ * Capa de servicio para Usuarios. 
+ * El objetivo de la misma es servir de interfaz entre el modelo y la capa de acceso a datos,
+ * expone métodos para uso público en el contexto de la aplicación.
  * 
  * Implementa lógica de negocio donde correspondiera.
  * 
@@ -43,6 +47,8 @@ public class UserServiceImpl implements UserService {
 	private UserDaoImpl dao;
 	@Autowired
 	private Environment environment;
+	@Autowired
+	private RoleService roleService;
 
 	public void createUser(User user) {
 		user.setSalt(SecurityUtils.saltGenerator());
@@ -55,8 +61,13 @@ public class UserServiceImpl implements UserService {
 		// Unstable:
 		user.setEstado("TEST");
 		user.setIntentosIngreso(0);
-		// Unstable:
-		user.setMembresia("GRATUITA");
+		
+		// Definimos los roles del usuario de acuerdo con la membresia del mismo. Todo usuario es usuario final.
+		Set<Role> roles = new HashSet<Role>();
+		roles.add(roleService.getRoleById(environment.getProperty("role.id.usuariofinal")));
+		if (user.getMembresia() != null)
+			roles.add(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase())));
+		user.setRoles(roles);
 		
 		dao.createUser(user);
 	}
@@ -94,19 +105,22 @@ public class UserServiceImpl implements UserService {
 					);
 		}
 		
-		/* Para update de imagenes usar metodo dedicado
-		entity.setFoto(user.getFoto());
-		entity.setThumbnail(user.getThumbnail()); */
+		if (user.getMembresia() != entity.getMembresia()) {
+			Set<Role> roles = entity.getRoles();
+			if (entity.getMembresia() != null)
+				roles.remove(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+entity.getMembresia().toLowerCase())));
+			if (user.getMembresia() != null)
+				roles.add(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase())));
+			
+			entity.setMembresia(user.getMembresia());
+			entity.setRoles(roles);
+		}
+		
 		/* El estado lo calculamos con reglas un poco más complejas que aun no definimos.
 		entity.setEstado(user.getEstado()); */
-		/* La membresía la vamos a calcular de acuerdo a los roles que tenga el usuario.
-		entity.setMembresia(user.getMembresia()); */
 		/* Gestionado por componentes de sesión
 		entity.setIntentosIngreso(user.getIntentosIngreso());
 		entity.setFechaUltimoIngreso(user.getFechaUltimoIngreso()); */
-		/* Nunca les hacemos update, solo setteo inicial en tiempo de creación.
-		entity.setSalt(user.getSalt()); 
-		entity.setFechaCreacion(user.getFechaCreacion()); */
 	}
 
 	public void deleteUserById(String id) {
@@ -121,18 +135,27 @@ public class UserServiceImpl implements UserService {
 		return dao.getUserById(id);
 	}
 	
+	public boolean exist(String id) {
+		return (dao.getUserById(id) != null);
+	}
+
+	public boolean hasUniqueId(String id) {
+		User user = getUserById(id);
+		return (user == null);
+	}
+	
 	/*
 	 *  Actualiza la foto y el thumbnail del Usuario haciendo un resize de la foto suscripta,
 	 *  si el procesamiento del thumbnail levanta excepcion, no suscribe la actualizacion
-	 *  de la foto.
+	 *  de la foto. Si la foto es nula, eliminamos la foto y thumbnail actual del usuario.
 	 */
 	public void updateUserPhotoById(String id, byte[] photo) {
 		User entity = dao.getUserById(id);
 		if (photo != null) {
 	        try {
 	        	logger.info(String.format("UpdateUserPhotoById - Updating user's <%s> photo.",id));
-				entity.setFoto(photo);
-				
+	        	entity.setFoto(photo);
+	        	
 				// construye y guarda el thumbnail a partir de la foto suscripta
 	        	InputStream is = new ByteArrayInputStream(photo);
 		        BufferedImage img = ImageIO.read(is);
@@ -154,14 +177,15 @@ public class UserServiceImpl implements UserService {
 		        throw new RuntimeException(e.getMessage());
 	        }
 		}
-	}
-	
-	public boolean exist(String id) {
-		return (dao.getUserById(id) != null);
-	}
-
-	public boolean hasUniqueId(String id) {
-		User user = getUserById(id);
-		return (user == null);
+		else {
+			if (entity.getFoto() != null || entity.getThumbnail() != null) {
+				logger.info(String.format("UpdateUserPhotoById - Deleting user's <%s> photo and thumbnail.",id));
+				
+				entity.setFoto(null);
+				entity.setThumbnail(null);
+			}
+			
+			logger.debug(String.format("UpdateUserPhotoById - User <%s> doesn't have a photo to delete, discarding transaction.",id));
+		}
 	}
 }
