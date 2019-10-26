@@ -63,12 +63,11 @@ public class UserServiceImpl implements UserService {
 		user.setIntentosIngreso(0);
 		
 		// Definimos los roles del usuario de acuerdo con la membresia del mismo. Todo usuario es usuario final.
-		Set<Role> roles = new HashSet<Role>();
-		roles.add(roleService.getRoleById(environment.getProperty("role.id.usuariofinal")));
+		user.setRoles(new HashSet<Role>());
+		user.addRole(roleService.getRoleById(environment.getProperty("role.id.usuariofinal")));
 		if (user.getMembresia() != null)
-			roles.add(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase())));
-		user.setRoles(roles);
-		
+			user.addRole(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase())));
+
 		dao.createUser(user);
 	}
 
@@ -106,14 +105,12 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		if (user.getMembresia() != entity.getMembresia()) {
-			Set<Role> roles = entity.getRoles();
 			if (entity.getMembresia() != null)
-				roles.remove(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+entity.getMembresia().toLowerCase())));
+				entity.removeRole(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+entity.getMembresia().toLowerCase())));
 			if (user.getMembresia() != null)
-				roles.add(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase())));
+				entity.addRole(roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase())));
 			
 			entity.setMembresia(user.getMembresia());
-			entity.setRoles(roles);
 		}
 		
 		/* El estado lo calculamos con reglas un poco más complejas que aun no definimos.
