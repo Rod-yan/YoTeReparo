@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 
