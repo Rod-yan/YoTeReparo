@@ -19,6 +19,7 @@
 </ul>
 <p style="padding-left: 30px;"><em>GET</em>: Devuelve la foto del usuario {id}. (image/png)</p>
 <p style="padding-left: 30px;"><em>PUT</em>: Actualiza la foto (y el thumbnail generado a partir de esta) del usuario {id}. (application/json)</p>
+<p style="padding-left: 30px;"><em>DELETE</em>: Elimina la foto y el thumbnail del usuario {id}.</p>
 <ul>
     <li><strong>/yotereparo/users/{id}/photo/thumbnail</strong></li>
 </ul>
