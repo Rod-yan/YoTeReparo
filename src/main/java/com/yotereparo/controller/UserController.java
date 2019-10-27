@@ -95,7 +95,7 @@ public class UserController {
         }
         else {
         	logger.debug(String.format("GetUser - GET - User with id <%s> not found.", id));
-            FieldError error =new FieldError("user","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+            FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
             return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
             		error.getField(), 
             		error.getDefaultMessage()), 
@@ -125,7 +125,7 @@ public class UserController {
 	        }
 			else {
 				logger.debug(String.format("CreateUser - POST - Unable to create user. User <%s> already exist.", clientInput.getId()));
-	            FieldError error =new FieldError("user","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
+	            FieldError error =new FieldError("User","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
 	            result.addError(error);
 	            return new ResponseEntity<>(MiscUtils.getFormatedRequestErrorList(result), HttpStatus.CONFLICT);
 			}
@@ -164,7 +164,7 @@ public class UserController {
         }
 		else {
 			logger.debug(String.format("UpdateUser - PUT - Unable to update user. User <%s> doesn't exist.", id));
-            FieldError error =new FieldError("user","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+            FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
             result.addError(error);
             return new ResponseEntity<>(MiscUtils.getFormatedRequestErrorList(result), HttpStatus.NOT_FOUND);
 		}
@@ -186,7 +186,7 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.OK);
         }
         else {
-        	FieldError error =new FieldError("user","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
         	logger.debug(String.format("DeleteUser - DELETE - Unable to delete user. User <%s> doesn't exist.", id));
         	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
             		error.getField(), 
@@ -240,7 +240,7 @@ public class UserController {
 			}
 			else {
 				logger.debug(String.format("GetUserPhoto - GET - Unable to fetch user's photo. No photo was found for user <%s>.", id));
-	        	FieldError error =new FieldError("user","error",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
+	        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
 	            		error.getField(), 
 	            		error.getDefaultMessage()), 
@@ -249,7 +249,7 @@ public class UserController {
         }
 		else {
 			logger.debug(String.format("GetUserPhoto - GET - Unable to fetch user's photo. User <%s> doesn't exist.", id));
-        	FieldError error =new FieldError("user","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
             return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
             		error.getField(), 
             		error.getDefaultMessage()), 
@@ -281,7 +281,7 @@ public class UserController {
 				}
 				catch (IllegalArgumentException e){
 					logger.error("UpdateUserPhoto - PUT - Received invalid base64 image, returning error to client.");
-		        	FieldError error =new FieldError("user","error",messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
+		        	FieldError error =new FieldError("User","error",messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
 		        	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
 		            		error.getField(), 
 		            		error.getDefaultMessage()), 
@@ -290,7 +290,7 @@ public class UserController {
 	        }
 			else {
 				logger.debug(String.format("UpdateUserPhoto - PUT - Unable to update user's photo. User <%s> doesn't exist.", id));
-	        	FieldError error =new FieldError("user","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+	        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
 	            		error.getField(), 
 	            		error.getDefaultMessage()), 
@@ -299,7 +299,7 @@ public class UserController {
 		}
 		catch (JSONException e) {
 			logger.error("UpdateUserPhoto - PUT - Received malformed request, returning error to client.");
-        	FieldError error =new FieldError("user","error",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
+        	FieldError error =new FieldError("User","error",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
         	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
             		error.getField(), 
             		error.getDefaultMessage()), 
@@ -324,7 +324,7 @@ public class UserController {
         }
 		else {
 			logger.debug(String.format("DeleteUserPhoto - DELETE - Unable to delete user's photo. User <%s> doesn't exist.", id));
-        	FieldError error =new FieldError("user","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
             return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
             		error.getField(), 
             		error.getDefaultMessage()), 

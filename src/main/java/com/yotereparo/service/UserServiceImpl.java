@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yotereparo.dao.UserDaoImpl;
+import com.yotereparo.model.Address;
 import com.yotereparo.model.Role;
 import com.yotereparo.model.User;
 import com.yotereparo.util.SecurityUtils;
@@ -112,6 +114,41 @@ public class UserServiceImpl implements UserService {
 			entity.setMembresia(user.getMembresia());
 		}
 		
+		/* Comparamos las direcciones del usuario actualizado con las existentes, y calculamos
+		 * los deltas para armar el Set final. Esto es necesario debido a que tenemos que comparar
+		 * a nivel de entidad <Address>, ya que cada objeto tiene id autogenerado.
+		 */
+		// TODO: Bloque muy suboptimizado, O(n^2)
+		Set<Address> addressesToBeRemoved = new HashSet<Address>();
+		Boolean addressWasRemoved = true;
+		for (Address direccion : entity.getDirecciones()) {
+			addressWasRemoved = true;
+			for (Address entry : user.getDirecciones()) {
+				if (entry.equals(direccion)) {
+					addressWasRemoved = false;
+					break;
+				}
+			}			
+			if (addressWasRemoved)
+				addressesToBeRemoved.add(direccion);
+		}
+		// TODO: Bloque muy suboptimizado, O(n^2)
+		Set<Address> addressesToBeAdded = new HashSet<Address>();
+		Boolean addressWasAdded = true;
+		for (Address entry : user.getDirecciones()) {
+			addressWasAdded = true;
+			for (Address direccion : entity.getDirecciones()) {
+				if (entry.equals(direccion)) {
+					addressWasAdded = false;
+					break;
+				}
+			}			
+			if (addressWasAdded)
+				addressesToBeAdded.add(entry);
+		}
+		entity.getDirecciones().addAll(addressesToBeAdded);
+		entity.getDirecciones().removeAll(addressesToBeRemoved);
+				
 		/* El estado lo calculamos con reglas un poco más complejas que aun no definimos.
 		entity.setEstado(user.getEstado()); */
 		/* Gestionado por componentes de sesión

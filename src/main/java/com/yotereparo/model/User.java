@@ -10,10 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -29,21 +30,18 @@ public class User
 {
 	@Id
 	@NotEmpty(message = "{user.id.not.empty}")
-	@Size(min=3, max=16, message = "{user.id.size}")
+	@Size(min=3, max=15, message = "{user.id.size}")
 	@Column(name = "id_usuario", nullable = false)
 	private String id;
 	
 	@NotEmpty(message = "{user.nombre.not.empty}")
-	@Column(name = "nombre", nullable = false)
 	private String nombre;
 	
 	@NotEmpty(message = "{user.apellido.not.empty}")
-	@Column(name = "apellido", nullable = false)
 	private String apellido;
 	
 	@NotEmpty(message = "{user.email.not.empty}")
 	@Email(message = "{user.email.not.valid}")
-	@Column(name = "email", nullable = false)
 	private String email;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) 
@@ -57,27 +55,20 @@ public class User
 	@Column(name = "telefono_alternativo", nullable = true)
 	private String telefonoAlternativo;
 	
-	@Column(name = "foto", nullable = true)
 	private byte[] foto;
 	
-	@Column(name = "thumbnail", nullable = true)
 	private byte[] thumbnail;
 	
 	@NotEmpty(message = "{user.contrasena.not.empty}")
-	@Column(name = "contrasena", nullable = false)
 	private String contrasena;
 	
-	@Column(name = "salt", nullable = false)
 	private String salt;
 	
-	@Column(name = "descripcion", nullable = true)
 	private String descripcion;
 	
-	@Size(max=20)
-	@Column(name = "estado", nullable = false)
 	private String estado;
 	
-	@DecimalMin("0")
+	@Min(value=0)
 	@Column(name = "intentos_ingreso", nullable = false)
 	private int intentosIngreso;
 	
@@ -101,9 +92,13 @@ public class User
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime fechaCreacion;
 	
-	@Size(max=10)
-	@Column(name = "membresia", nullable = true)
+	@Size(max=10, message = "{user.membresia.size}")
 	private String membresia;
+	
+	@NotEmpty(message = "{user.direcciones.not.empty}")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "id_usuario", nullable = false, updatable = false, insertable = true)
+	private Set<Address> direcciones;
 	
 	@ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
     @JoinTable(name="usuario_rol",
@@ -256,12 +251,26 @@ public class User
 		this.roles = roles;
 	}
 
+	public Set<Address> getDirecciones() {
+		return direcciones;
+	}
+	public void setDirecciones(Set<Address> direcciones) {
+		this.direcciones = direcciones;
+	}
+
 	public void addRole(Role role) {
 		roles.add(role);
 	}
 	public void removeRole(Role role) {
 		roles.remove(role);
 	}
+	
+	public void addDireccion(Address direccion) {
+        direcciones.add(direccion);
+    }
+    public void removeComment(Address direccion) {
+    	direcciones.remove(direccion);
+    }
 
 	@Override
 	public int hashCode() {
@@ -270,6 +279,7 @@ public class User
 		result = prime * result + ((apellido == null) ? 0 : apellido.hashCode());
 		result = prime * result + ((contrasena == null) ? 0 : contrasena.hashCode());
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
+		result = prime * result + ((direcciones == null) ? 0 : direcciones.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
 		result = prime * result + ((fechaCreacion == null) ? 0 : fechaCreacion.hashCode());
@@ -313,6 +323,11 @@ public class User
 			if (other.descripcion != null)
 				return false;
 		} else if (!descripcion.equals(other.descripcion))
+			return false;
+		if (direcciones == null) {
+			if (other.direcciones != null)
+				return false;
+		} else if (!direcciones.equals(other.direcciones))
 			return false;
 		if (email == null) {
 			if (other.email != null)
