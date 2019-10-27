@@ -268,7 +268,7 @@ public class User
 	public void addDireccion(Address direccion) {
         direcciones.add(direccion);
     }
-    public void removeComment(Address direccion) {
+    public void removeDireccion(Address direccion) {
     	direcciones.remove(direccion);
     }
 
