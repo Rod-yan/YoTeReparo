@@ -7,7 +7,8 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.Test;
- 
+
+import com.yotereparo.model.City;
 import com.yotereparo.model.User;
 import com.yotereparo.util.SecurityUtils;
  
@@ -20,7 +21,7 @@ public class UserDaoImplTest extends EntityDaoImplTest {
     // Definimos un dataset in-memory
     @Override
     protected IDataSet getDataSet() throws Exception{
-        IDataSet dataSet = new FlatXmlDataSet(this.getClass().getClassLoader().getResourceAsStream("User.xml"));
+        IDataSet dataSet = new FlatXmlDataSet(this.getClass().getClassLoader().getResourceAsStream("DataSet.xml"));
         return dataSet;
     }
  
@@ -54,6 +55,11 @@ public class UserDaoImplTest extends EntityDaoImplTest {
     }
  
     public User getSampleUser(){
+    	City city = new City();
+    	city.setId("venado_tuerto");
+    	city.setDescripcion("Venado Tuerto");
+    	city.setProvincia("santa_fe");
+    	
         User user = new User();
         user.setId("testUser0");
         user.setNombre("Test");
@@ -64,6 +70,7 @@ public class UserDaoImplTest extends EntityDaoImplTest {
         user.setFechaNacimiento(new LocalDate());
         user.setTelefonoPrincipal("123123123123");
         user.setTelefonoAlternativo("123123123123");
+        user.setCiudad(city);
         user.setDescripcion("test user description");
         user.setFechaExpiracionContrasena(new DateTime().plusDays(180));
         user.setFechaUltimoCambioContrasena(new DateTime());
@@ -72,6 +79,7 @@ public class UserDaoImplTest extends EntityDaoImplTest {
         user.setEstado("TEST");
         user.setMembresia(null);
         user.setIntentosIngreso(0);
+        user.setRoles(null);
         return user;
     }
  

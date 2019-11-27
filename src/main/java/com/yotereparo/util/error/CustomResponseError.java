@@ -1,6 +1,8 @@
-package com.yotereparo.util;
+package com.yotereparo.util.error;
 
-public class CustomResponseError {
+public class CustomResponseError extends RuntimeException {
+	
+	private static final long serialVersionUID = 1L;
 	private String field;
 	private String defaultMessage;
 	private String objectName;
@@ -35,5 +37,11 @@ public class CustomResponseError {
 
 	public void setDefaultMessage(String defaultMessage) {
 		this.defaultMessage = defaultMessage;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomResponseError [field=" + field + ", defaultMessage=" + defaultMessage + ", objectName="
+				+ objectName + "]";
 	}
 }

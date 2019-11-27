@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -15,6 +16,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.CacheControl;
@@ -32,11 +34,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.model.User;
+import com.yotereparo.service.CityService;
 import com.yotereparo.service.UserService;
-import com.yotereparo.util.CustomResponseError;
 import com.yotereparo.util.MiscUtils;
 import com.yotereparo.util.ValidationUtils;
+import com.yotereparo.util.error.CustomResponseError;
 
 /**
  * Controlador REST SpringMVC que expone servicios básicos para la gestión de Usuarios.
@@ -52,7 +56,11 @@ public class UserController {
 	@Autowired
     UserService userService;
 	@Autowired
+    CityService cityService;
+	@Autowired
     MessageSource messageSource;
+	@Autowired
+    ModelMapper modelMapper;
 
 	/*
 	 * Devuelve todos los usuarios registrados en formato JSON.
@@ -61,18 +69,23 @@ public class UserController {
 			value = { "/users/" }, 
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
-	public ResponseEntity<List<User>> listUsers() {
+	public ResponseEntity<List<UserDto>> listUsers() {
 		logger.info("ListUsers - GET - Processing request for a list with all existing users.");
         
 		List<User> users = userService.getAllUsers();
-        
+        		
 		if (!users.isEmpty()) {
-        	logger.debug("ListUsers - GET - Exiting method, providing response resource to client.");
-            return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+			
+			List<UserDto> usersDto = users.stream()
+	                .map(user -> convertToDto(user))
+	                .collect(Collectors.toList());
+			
+        	logger.info("ListUsers - GET - Exiting method, providing response resource to client.");
+            return new ResponseEntity<List<UserDto>>(usersDto, HttpStatus.OK);
         }
         else {
-        	logger.debug("ListUsers - GET - No users were found.");
-        	return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+        	logger.info("ListUsers - GET - Request failed - No users were found.");
+        	return new ResponseEntity<List<UserDto>>(HttpStatus.NO_CONTENT);
         }
     }
 	
@@ -90,16 +103,13 @@ public class UserController {
 		User user = userService.getUserById(id);
         
 		if (user != null) {
-        	logger.debug("GetUser - GET - Exiting method, providing response resource to client.");
-            return new ResponseEntity<User>(user, HttpStatus.OK);
+        	logger.info("GetUser - GET - Exiting method, providing response resource to client.");
+            return new ResponseEntity<UserDto>(convertToDto(user), HttpStatus.OK);
         }
         else {
-        	logger.debug(String.format("GetUser - GET - User with id <%s> not found.", id));
-            FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-            return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-            		error.getField(), 
-            		error.getDefaultMessage()), 
-            		HttpStatus.NOT_FOUND);
+        	logger.info(String.format("GetUser - GET - Request failed - User with id <%s> not found.", id));
+            FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
         } 
     }
 	
@@ -109,29 +119,36 @@ public class UserController {
 	@RequestMapping(
 			value = { "/users/" }, 
 			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody User clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
 		
 		if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
 			logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId()));
 			if (!userService.exist(clientInput.getId())) {
-				userService.createUser(clientInput);
-				
-				HttpHeaders headers = new HttpHeaders();
-		        headers.setLocation(ucBuilder.path("/users/{id}").buildAndExpand(clientInput.getId()).toUri());
-		        
-		        logger.debug("CreateUser - POST - Exiting method, providing response resource to client.");
-				return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+				try {
+					userService.createUser(convertToEntity(clientInput));
+					
+					HttpHeaders headers = new HttpHeaders();
+			        headers.setLocation(ucBuilder.path("/users/{id}").buildAndExpand(clientInput.getId()).toUri());
+			        
+			        logger.info("CreateUser - POST - Exiting method, providing response resource to client.");
+					return new ResponseEntity<>(headers, HttpStatus.CREATED);
+				}
+				catch (CustomResponseError error) {
+					logger.error(String.format("CreateUser - POST - Request failed - Error procesing request: <%s>", error.toString()));
+					return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+				}
 	        }
 			else {
-				logger.debug(String.format("CreateUser - POST - Unable to create user. User <%s> already exist.", clientInput.getId()));
-	            FieldError error =new FieldError("User","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
-	            result.addError(error);
-	            return new ResponseEntity<>(MiscUtils.getFormatedRequestErrorList(result), HttpStatus.CONFLICT);
+				logger.info(String.format("CreateUser - POST - Request failed - Unable to create user. User <%s> already exist.", clientInput.getId()));
+	            FieldError error = new FieldError("User","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
+	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
 			}
 		}
 		else {
-			return new ResponseEntity<>(MiscUtils.getFormatedRequestErrorList(result), HttpStatus.BAD_REQUEST);
+			logger.info("CreateUser - POST - Request failed - Input validation error(s) detected.");
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 		}	
     }
 	
@@ -146,27 +163,33 @@ public class UserController {
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody User clientInput, BindingResult result) {
+    public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody UserDto clientInput, BindingResult result) {
 		logger.info(String.format("UpdateUser - PUT - Processing request for user <%s>.", id));
 		
 		clientInput.setId(id);
 		
 		if (userService.exist(id)) {
 			if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
-				userService.updateUser(clientInput);
-				
-				logger.debug("UpdateUser - PUT - Exiting method, providing response resource to client.");
-				return new ResponseEntity<User>(userService.getUserById(id), HttpStatus.OK);
+				try {
+					userService.updateUser(convertToEntity(clientInput));
+					
+					logger.info("UpdateUser - PUT - Exiting method, providing response resource to client.");
+					return new ResponseEntity<UserDto>(convertToDto(userService.getUserById(id)), HttpStatus.OK);
+				}
+				catch (CustomResponseError error) {
+					logger.error(String.format("UpdateUser - PUT - Request failed - Error procesing request: <%s>", error.toString()));
+					return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+				}
 			}
 			else {
-				return new ResponseEntity<>(MiscUtils.getFormatedRequestErrorList(result), HttpStatus.BAD_REQUEST);
+				logger.info("UpdateUser - PUT - Request failed - Input validation error(s) detected.");
+				return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 			}
         }
 		else {
-			logger.debug(String.format("UpdateUser - PUT - Unable to update user. User <%s> doesn't exist.", id));
-            FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-            result.addError(error);
-            return new ResponseEntity<>(MiscUtils.getFormatedRequestErrorList(result), HttpStatus.NOT_FOUND);
+			logger.info(String.format("UpdateUser - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
+            FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 		}
     }
 
@@ -175,6 +198,7 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}" }, 
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
 		logger.info(String.format("DeleteUser - DELETE - Processing request for user <%s>.", id));
@@ -182,16 +206,13 @@ public class UserController {
         if (userService.exist(id)) {
         	userService.deleteUserById(id);
         	
-        	logger.debug("DeleteUser - DELETE - Exiting method, providing response resource to client.");
-            return new ResponseEntity<User>(HttpStatus.OK);
+        	logger.info("DeleteUser - DELETE - Exiting method, providing response resource to client.");
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         else {
-        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-        	logger.debug(String.format("DeleteUser - DELETE - Unable to delete user. User <%s> doesn't exist.", id));
-        	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-            		error.getField(), 
-            		error.getDefaultMessage()), 
-            		HttpStatus.NOT_FOUND);
+        	logger.info(String.format("DeleteUser - DELETE - Request failed - Unable to delete user. User <%s> doesn't exist.", id));
+        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
         }
     }
 	
@@ -201,11 +222,12 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}/photo", "/users/{id}/photo/thumbnail" }, 
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.GET)
     public ResponseEntity<?> getUserPhoto(@PathVariable("id") String id) {
 		logger.info(String.format("GetUserPhoto - GET - Processing request for user's <%s> photo.", id));
-
-		if (userService.exist(id)) {
+		
+		if (userService.exist(id)) {			
 			// evaluamos el uri path del request para determinar si vamos a estar trabajando con la foto o con el thumbnail
 			String requestUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
 			byte[] userPhoto;
@@ -231,29 +253,24 @@ public class UserController {
 					bao.close();
 					img.flush();
 					
-					logger.debug("GetUserPhoto - GET - Exiting method, providing response resource to client.");
+					logger.info("GetUserPhoto - GET - Exiting method, providing response resource to client.");
 					return new ResponseEntity<byte[]>(userPhoto, headers, HttpStatus.OK);
 			    } catch (IOException e) {
-			        logger.error("GetUserPhoto - GET - IOException: "+e.getMessage());
-			        throw new RuntimeException(e.getMessage());
+			        logger.error("GetUserPhoto - GET - Request failed - IOException: "+e.getMessage());
+			        FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			        return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 			    }
 			}
 			else {
-				logger.debug(String.format("GetUserPhoto - GET - Unable to fetch user's photo. No photo was found for user <%s>.", id));
-	        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
-	        	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-	            		error.getField(), 
-	            		error.getDefaultMessage()), 
-	            		HttpStatus.NOT_FOUND);
+				logger.info(String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. No photo was found for user <%s>.", id));
+	        	FieldError error = new FieldError("User","foto",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
+	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
         }
 		else {
-			logger.debug(String.format("GetUserPhoto - GET - Unable to fetch user's photo. User <%s> doesn't exist.", id));
-        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-            return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-            		error.getField(), 
-            		error.getDefaultMessage()), 
-            		HttpStatus.NOT_FOUND);
+			logger.info(String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. User <%s> doesn't exist.", id));
+        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -263,7 +280,8 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}/photo" }, 
-			consumes = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody String photoPayload) {
 		logger.info(String.format("UpdateUserPhoto - PUT - Processing request for user's <%s> photo.", id));
@@ -276,34 +294,25 @@ public class UserController {
 				try {
 					userService.updateUserPhotoById(id, Base64.getDecoder().decode(b64photo));
 					
-					logger.debug("UpdateUserPhoto - PUT - Exiting method, providing response resource to client.");
+					logger.info("UpdateUserPhoto - PUT - Exiting method, providing response resource to client.");
 					return new ResponseEntity<String>(HttpStatus.OK);
 				}
 				catch (IllegalArgumentException e){
-					logger.error("UpdateUserPhoto - PUT - Received invalid base64 image, returning error to client.");
+					logger.error("UpdateUserPhoto - PUT - Request failed - Received invalid base64 image, returning error to client.");
 		        	FieldError error =new FieldError("User","error",messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
-		        	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-		            		error.getField(), 
-		            		error.getDefaultMessage()), 
-		            		HttpStatus.BAD_REQUEST);
+		        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 				}
 	        }
 			else {
-				logger.debug(String.format("UpdateUserPhoto - PUT - Unable to update user's photo. User <%s> doesn't exist.", id));
-	        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-	            return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-	            		error.getField(), 
-	            		error.getDefaultMessage()), 
-	            		HttpStatus.NOT_FOUND);
+				logger.info(String.format("UpdateUserPhoto - PUT - Request failed - Unable to update user's photo. User <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (JSONException e) {
-			logger.error("UpdateUserPhoto - PUT - Received malformed request, returning error to client.");
-        	FieldError error =new FieldError("User","error",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
-        	return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-            		error.getField(), 
-            		error.getDefaultMessage()), 
-            		HttpStatus.BAD_REQUEST);
+			logger.error("UpdateUserPhoto - PUT - Request failed - Received malformed request, returning error to client.");
+        	FieldError error = new FieldError("User","error",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
+        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -311,7 +320,8 @@ public class UserController {
 	 * Elimina la foto y el thumbnail del usuario.
 	 */
 	@RequestMapping(
-			value = { "/users/{id}/photo" }, 
+			value = { "/users/{id}/photo" },
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUserPhoto(@PathVariable("id") String id) {
 		logger.info(String.format("DeleteUserPhoto - DELETE - Processing request for user's <%s> photo.", id));
@@ -319,16 +329,27 @@ public class UserController {
 		if (userService.exist(id)) {
 			userService.updateUserPhotoById(id, null);
 			
-			logger.debug("DeleteUserPhoto - DELETE - Exiting method, providing response resource to client.");
+			logger.info("DeleteUserPhoto - DELETE - Exiting method, providing response resource to client.");
 			return new ResponseEntity<String>(HttpStatus.OK);
         }
 		else {
-			logger.debug(String.format("DeleteUserPhoto - DELETE - Unable to delete user's photo. User <%s> doesn't exist.", id));
-        	FieldError error =new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-            return new ResponseEntity<>(new CustomResponseError(error.getObjectName(), 
-            		error.getField(), 
-            		error.getDefaultMessage()), 
-            		HttpStatus.NOT_FOUND);
+			logger.info(String.format("DeleteUserPhoto - DELETE - Request failed - Unable to delete user's photo. User <%s> doesn't exist.", id));
+        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 		}
+	}
+	
+	private UserDto convertToDto(User user) {
+	    UserDto userDto = modelMapper.map(user, UserDto.class);
+	    return userDto;
+	}
+	
+	private User convertToEntity(UserDto userDto) {
+	    User user = modelMapper.map(userDto, User.class);
+	    if (cityService.exist(userDto.getCiudad()))
+	    	user.setCiudad(cityService.getCityById(userDto.getCiudad()));
+	    else
+	    	throw new CustomResponseError("City","ciudad",messageSource.getMessage("city.doesnt.exist", null, Locale.getDefault()));
+	    return user;
 	}
 }

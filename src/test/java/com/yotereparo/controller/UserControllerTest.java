@@ -2,6 +2,7 @@ package com.yotereparo.controller;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -20,6 +21,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.modelmapper.ModelMapper;
+
 import static org.mockito.Mockito.atLeastOnce;
  
 import org.springframework.context.MessageSource;
@@ -34,14 +37,23 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.model.Address;
+import com.yotereparo.model.City;
 import com.yotereparo.model.User;
+import com.yotereparo.service.CityServiceImpl;
 import com.yotereparo.service.UserServiceImpl;
-import com.yotereparo.util.SecurityUtils;
  
 public class UserControllerTest {
  
     @Mock
     UserServiceImpl userService;
+    
+    @Mock
+    CityServiceImpl cityService;
+    
+    @Mock
+    ModelMapper modelMapper;
      
     @Mock
     MessageSource message;
@@ -51,6 +63,15 @@ public class UserControllerTest {
      
     @Spy
     List<User> users = new ArrayList<User>();
+    
+    @Spy
+    List<UserDto> usersDto = new ArrayList<UserDto>();
+    
+    @Spy
+    Address address = new Address();
+    
+    @Spy
+    City city = new City();
      
     @Mock
     BindingResult result;
@@ -61,18 +82,36 @@ public class UserControllerTest {
     @BeforeClass
     public void setUp(){
         MockitoAnnotations.initMocks(this);
+        
+        address.setCalle("TestCalle");
+        address.setAltura(123);
+        address.setDepartamento("TestDepto");
+        address.setId(10000);
+        address.setPiso("4");
+        
+        city.setId("venado_tuerto");
+        city.setDescripcion("Venado Tuerto");
+        
         users = getUsersList();
+        usersDto = getUsersDtoList();
     }
      
     @Test
     public void getAllUsers(){
-    	ResponseEntity<?> responseEntity = new ResponseEntity<>(
-    			users, 
+    	User user0 = users.get(0);
+    	User user1 = users.get(1);
+    	UserDto userDto0 = usersDto.get(0);
+    	UserDto userDto1 = usersDto.get(1);
+    	ResponseEntity<List<UserDto>> responseEntity = new ResponseEntity<List<UserDto>>(
+    			(List<UserDto>) usersDto, 
 	            HttpStatus.OK
 	        );
     	
         when(userService.getAllUsers()).thenReturn(users);
-        Assert.assertEquals(userController.listUsers(), responseEntity);
+        when(modelMapper.map(user0, UserDto.class)).thenReturn(userDto0);
+        when(modelMapper.map(user1, UserDto.class)).thenReturn(userDto1);
+        when(cityService.getCityById(anyString())).thenReturn(city);
+        Assert.assertEquals(userController.listUsers().toString(), responseEntity.toString());
         verify(userService, atLeastOnce()).getAllUsers();
     }
     
@@ -81,15 +120,19 @@ public class UserControllerTest {
         when(userService.getUserById(anyString())).thenReturn(null);
         Assert.assertEquals(userController.getUser(anyString()).getStatusCode(), HttpStatus.NOT_FOUND);
     }
+    
     @Test
     public void getUser_Success(){
     	User user = users.get(0);
+    	UserDto userDto = usersDto.get(0);
     	ResponseEntity<?> responseEntity = new ResponseEntity<>(
-    			user, 
+    			userDto, 
 	            HttpStatus.OK
 	        );
     	
         when(userService.getUserById(anyString())).thenReturn(user);
+        when(modelMapper.map(any(User.class), eq(UserDto.class))).thenReturn(userDto);
+        when(cityService.getCityById(anyString())).thenReturn(city);
         Assert.assertEquals(userController.getUser(anyString()), responseEntity);
     }
     
@@ -97,53 +140,62 @@ public class UserControllerTest {
     public void createUser_WithValidationError_InputErrors(){
     	when(result.hasErrors()).thenReturn(true);
         when(userService.exist(anyString())).thenReturn(false);
+        when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).createUser(any(User.class));
-        Assert.assertEquals(userController.createUser(users.get(0), ucBuilder, result).getStatusCode(), HttpStatus.BAD_REQUEST);
+        Assert.assertEquals(userController.createUser(usersDto.get(0), ucBuilder, result).getStatusCode(), HttpStatus.BAD_REQUEST);
     }
  
     @Test
     public void createUser_WithValidationError_UserAlreadyExist(){
     	when(result.hasErrors()).thenReturn(false);
         when(userService.exist(anyString())).thenReturn(true);
-        Assert.assertEquals(userController.createUser(users.get(0), ucBuilder, result).getStatusCode(), HttpStatus.CONFLICT);
+        when(cityService.getCityById(anyString())).thenReturn(city);
+        Assert.assertEquals(userController.createUser(usersDto.get(0), ucBuilder, result).getStatusCode(), HttpStatus.CONFLICT);
     }
  
     @Test
     public void createUser_Success(){
+    	UserDto userDto = usersDto.get(0);
+    	User user = users.get(0);
         when(result.hasErrors()).thenReturn(false);
         when(userService.exist(anyString())).thenReturn(false);
+        when(modelMapper.map(any(UserDto.class), eq(User.class))).thenReturn(user);
+        when(cityService.exist(anyString())).thenReturn(true);
+        when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).createUser(any(User.class));
-        Assert.assertEquals(userController.createUser(users.get(0), ucBuilder, result).getStatusCode(), HttpStatus.CREATED);
+        Assert.assertEquals(userController.createUser(userDto, ucBuilder, result).getStatusCode(), HttpStatus.CREATED);
     }
 
     @Test
     public void updateUser_WithValidationError_InputErrors(){
     	when(result.hasErrors()).thenReturn(true);
         when(userService.exist(anyString())).thenReturn(true);
+        when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).updateUser(any(User.class));
-        Assert.assertEquals(userController.updateUser(users.get(0).getId(), users.get(0), result).getStatusCode(), HttpStatus.BAD_REQUEST);
+        Assert.assertEquals(userController.updateUser(usersDto.get(0).getId(), usersDto.get(0), result).getStatusCode(), HttpStatus.BAD_REQUEST);
     }
     
     @Test
     public void updateUser_WithValidationError_UserDoesntExist(){
     	when(result.hasErrors()).thenReturn(false);
         when(userService.exist(anyString())).thenReturn(false);
-        Assert.assertEquals(userController.updateUser(users.get(0).getId(), users.get(0), result).getStatusCode(), HttpStatus.NOT_FOUND);
+        Assert.assertEquals(userController.updateUser(usersDto.get(0).getId(), usersDto.get(0), result).getStatusCode(), HttpStatus.NOT_FOUND);
     }
  
     @Test
     public void updateUser_Success(){
     	User user = users.get(0);
     	ResponseEntity<?> responseEntity = new ResponseEntity<>(
-    			user, 
+    			usersDto.get(0), 
 	            HttpStatus.OK
 	        );
     	
         when(result.hasErrors()).thenReturn(false);
         when(userService.exist(anyString())).thenReturn(true);
         when(userService.getUserById(anyString())).thenReturn(user);
+        when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).updateUser(any(User.class));
-        Assert.assertEquals(userController.updateUser(user.getId(), user, result), responseEntity);
+        Assert.assertEquals(userController.updateUser(usersDto.get(0).getId(), usersDto.get(0), result), responseEntity);
     }
     
     @Test
@@ -221,16 +273,17 @@ public class UserControllerTest {
     }
  
     public List<User> getUsersList(){
-        User testUser1 = new User();
+    	User testUser1 = new User();
         testUser1.setId("testUser7");
         testUser1.setNombre("Test");
         testUser1.setApellido("User7");
         testUser1.setEmail("testuser7@yotereparo.com");
         testUser1.setContrasena("test2001");
-        testUser1.setSalt(SecurityUtils.saltGenerator());
-        testUser1.setEstado("TEST");
+        testUser1.setCiudad(city);
         testUser1.setMembresia(null);
+        testUser1.setEstado("TST");
         testUser1.setIntentosIngreso(0);
+        testUser1.getDirecciones().add(address);
          
         User testUser2 = new User();
         testUser2.setId("testUser8");
@@ -238,13 +291,44 @@ public class UserControllerTest {
         testUser2.setApellido("User8");
         testUser2.setEmail("testuser2@yotereparo.com");
         testUser2.setContrasena("test2002");
-        testUser2.setSalt(SecurityUtils.saltGenerator());
-        testUser2.setEstado("TEST");
+        testUser2.setCiudad(city);
         testUser2.setMembresia(null);
+        testUser2.setEstado("TST");
         testUser2.setIntentosIngreso(0);
+        testUser2.getDirecciones().add(address);
          
         users.add(testUser1);
         users.add(testUser2);
         return users;
+    }
+    
+    public List<UserDto> getUsersDtoList(){
+    	UserDto testUser1 = new UserDto();
+        testUser1.setId("testUser7");
+        testUser1.setNombre("Test");
+        testUser1.setApellido("User7");
+        testUser1.setEmail("testuser7@yotereparo.com");
+        testUser1.setContrasena("test2001");
+        testUser1.setCiudad("venado_tuerto");
+        testUser1.setMembresia(null);
+        testUser1.setEstado("TST");
+        testUser1.setIntentosIngreso(0);
+        testUser1.getDirecciones().add(address);
+         
+        UserDto testUser2 = new UserDto();
+        testUser2.setId("testUser8");
+        testUser2.setNombre("Test");
+        testUser2.setApellido("User8");
+        testUser2.setEmail("testuser2@yotereparo.com");
+        testUser2.setContrasena("test2002");
+        testUser2.setCiudad("venado_tuerto");
+        testUser2.setMembresia(null);
+        testUser2.setEstado("TST");
+        testUser2.setIntentosIngreso(0);
+        testUser2.getDirecciones().add(address);
+        
+        usersDto.add(testUser1);
+        usersDto.add(testUser2);
+        return usersDto;
     }
 }

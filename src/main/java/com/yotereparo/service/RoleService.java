@@ -10,6 +10,10 @@ public interface RoleService {
      
     Role getRoleById(String id);
     
+    List<Role> getAllPrestadorRoles();
+    
+    List<Role> getAllFinalRoles();
+    
     boolean exist(String id);
  
     boolean hasUniqueId(String id);

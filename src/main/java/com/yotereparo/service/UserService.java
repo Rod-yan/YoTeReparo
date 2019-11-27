@@ -21,4 +21,8 @@ public interface UserService {
     boolean exist(String id);
  
     boolean hasUniqueId(String id);
+    
+    boolean userIsPrestador(User user);
+    
+    boolean userIsFinal(User user);
 }

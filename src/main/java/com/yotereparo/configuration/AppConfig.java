@@ -3,6 +3,7 @@ package com.yotereparo.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.model.User;
  
 @Configuration
 @EnableWebMvc
@@ -34,6 +38,16 @@ public class AppConfig {
 	    ByteArrayHttpMessageConverter arrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
 	    arrayHttpMessageConverter.setSupportedMediaTypes(getSupportedMediaTypes());
 	    return arrayHttpMessageConverter;
+	}
+	
+	@Bean
+	public ModelMapper modelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.createTypeMap(UserDto.class, User.class).addMappings(mapper -> mapper.skip(User::setCiudad));
+		modelMapper.createTypeMap(User.class, UserDto.class).addMappings(mapper -> {
+			mapper.map(src -> src.getCiudad().getId(), UserDto::setCiudad);
+		});
+	    return modelMapper;
 	}
 	 
 	private List<MediaType> getSupportedMediaTypes() {

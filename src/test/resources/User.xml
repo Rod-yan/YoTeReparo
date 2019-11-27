@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-    <usuario id_usuario="testUser1" nombre="Test" apellido="User1" email="testuser1@yotereparo.com" contrasena="1234134" salt="abcdefg" estado="" intentos_ingreso="0" membresia="GRATUITA"/>
-    <usuario id_usuario="testUser2" nombre="Test" apellido="User2" email="testuser2@yotereparo.com" contrasena="1234134" salt="abcdefg" estado="" intentos_ingreso="0" membresia="GRATUITA"/>
-</dataset>

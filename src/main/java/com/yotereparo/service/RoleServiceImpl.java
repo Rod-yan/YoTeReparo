@@ -1,13 +1,19 @@
 package com.yotereparo.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yotereparo.dao.RoleDaoImpl;
 import com.yotereparo.model.Role;
+import com.yotereparo.util.SpringEnvironmentUtils;
 
 /**
  * Capa de servicio para Roles.
@@ -23,23 +29,50 @@ import com.yotereparo.model.Role;
 @Transactional 
 public class RoleServiceImpl implements RoleService {
 	
+	private static final Logger logger = LogManager.getLogger(RoleServiceImpl.class);
+	
 	@Autowired
 	private RoleDaoImpl dao;
+	@Autowired
+	private ConfigurableEnvironment  environment;
 
 	public List<Role> getAllRoles() {
+		logger.debug("Fetching all roles");
 		return dao.getAllRoles();
 	}
 
 	public Role getRoleById(String id) {
+		logger.debug(String.format("Fetching role <%s>", id));
 		return dao.getRoleById(id);
 	}
 	
+	public List<Role> getAllPrestadorRoles() {
+		Map<String, Object> filteredRolesInProperties = SpringEnvironmentUtils.getPropertiesStartingWith(environment, "role.id.usuarioprestador");
+		List<Role> prestadorRoles = new ArrayList<Role>();
+		for (Object roleId : filteredRolesInProperties.values()) {
+			prestadorRoles.add(getRoleById(roleId.toString())); 
+		}
+		
+		return prestadorRoles;
+	}
+	
+	public List<Role> getAllFinalRoles() {
+		Map<String, Object> filteredRolesInProperties = SpringEnvironmentUtils.getPropertiesStartingWith(environment, "role.id.usuariofinal");
+		List<Role> finalRoles = new ArrayList<Role>();
+		for (Object roleId : filteredRolesInProperties.values()) {
+			finalRoles.add(getRoleById(roleId.toString())); 
+		}
+		
+		return finalRoles;
+	}
+	
 	public boolean exist(String id) {
-		return (dao.getRoleById(id) != null);
+		logger.debug(String.format("Verifying existence of role <%s>", id));
+		return (getRoleById(id) != null);
 	}
 
 	public boolean hasUniqueId(String id) {
-		Role Role = getRoleById(id);
-		return (Role == null);
+		logger.debug(String.format("Verifying uniqueness of role's <%s> ID", id));
+		return !exist(id);
 	}
 }

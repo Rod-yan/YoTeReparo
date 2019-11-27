@@ -1,6 +1,7 @@
 package com.yotereparo.model;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,14 +11,10 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
@@ -29,19 +26,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class User
 {
 	@Id
-	@NotEmpty(message = "{user.id.not.empty}")
-	@Size(min=3, max=15, message = "{user.id.size}")
 	@Column(name = "id_usuario", nullable = false)
 	private String id;
 	
-	@NotEmpty(message = "{user.nombre.not.empty}")
 	private String nombre;
 	
-	@NotEmpty(message = "{user.apellido.not.empty}")
 	private String apellido;
 	
-	@NotEmpty(message = "{user.email.not.empty}")
-	@Email(message = "{user.email.not.valid}")
 	private String email;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) 
@@ -55,11 +46,14 @@ public class User
 	@Column(name = "telefono_alternativo", nullable = true)
 	private String telefonoAlternativo;
 	
+	@ManyToOne
+    @JoinColumn(name="id_ciudad", nullable=false, updatable = true, insertable = true)
+	private City ciudad;
+	
 	private byte[] foto;
 	
 	private byte[] thumbnail;
 	
-	@NotEmpty(message = "{user.contrasena.not.empty}")
 	private String contrasena;
 	
 	private String salt;
@@ -68,7 +62,6 @@ public class User
 	
 	private String estado;
 	
-	@Min(value=0)
 	@Column(name = "intentos_ingreso", nullable = false)
 	private int intentosIngreso;
 	
@@ -92,21 +85,26 @@ public class User
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime fechaCreacion;
 	
-	@Size(max=10, message = "{user.membresia.size}")
 	private String membresia;
 	
-	@NotEmpty(message = "{user.direcciones.not.empty}")
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "id_usuario", nullable = false, updatable = false, insertable = true)
-	private Set<Address> direcciones;
+	private Set<Address> direcciones = new HashSet<Address>(0);
 	
-	@ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE},fetch=FetchType.EAGER)
     @JoinTable(name="usuario_rol",
-        joinColumns = {@JoinColumn(name="id_usuario", referencedColumnName="id_usuario")},
-        inverseJoinColumns = {@JoinColumn(name="id_rol", referencedColumnName="id_rol")}    
+        joinColumns = {@JoinColumn(name="id_usuario")},
+        inverseJoinColumns = {@JoinColumn(name="id_rol")}    
     )
 	@Where(clause = "estado <> 'INACTIVO'")
-	private Set<Role> roles;
+	private Set<Role> roles = new HashSet<Role>(0);
+	
+	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
+    @JoinTable(name="usuario_barrio",
+        joinColumns = {@JoinColumn(name="id_usuario")},
+        inverseJoinColumns = {@JoinColumn(name="id_barrio")}    
+    )
+	private Set<District> barrios = new HashSet<District>(0);
 
 	public User() {	}
 	
@@ -160,6 +158,13 @@ public class User
 		this.telefonoAlternativo = telefonoAlternativo;
 	}
 	
+	public City getCiudad() {
+		return ciudad;
+	}
+	public void setCiudad(City ciudad) {
+		this.ciudad = ciudad;
+	}
+
 	public byte[] getFoto() {
 		return foto;
 	}
@@ -258,6 +263,13 @@ public class User
 		this.direcciones = direcciones;
 	}
 
+	public Set<District> getBarrios() {
+		return barrios;
+	}
+	public void setBarrios(Set<District> barrios) {
+		this.barrios = barrios;
+	}
+
 	public void addRole(Role role) {
 		roles.add(role);
 	}
@@ -271,12 +283,21 @@ public class User
     public void removeDireccion(Address direccion) {
     	direcciones.remove(direccion);
     }
+    
+    public void addBarrio(District barrio) {
+    	barrios.add(barrio);
+    }
+    public void removeBarrio(District barrio) {
+    	barrios.remove(barrio);
+    }
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((apellido == null) ? 0 : apellido.hashCode());
+		result = prime * result + ((barrios == null) ? 0 : barrios.hashCode());
+		result = prime * result + ((ciudad == null) ? 0 : ciudad.hashCode());
 		result = prime * result + ((contrasena == null) ? 0 : contrasena.hashCode());
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
 		result = prime * result + ((direcciones == null) ? 0 : direcciones.hashCode());
@@ -313,6 +334,16 @@ public class User
 			if (other.apellido != null)
 				return false;
 		} else if (!apellido.equals(other.apellido))
+			return false;
+		if (barrios == null) {
+			if (other.barrios != null)
+				return false;
+		} else if (!barrios.equals(other.barrios))
+			return false;
+		if (ciudad == null) {
+			if (other.ciudad != null)
+				return false;
+		} else if (!ciudad.equals(other.ciudad))
 			return false;
 		if (contrasena == null) {
 			if (other.contrasena != null)
@@ -406,5 +437,18 @@ public class User
 		if (!Arrays.equals(thumbnail, other.thumbnail))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", nombre=" + nombre + ", apellido=" + apellido + ", email=" + email
+				+ ", fechaNacimiento=" + fechaNacimiento + ", telefonoPrincipal=" + telefonoPrincipal
+				+ ", telefonoAlternativo=" + telefonoAlternativo + ", ciudad=" + ciudad + ", foto="
+				+ Arrays.toString(foto) + ", thumbnail=" + Arrays.toString(thumbnail) + ", contrasena=" + contrasena
+				+ ", salt=" + salt + ", descripcion=" + descripcion + ", estado=" + estado + ", intentosIngreso="
+				+ intentosIngreso + ", fechaUltimoCambioContrasena=" + fechaUltimoCambioContrasena
+				+ ", fechaUltimoIngreso=" + fechaUltimoIngreso + ", fechaExpiracionContrasena="
+				+ fechaExpiracionContrasena + ", fechaCreacion=" + fechaCreacion + ", membresia=" + membresia
+				+ ", direcciones=" + direcciones + ", roles=" + roles + ", barrios=" + barrios + "]";
 	}
 }

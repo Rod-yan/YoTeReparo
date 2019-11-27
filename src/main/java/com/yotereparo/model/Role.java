@@ -15,6 +15,8 @@ public class Role {
 	
 	private String descripcion;
 	
+	private String estado;
+	
 	public Role() { }
 
 	/* Getters & Setters */
@@ -32,11 +34,19 @@ public class Role {
 		this.descripcion = descripcion;
 	}
 
+	public String getEstado() {
+		return estado;
+	}
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
+		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -55,11 +65,21 @@ public class Role {
 				return false;
 		} else if (!descripcion.equals(other.descripcion))
 			return false;
+		if (estado == null) {
+			if (other.estado != null)
+				return false;
+		} else if (!estado.equals(other.estado))
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", descripcion=" + descripcion + ", estado=" + estado + "]";
 	}
 }
