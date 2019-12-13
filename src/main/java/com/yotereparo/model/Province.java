@@ -11,24 +11,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="ciudad") 
-public class City {
+@Table(name="provincia")
 
+public class Province {
+	
 	@Id
-	@NotEmpty(message = "{city.id.not.empty}")
-	@Column(name = "id_ciudad", nullable = false)
+	@NotNull(message = "{province.id.not.null}")
+	@Column(name = "id_provincia", nullable = false)
 	private String id;
 	
-	@NotEmpty(message = "{city.descripcion.not.empty}")
-	private String descripcion;	
-	
+	@NotEmpty(message = "{province.descripcion.not.empty}")
+	private String descripcion;
+		
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
-	@JoinColumn(name = "id_ciudad", nullable = false, updatable = false, insertable = false)
-	private Set<District> barrios;
+	@JoinColumn(name = "id_provincia", nullable = false, updatable = false, insertable = false)
+	private Set<City> ciudades;
 	
-	public City() { }
+	public Province() { }
 
 	/* Getters & Setters */
 	public String getId() {
@@ -44,21 +46,23 @@ public class City {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-
-	public Set<District> getBarrios() {
-		return barrios;
+	
+	public Set<City> getCiudades() {
+		return ciudades;
 	}
-	public void setBarrios(Set<District> barrios) {
-		this.barrios = barrios;
+	public void setCiudades(Set<City> ciudades) {
+		this.ciudades = ciudades;
 	}
 
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((barrios == null) ? 0 : barrios.hashCode());
-		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
+		result = prime * result + ((ciudades == null) ? 0 : ciudades.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
 		return result;
 	}
 
@@ -70,11 +74,11 @@ public class City {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		City other = (City) obj;
-		if (barrios == null) {
-			if (other.barrios != null)
+		Province other = (Province) obj;
+		if (ciudades == null) {
+			if (other.ciudades != null)
 				return false;
-		} else if (!barrios.equals(other.barrios))
+		} else if (!ciudades.equals(other.ciudades))
 			return false;
 		if (descripcion == null) {
 			if (other.descripcion != null)
@@ -91,7 +95,6 @@ public class City {
 
 	@Override
 	public String toString() {
-		return "City [id=" + id + ", descripcion=" + descripcion + ", barrios=" + barrios + "]";
+		return "Province [id=" + id + ", descripcion=" + descripcion + ", ciudades=" + ciudades + "]";
 	}
-	
 }
