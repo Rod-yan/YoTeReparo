@@ -105,6 +105,9 @@ public class User
         inverseJoinColumns = {@JoinColumn(name="id_barrio")}    
     )
 	private Set<District> barrios = new HashSet<District>(0);
+	
+	@OneToMany(mappedBy = "usuarioPrestador", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Service> servicios = new HashSet<Service>(0);
 
 	public User() {	}
 	
@@ -270,6 +273,14 @@ public class User
 		this.barrios = barrios;
 	}
 
+	public Set<Service> getServicios() {
+		return servicios;
+	}
+
+	public void setServicios(Set<Service> servicios) {
+		this.servicios = servicios;
+	}
+
 	public void addRole(Role role) {
 		roles.add(role);
 	}
@@ -289,6 +300,13 @@ public class User
     }
     public void removeBarrio(District barrio) {
     	barrios.remove(barrio);
+    }
+    
+    public void addServicio(Service servicio) {
+    	servicios.add(servicio);
+    }
+    public void removeServicio(Service servicio) {
+    	servicios.remove(servicio);
     }
 
 	@Override
@@ -315,6 +333,7 @@ public class User
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
 		result = prime * result + ((roles == null) ? 0 : roles.hashCode());
 		result = prime * result + ((salt == null) ? 0 : salt.hashCode());
+		result = prime * result + ((servicios == null) ? 0 : servicios.hashCode());
 		result = prime * result + ((telefonoAlternativo == null) ? 0 : telefonoAlternativo.hashCode());
 		result = prime * result + ((telefonoPrincipal == null) ? 0 : telefonoPrincipal.hashCode());
 		result = prime * result + Arrays.hashCode(thumbnail);
@@ -424,6 +443,11 @@ public class User
 				return false;
 		} else if (!salt.equals(other.salt))
 			return false;
+		if (servicios == null) {
+			if (other.servicios != null)
+				return false;
+		} else if (!servicios.equals(other.servicios))
+			return false;
 		if (telefonoAlternativo == null) {
 			if (other.telefonoAlternativo != null)
 				return false;
@@ -449,6 +473,7 @@ public class User
 				+ intentosIngreso + ", fechaUltimoCambioContrasena=" + fechaUltimoCambioContrasena
 				+ ", fechaUltimoIngreso=" + fechaUltimoIngreso + ", fechaExpiracionContrasena="
 				+ fechaExpiracionContrasena + ", fechaCreacion=" + fechaCreacion + ", membresia=" + membresia
-				+ ", direcciones=" + direcciones + ", roles=" + roles + ", barrios=" + barrios + "]";
+				+ ", direcciones=" + direcciones + ", roles=" + roles + ", barrios=" + barrios + ", servicios="
+				+ servicios + "]";
 	}
 }

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
 <dataset>
     <ciudad id_ciudad="venado_tuerto" id_provincia="santa_fe" descripcion="Venado Tuerto"/>
     <rol id_rol="USUARIO_FINAL" descripcion="Usuario final" estado="ACTIVO"/>

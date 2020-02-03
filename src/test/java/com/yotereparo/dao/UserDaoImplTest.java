@@ -58,7 +58,6 @@ public class UserDaoImplTest extends EntityDaoImplTest {
     	City city = new City();
     	city.setId("venado_tuerto");
     	city.setDescripcion("Venado Tuerto");
-    	city.setProvincia("santa_fe");
     	
         User user = new User();
         user.setId("testUser0");

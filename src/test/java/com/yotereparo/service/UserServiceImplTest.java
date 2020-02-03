@@ -67,7 +67,6 @@ public class UserServiceImplTest {
         address.setPiso("4");
         
         city.setId("venado_tuerto");
-        city.setProvincia("santa_fe");
         city.setDescripcion("Venado Tuerto");
         
         users = getUsersList();

@@ -294,7 +294,7 @@ public class UserServiceImpl implements UserService {
 		return !exist(id);
 	}
 	
-	public boolean userIsPrestador(User user) {
+	public boolean isPrestador(User user) {
 		logger.debug(String.format("Verifying if user's <%s> is of type PRESTADOR", user.getId()));
 		for (Role role : roleService.getAllPrestadorRoles()) {
 			if (user.getRoles().contains(role))
@@ -303,7 +303,7 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 	
-	public boolean userIsFinal(User user) {
+	public boolean isFinal(User user) {
 		logger.debug(String.format("Verifying if user's <%s> is of type FINAL", user.getId()));
 		for (Role role : roleService.getAllFinalRoles()) {
 			if (user.getRoles().contains(role))

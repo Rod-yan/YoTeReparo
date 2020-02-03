@@ -22,7 +22,7 @@ public interface UserService {
  
     boolean hasUniqueId(String id);
     
-    boolean userIsPrestador(User user);
+    boolean isPrestador(User user);
     
-    boolean userIsFinal(User user);
+    boolean isFinal(User user);
 }
