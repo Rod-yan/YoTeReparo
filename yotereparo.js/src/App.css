@@ -1,0 +1,19 @@
+p {
+  font-weight: 600;
+  font-style: normal;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  height: 200px;
+}
+
+.centerItems {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+body {
+  background-image: linear-gradient(to right, #21243d, #ff7c7c);
+}

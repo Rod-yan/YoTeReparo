@@ -1,7 +1,15 @@
 import React from "react";
 
 function About(props) {
-  return <div>About page related to YoTeRepaso.js</div>;
+  return (
+    <div className="centerItems">
+      <div className="row">
+        <div className="centerItems">
+          <div>About page related to YoTeRepaso.js</div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default About;
