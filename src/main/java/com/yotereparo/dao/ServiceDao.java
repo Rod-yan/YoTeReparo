@@ -6,11 +6,11 @@ import com.yotereparo.model.Service;
 
 public interface ServiceDao {
 	
-	Service getServiceById(int id);
+	Service getServiceById(Integer id);
 	 
     void createService(Service service);
      
-    void deleteServiceById(int id);
+    void deleteServiceById(Integer id);
      
     List<Service> getAllServices();
 }

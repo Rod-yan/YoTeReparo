@@ -32,7 +32,7 @@ public class Service {
 	
 	@Id
 	@Column(name = "id_servicio", nullable = false)
-	private int id;
+	private Integer id;
 	
 	@ManyToOne(optional = false)
     @JoinColumn(name="id_usuario_prestador", nullable=false, updatable = false, insertable = true)
@@ -75,7 +75,7 @@ public class Service {
 	@Column(name = "cantidad_trabajadores", nullable = false)
 	@NotEmpty(message = "{service.cantidadTrabajadores.not.empty}")
 	@Min(value = 1, message = "{service.cantidadTrabajadores.less.than.min}")
-	private int cantidadTrabajadores;
+	private Integer cantidadTrabajadores;
 	
 	@Column(name = "factura_emitida", nullable = false)
 	@NotEmpty(message = "{service.facturaEmitida.not.empty}")
@@ -108,11 +108,11 @@ public class Service {
 	public Service() { }
 	
 	/* Getters & Setters */
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -188,11 +188,11 @@ public class Service {
 		this.horasEstimadasEjecucion = horasEstimadasEjecucion;
 	}
 
-	public int getCantidadTrabajadores() {
+	public Integer getCantidadTrabajadores() {
 		return cantidadTrabajadores;
 	}
 
-	public void setCantidadTrabajadores(int cantidadTrabajadores) {
+	public void setCantidadTrabajadores(Integer cantidadTrabajadores) {
 		this.cantidadTrabajadores = cantidadTrabajadores;
 	}
 

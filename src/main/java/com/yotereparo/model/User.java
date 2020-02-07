@@ -63,7 +63,7 @@ public class User
 	private String estado;
 	
 	@Column(name = "intentos_ingreso", nullable = false)
-	private int intentosIngreso;
+	private Integer intentosIngreso;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	@Column(name = "fecha_ultimo_cambio_contrasena", nullable = true)
@@ -210,10 +210,10 @@ public class User
 		this.estado = estado;
 	}
 	
-	public int getIntentosIngreso()	{
+	public Integer getIntentosIngreso()	{
 		return intentosIngreso;
 	}
-	public void setIntentosIngreso(int intentosIngreso)	{
+	public void setIntentosIngreso(Integer intentosIngreso)	{
 		this.intentosIngreso = intentosIngreso;
 	}
 	
