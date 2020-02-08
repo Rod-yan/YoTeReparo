@@ -1,24 +1,30 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ElementContainer from "../Container/ElementContainer";
+import { useState, useEffect } from "react";
+import Axios from "axios";
 
 function Home(props) {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await Axios("http://localhost:8080/yotereparo/users/");
+      setUsers(result.data);
+    }
+    fetchData();
+  }, []);
+
+  if (Array.isArray(users) && users.length) {
+    console.log(users);
+  }
+
   return (
-    <div className="centerItems">
-      <div className="row">
-        <div className="col-6">
-          <div className="card">
-            <div className="centerItems">
-              Welcome to <strong>YoTeReparo</strong>
-            </div>
-          </div>
-        </div>
-        <div className="col-6">
-          <div className="card">
-            <div className="centerItems">
-              Welcome to <strong>YoTeReparo</strong>
-            </div>
-          </div>
-        </div>
+    <div className="row">
+      <div className="col-12">
+        <ElementContainer>
+          Welcome to <strong>YoTeReparo</strong>
+        </ElementContainer>
       </div>
     </div>
   );

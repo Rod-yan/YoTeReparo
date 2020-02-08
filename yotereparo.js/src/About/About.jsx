@@ -1,13 +1,12 @@
 import React from "react";
+import ElementContainer from "../Container/ElementContainer";
 
 function About(props) {
   return (
-    <div className="centerItems">
-      <div className="row">
-        <div className="centerItems">
-          <div>About page related to YoTeRepaso.js</div>
-        </div>
-      </div>
+    <div className="row">
+      <ElementContainer>
+        <div>About page related to YoTeRepaso.js</div>
+      </ElementContainer>
     </div>
   );
 }

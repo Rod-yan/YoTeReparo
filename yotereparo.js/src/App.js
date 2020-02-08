@@ -9,8 +9,9 @@ import {
   useLocation
 } from "react-router-dom";
 import "./App.css";
+import Container from "./Container/Container";
 
-function NoMatch() {
+const NoMatch = () => {
   let location = useLocation();
 
   return (
@@ -20,7 +21,7 @@ function NoMatch() {
       </h3>
     </div>
   );
-}
+};
 
 function App() {
   return (
@@ -37,13 +38,19 @@ function App() {
 
         <Switch>
           <Route exact path="/">
-            <Home />
+            <Container type="card">
+              <Home />
+            </Container>
           </Route>
           <Route path="/about">
-            <About />
+            <Container type="card">
+              <About />
+            </Container>
           </Route>
           <Route path="*">
-            <NoMatch />
+            <Container type="card">
+              <NoMatch />
+            </Container>
           </Route>
         </Switch>
       </Router>
