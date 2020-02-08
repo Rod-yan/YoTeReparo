@@ -76,6 +76,8 @@ public class UserDto {
 	
 	private Set<District> barrios;
 	
+	private Set<ServiceDto> servicios;
+	
 	public String getId() {
 		return id;
 	}
@@ -190,6 +192,18 @@ public class UserDto {
 	public void setBarrios(Set<District> barrios) {
 		this.barrios = barrios;
 	}
+	public Set<ServiceDto> getServicios() {
+		return servicios;
+	}
+	public void setServicios(Set<ServiceDto> servicios) {
+		this.servicios = servicios;
+	}
+	public void addServicio(ServiceDto servicioId) {
+		this.servicios.add(servicioId);
+	}
+	public void removeServicio(ServiceDto servicioId) {
+		this.servicios.remove(servicioId);
+	}
 	
 	@Override
 	public int hashCode() {
@@ -212,6 +226,7 @@ public class UserDto {
 		result = prime * result + intentosIngreso;
 		result = prime * result + ((membresia == null) ? 0 : membresia.hashCode());
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+		result = prime * result + ((servicios == null) ? 0 : servicios.hashCode());
 		result = prime * result + ((telefonoAlternativo == null) ? 0 : telefonoAlternativo.hashCode());
 		result = prime * result + ((telefonoPrincipal == null) ? 0 : telefonoPrincipal.hashCode());
 		return result;
@@ -307,6 +322,11 @@ public class UserDto {
 				return false;
 		} else if (!nombre.equals(other.nombre))
 			return false;
+		if (servicios == null) {
+			if (other.servicios != null)
+				return false;
+		} else if (!servicios.equals(other.servicios))
+			return false;
 		if (telefonoAlternativo == null) {
 			if (other.telefonoAlternativo != null)
 				return false;
@@ -328,6 +348,6 @@ public class UserDto {
 				+ ", fechaUltimoCambioContrasena=" + fechaUltimoCambioContrasena + ", fechaUltimoIngreso="
 				+ fechaUltimoIngreso + ", fechaExpiracionContrasena=" + fechaExpiracionContrasena + ", fechaCreacion="
 				+ fechaCreacion + ", membresia=" + membresia + ", direcciones=" + direcciones + ", barrios=" + barrios
-				+ "]";
+				+ ", servicios=" + servicios + "]";
 	}
 }

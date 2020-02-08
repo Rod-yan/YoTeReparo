@@ -14,7 +14,9 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
  
 @Configuration
@@ -43,9 +45,17 @@ public class AppConfig {
 	@Bean
 	public ModelMapper modelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.createTypeMap(UserDto.class, User.class).addMappings(mapper -> mapper.skip(User::setCiudad));
+		modelMapper.createTypeMap(UserDto.class, User.class).addMappings(mapper -> {
+			mapper.skip(User::setCiudad);
+			mapper.skip(User::setServicios);
+		});
 		modelMapper.createTypeMap(User.class, UserDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getCiudad().getId(), UserDto::setCiudad);
+			mapper.skip(UserDto::setServicios);
+		});
+		modelMapper.createTypeMap(ServiceDto.class, Service.class).addMappings(mapper -> mapper.skip(Service::setUsuarioPrestador));
+		modelMapper.createTypeMap(Service.class, ServiceDto.class).addMappings(mapper -> {
+			mapper.map(src -> src.getUsuarioPrestador().getId(), ServiceDto::setUsuarioPrestador);
 		});
 	    return modelMapper;
 	}

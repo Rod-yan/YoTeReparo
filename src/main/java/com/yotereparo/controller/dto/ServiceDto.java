@@ -1,90 +1,74 @@
-package com.yotereparo.model;
+package com.yotereparo.controller.dto;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity
-@Table(name="servicio")
-public class Service {
+import com.yotereparo.model.PaymentMethod;
+import com.yotereparo.util.customvalidator.GreaterThan;
+
+public class ServiceDto {
 	
-	@Id
-	@Column(name = "id_servicio", nullable = false)
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name="id_usuario_prestador", nullable=false, updatable = false, insertable = true)
-	private User usuarioPrestador;
+	@NotEmpty(message = "{service.usuarioPrestador.not.empty}")
+	private String usuarioPrestador;
 	
+	@NotEmpty(message = "{service.descripcion.not.empty}")
 	private String descripcion;
 	
 	private String disponibilidad;
 	
-	@Column(name = "precio_maximo", columnDefinition = "NUMERIC", precision = 11, scale = 2, nullable = false)
+	@NotNull(message = "{service.precioMaximo.not.null}")
+	@Digits(integer = 9, fraction = 2, message = "{service.precioMaximo.out.of.boundaries}")
+	@GreaterThan(field = "precioMinimo", message = "{service.precioMaximo.less.than.min}")
 	private Float precioMaximo;
 	
-	@Column(name = "precio_minimo", columnDefinition = "NUMERIC", precision = 11, scale = 2, nullable = false)
+	@NotNull(message = "{service.precioMinimo.not.null}")
+	@Digits(integer = 9, fraction = 2, message = "{service.precioMinimo.out.of.boundaries}")
+	@Min(value = 0, message="{service.precioMinimo.less.than.min}")
 	private Float precioMinimo;
-	
-	@Transient
+
+	@Digits(integer = 9, fraction = 2, message = "{service.precioPromedio.out.of.boundaries}")
+	@Min(value = 0, message="{service.precioPromedio.less.than.min}")
 	private Float precioPromedio;
-	
-	@Column(name = "precio_insumos", columnDefinition = "NUMERIC", precision = 11, scale = 2, nullable = true)
+
+	@Digits(integer = 9, fraction = 2, message = "{service.precioInsumos.out.of.boundaries}")
+	@Min(value = 0, message="{service.precioInsumos.less.than.min}")
 	private Float precioInsumos;
-	
-	@Column(name = "precio_adicionales", columnDefinition = "NUMERIC", precision = 11, scale = 2, nullable = true)
+
+	@Digits(integer = 9, fraction = 2, message = "{service.precioAdicionales.out.of.boundaries}")
+	@Min(value = 0, message="{service.precioAdicionales.less.than.min}")
 	private Float precioAdicionales;
-	
-	@Column(name = "horas_estimadas_ejecucion", columnDefinition = "NUMERIC", precision = 7, scale = 2, nullable = false)
+
+	@NotNull(message = "{service.horasEstimadasEjecucion.not.null}")
+	@Digits(integer = 5, fraction = 2, message = "{service.horasEstimadasEjecucion.out.of.boundaries}")
+	@Min(value = 0, message="{service.horasEstimadasEjecucion.less.than.min}")
 	private Float horasEstimadasEjecucion;
-	
-	@Column(name = "cantidad_trabajadores", nullable = false)
+
+	@NotNull(message = "{service.cantidadTrabajadores.not.null}")
+	@Min(value = 1, message = "{service.cantidadTrabajadores.less.than.min}")
 	private Integer cantidadTrabajadores;
-	
-	@Column(name = "factura_emitida", nullable = false)
+
+	@NotNull(message = "{service.facturaEmitida.not.null}")
 	private boolean facturaEmitida;
 	
-	private byte[] imagen;
-	
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column(name = "fecha_creacion", nullable = true)
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime fechaCreacion;
-	
+
+	@NotEmpty(message = "{service.estado.not.empty}")
 	private String estado;
-	
-	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE},fetch=FetchType.EAGER)
-    @JoinTable(name="servicio_mediodepago",
-        joinColumns = {@JoinColumn(name="id_servicio")},
-        inverseJoinColumns = {@JoinColumn(name="id_mediodepago")}    
-    )
+
+	@NotEmpty(message = "{service.mediosDePago.not.empty}")
 	private Set<PaymentMethod> mediosDePago = new HashSet<PaymentMethod>(0);
 	
-	//TODO: Tipo servicio
-	
-	//TODO: Requerimiento
-	
-	//TODO: Contrato ?
-	
-	public Service() { }
-	
-	/* Getters & Setters */
+	public ServiceDto() { }
+
 	public Integer getId() {
 		return id;
 	}
@@ -93,11 +77,11 @@ public class Service {
 		this.id = id;
 	}
 
-	public User getUsuarioPrestador() {
+	public String getUsuarioPrestador() {
 		return usuarioPrestador;
 	}
 
-	public void setUsuarioPrestador(User usuarioPrestador) {
+	public void setUsuarioPrestador(String usuarioPrestador) {
 		this.usuarioPrestador = usuarioPrestador;
 	}
 
@@ -181,14 +165,6 @@ public class Service {
 		this.facturaEmitida = facturaEmitida;
 	}
 
-	public byte[] getImagen() {
-		return imagen;
-	}
-
-	public void setImagen(byte[] imagen) {
-		this.imagen = imagen;
-	}
-
 	public DateTime getFechaCreacion() {
 		return fechaCreacion;
 	}
@@ -212,13 +188,6 @@ public class Service {
 	public void setMediosDePago(Set<PaymentMethod> mediosDePago) {
 		this.mediosDePago = mediosDePago;
 	}
-	
-	public void addMedioDePago(PaymentMethod medioDePago) {
-		mediosDePago.add(medioDePago);
-    }
-    public void removeDireccion(PaymentMethod medioDePago) {
-    	mediosDePago.remove(medioDePago);
-    }
 
 	@Override
 	public int hashCode() {
@@ -232,7 +201,6 @@ public class Service {
 		result = prime * result + ((fechaCreacion == null) ? 0 : fechaCreacion.hashCode());
 		result = prime * result + ((horasEstimadasEjecucion == null) ? 0 : horasEstimadasEjecucion.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + Arrays.hashCode(imagen);
 		result = prime * result + ((mediosDePago == null) ? 0 : mediosDePago.hashCode());
 		result = prime * result + ((precioAdicionales == null) ? 0 : precioAdicionales.hashCode());
 		result = prime * result + ((precioInsumos == null) ? 0 : precioInsumos.hashCode());
@@ -251,7 +219,7 @@ public class Service {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Service other = (Service) obj;
+		ServiceDto other = (ServiceDto) obj;
 		if (cantidadTrabajadores == null) {
 			if (other.cantidadTrabajadores != null)
 				return false;
@@ -288,8 +256,6 @@ public class Service {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (!Arrays.equals(imagen, other.imagen))
 			return false;
 		if (mediosDePago == null) {
 			if (other.mediosDePago != null)
@@ -331,12 +297,11 @@ public class Service {
 
 	@Override
 	public String toString() {
-		return "Service [id=" + id + ", usuarioPrestador=" + usuarioPrestador + ", descripcion=" + descripcion
+		return "ServiceDto [id=" + id + ", usuarioPrestador=" + usuarioPrestador + ", descripcion=" + descripcion
 				+ ", disponibilidad=" + disponibilidad + ", precioMaximo=" + precioMaximo + ", precioMinimo="
 				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
 				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
-				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", imagen="
-				+ Arrays.toString(imagen) + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", mediosDePago=" + mediosDePago + "]";
+				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida
+				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago + "]";
 	}
 }

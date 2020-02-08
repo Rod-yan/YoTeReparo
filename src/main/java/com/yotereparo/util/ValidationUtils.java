@@ -10,9 +10,11 @@ import org.apache.log4j.Logger;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
+import com.yotereparo.model.PaymentMethod;
 
 /**
  * Clase utilitaria para métodos accesorios cuyo objetivo esté vinculado con la validación de entidades. 
@@ -36,8 +38,8 @@ public class ValidationUtils {
 	        				"User", propertyPath, message));
 	    }
 		
-		for (Address direccion : userDto.getDirecciones())
-			for (ConstraintViolation<Address> violation : validator.validate(direccion)) {
+		for (Address address : userDto.getDirecciones())
+			for (ConstraintViolation<Address> violation : validator.validate(address)) {
 		        String propertyPath = violation.getPropertyPath().toString();
 		        String message = violation.getMessage();
 		        result.addError(new FieldError("Address", propertyPath, message));
@@ -45,16 +47,49 @@ public class ValidationUtils {
         				"Address", propertyPath, message));
 		    }
 		
+		for (ServiceDto serviceDto : userDto.getServicios())
+			for (ConstraintViolation<ServiceDto> violation : validator.validate(serviceDto)) {
+		        String propertyPath = violation.getPropertyPath().toString();
+		        String message = violation.getMessage();
+		        result.addError(new FieldError("Service", propertyPath, message));
+		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
+        				"Service", propertyPath, message));
+		    }
+		
 		if (userDto.getMembresia() != null)
 			if (userDto.getBarrios() != null)
-				for (District barrio : userDto.getBarrios()) 
-					for (ConstraintViolation<District> violation : validator.validate(barrio)) {
+				for (District district : userDto.getBarrios()) 
+					for (ConstraintViolation<District> violation : validator.validate(district)) {
 				        String propertyPath = violation.getPropertyPath().toString();
 				        String message = violation.getMessage();
 				        result.addError(new FieldError("District", propertyPath, message));
 				        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
 		        				"District", propertyPath, message));
 				    }
+		
+		return result;
+	}
+	
+	public static BindingResult serviceInputValidation(ServiceDto serviceDto, BindingResult result) {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		
+		for (ConstraintViolation<ServiceDto> violation : validator.validate(serviceDto)) {
+			String propertyPath = violation.getPropertyPath().toString();
+	        String message = violation.getMessage();
+	        result.addError(new FieldError("Service", propertyPath, message));
+	        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
+	        				"Service", propertyPath, message));
+	    }
+		
+		for (PaymentMethod paymentMethod : serviceDto.getMediosDePago())
+			for (ConstraintViolation<PaymentMethod> violation : validator.validate(paymentMethod)) {
+		        String propertyPath = violation.getPropertyPath().toString();
+		        String message = violation.getMessage();
+		        result.addError(new FieldError("PaymentMethod", propertyPath, message));
+		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
+        				"PaymentMethod", propertyPath, message));
+		    }
 		
 		return result;
 	}

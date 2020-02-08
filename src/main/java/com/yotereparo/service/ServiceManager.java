@@ -10,9 +10,9 @@ import com.yotereparo.model.User;
 
 public interface ServiceManager {
     
-    void createService(Service Service);
+    void createService(Service service);
      
-    void updateService(Service Service);
+    void updateService(Service service);
     
     void enableServiceById(Integer id);
     

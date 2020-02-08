@@ -16,7 +16,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.CacheControl;
@@ -35,8 +34,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.controller.dto.converter.UserConverter;
 import com.yotereparo.model.User;
-import com.yotereparo.service.CityService;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
 import com.yotereparo.util.ValidationUtils;
@@ -56,11 +55,9 @@ public class UserController {
 	@Autowired
     UserService userService;
 	@Autowired
-    CityService cityService;
-	@Autowired
     MessageSource messageSource;
 	@Autowired
-    ModelMapper modelMapper;
+	UserConverter userConverter;
 
 	/*
 	 * Devuelve todos los usuarios registrados en formato JSON.
@@ -77,7 +74,7 @@ public class UserController {
 		if (!users.isEmpty()) {
 			
 			List<UserDto> usersDto = users.stream()
-	                .map(user -> convertToDto(user))
+	                .map(user -> userConverter.convertToDto(user))
 	                .collect(Collectors.toList());
 			
         	logger.info("ListUsers - GET - Exiting method, providing response resource to client.");
@@ -104,12 +101,12 @@ public class UserController {
         
 		if (user != null) {
         	logger.info("GetUser - GET - Exiting method, providing response resource to client.");
-            return new ResponseEntity<UserDto>(convertToDto(user), HttpStatus.OK);
+            return new ResponseEntity<UserDto>(userConverter.convertToDto(user), HttpStatus.OK);
         }
         else {
         	logger.info(String.format("GetUser - GET - Request failed - User with id <%s> not found.", id));
             FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
         } 
     }
 	
@@ -127,7 +124,7 @@ public class UserController {
 			logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId()));
 			if (!userService.exist(clientInput.getId())) {
 				try {
-					userService.createUser(convertToEntity(clientInput));
+					userService.createUser(userConverter.convertToEntity(clientInput));
 					
 					HttpHeaders headers = new HttpHeaders();
 			        headers.setLocation(ucBuilder.path("/users/{id}").buildAndExpand(clientInput.getId()).toUri());
@@ -171,10 +168,10 @@ public class UserController {
 		if (userService.exist(id)) {
 			if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
 				try {
-					userService.updateUser(convertToEntity(clientInput));
+					userService.updateUser(userConverter.convertToEntity(clientInput));
 					
 					logger.info("UpdateUser - PUT - Exiting method, providing response resource to client.");
-					return new ResponseEntity<UserDto>(convertToDto(userService.getUserById(id)), HttpStatus.OK);
+					return new ResponseEntity<UserDto>(userConverter.convertToDto(userService.getUserById(id)), HttpStatus.OK);
 				}
 				catch (CustomResponseError error) {
 					logger.error(String.format("UpdateUser - PUT - Request failed - Error procesing request: <%s>", error.toString()));
@@ -337,19 +334,5 @@ public class UserController {
         	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
             return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 		}
-	}
-	
-	private UserDto convertToDto(User user) {
-	    UserDto userDto = modelMapper.map(user, UserDto.class);
-	    return userDto;
-	}
-	
-	private User convertToEntity(UserDto userDto) {
-	    User user = modelMapper.map(userDto, User.class);
-	    if (cityService.exist(userDto.getCiudad()))
-	    	user.setCiudad(cityService.getCityById(userDto.getCiudad()));
-	    else
-	    	throw new CustomResponseError("City","ciudad",messageSource.getMessage("city.doesnt.exist", null, Locale.getDefault()));
-	    return user;
 	}
 }

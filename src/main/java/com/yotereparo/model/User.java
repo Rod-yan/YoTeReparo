@@ -106,8 +106,8 @@ public class User
     )
 	private Set<District> barrios = new HashSet<District>(0);
 	
-	@OneToMany(mappedBy = "usuarioPrestador", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<Service> servicios = new HashSet<Service>(0);
+	@OneToMany(mappedBy = "usuarioPrestador", cascade ={CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, orphanRemoval = true)
+	private Set<Service> servicios  = new HashSet<Service>(0);
 
 	public User() {	}
 	
@@ -308,37 +308,6 @@ public class User
     public void removeServicio(Service servicio) {
     	servicios.remove(servicio);
     }
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((apellido == null) ? 0 : apellido.hashCode());
-		result = prime * result + ((barrios == null) ? 0 : barrios.hashCode());
-		result = prime * result + ((ciudad == null) ? 0 : ciudad.hashCode());
-		result = prime * result + ((contrasena == null) ? 0 : contrasena.hashCode());
-		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
-		result = prime * result + ((direcciones == null) ? 0 : direcciones.hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
-		result = prime * result + ((fechaCreacion == null) ? 0 : fechaCreacion.hashCode());
-		result = prime * result + ((fechaExpiracionContrasena == null) ? 0 : fechaExpiracionContrasena.hashCode());
-		result = prime * result + ((fechaNacimiento == null) ? 0 : fechaNacimiento.hashCode());
-		result = prime * result + ((fechaUltimoCambioContrasena == null) ? 0 : fechaUltimoCambioContrasena.hashCode());
-		result = prime * result + ((fechaUltimoIngreso == null) ? 0 : fechaUltimoIngreso.hashCode());
-		result = prime * result + Arrays.hashCode(foto);
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + intentosIngreso;
-		result = prime * result + ((membresia == null) ? 0 : membresia.hashCode());
-		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-		result = prime * result + ((roles == null) ? 0 : roles.hashCode());
-		result = prime * result + ((salt == null) ? 0 : salt.hashCode());
-		result = prime * result + ((servicios == null) ? 0 : servicios.hashCode());
-		result = prime * result + ((telefonoAlternativo == null) ? 0 : telefonoAlternativo.hashCode());
-		result = prime * result + ((telefonoPrincipal == null) ? 0 : telefonoPrincipal.hashCode());
-		result = prime * result + Arrays.hashCode(thumbnail);
-		return result;
-	}
 
 	@Override
 	public boolean equals(Object obj) {
