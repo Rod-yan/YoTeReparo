@@ -17,7 +17,7 @@ public class UserDaoImplTest extends EntityDaoImplTest {
  
     @Autowired
     UserDao userDao;
-    
+    // Probando github commit
     // Definimos un dataset in-memory
     @Override
     protected IDataSet getDataSet() throws Exception{

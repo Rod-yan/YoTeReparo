@@ -16,7 +16,7 @@ public class District {
 	@Id
 	@NotNull(message = "{district.id.not.null}")
 	@Column(name = "id_barrio", nullable = false)
-	private int id;
+	private Integer id;
 	
 	@NotEmpty(message = "{district.descripcion.not.empty}")
 	private String descripcion;
@@ -24,15 +24,15 @@ public class District {
 	@Min(value=1000, message = "{district.codigopostal.min.value}")
 	@Max(value=9999, message = "{district.codigopostal.max.value}")
 	@Column(name = "codigo_postal", nullable = false)
-	private int codigoPostal;
+	private Integer codigoPostal;
 	
 	public District() { }
 
 	/* Getters & Setters */
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -43,10 +43,10 @@ public class District {
 		this.descripcion = descripcion;
 	}
 
-	public int getCodigoPostal() {
+	public Integer getCodigoPostal() {
 		return codigoPostal;
 	}
-	public void setCodigoPostal(int codigoPostal) {
+	public void setCodigoPostal(Integer codigoPostal) {
 		this.codigoPostal = codigoPostal;
 	}
 
@@ -54,9 +54,9 @@ public class District {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + codigoPostal;
+		result = prime * result + ((codigoPostal == null) ? 0 : codigoPostal.hashCode());
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
-		result = prime * result + id;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -69,15 +69,21 @@ public class District {
 		if (getClass() != obj.getClass())
 			return false;
 		District other = (District) obj;
-		if (codigoPostal != other.codigoPostal)
+		if (codigoPostal == null) {
+			if (other.codigoPostal != null)
+				return false;
+		} else if (!codigoPostal.equals(other.codigoPostal))
 			return false;
 		if (descripcion == null) {
 			if (other.descripcion != null)
 				return false;
 		} else if (!descripcion.equals(other.descripcion))
 			return false;
-		/*if (id != other.id)
-			return false;*/
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
 		return true;
 	}
 

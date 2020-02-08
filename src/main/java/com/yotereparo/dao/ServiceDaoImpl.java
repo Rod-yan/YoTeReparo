@@ -21,7 +21,7 @@ import com.yotereparo.model.Service;
 @Repository
 public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements ServiceDao {
 
-	public Service getServiceById(int id) {
+	public Service getServiceById(Integer id) {
 		return getByKey(id);
 	}
 	
@@ -29,7 +29,7 @@ public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements Ser
 		persist(service);
 	}
 
-	public void deleteServiceById(int id) {
+	public void deleteServiceById(Integer id) {
 		Query<?> query = getSession().createSQLQuery("DELETE FROM servicio WHERE id_servicio = :id");
 		query.setParameter("id", id);
         query.executeUpdate();

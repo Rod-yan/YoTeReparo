@@ -14,17 +14,17 @@ public interface ServiceManager {
      
     void updateService(Service Service);
     
-    void enableServiceById(int id);
+    void enableServiceById(Integer id);
     
-    void disableServiceById(int id);
+    void disableServiceById(Integer id);
     
-    void deleteServiceById(int id);
+    void deleteServiceById(Integer id);
      
-    Service getServiceById(int id);
+    Service getServiceById(Integer id);
     
-    void updateServicePhotoById(int id, byte[] b64photo);
+    void updateServicePhotoById(Integer id, byte[] b64photo);
     
-    boolean exist(int id);
+    boolean exist(Integer id);
     
     List<Service> getAllServices(); 
     

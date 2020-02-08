@@ -18,14 +18,14 @@ public class Address {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_direccion", nullable = false)
-	private int id;
+	private Integer id;
 	
 	@NotEmpty(message = "{address.calle.not.empty}")
 	private String calle;
 	
 	@Min(value=1, message = "{address.altura.min.value}")
 	@Digits(integer=6, fraction=0, message = "{address.altura.digits.above.limit}")
-	private int altura;
+	private Integer altura;
 	
 	@Size(min=0, max=15, message = "{address.piso.size}")
 	private String piso;
@@ -38,11 +38,11 @@ public class Address {
 	public Address() { }
 
 	/* Getters & Setters */
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
@@ -54,10 +54,10 @@ public class Address {
 		this.calle = calle;
 	}
 
-	public int getAltura() {
+	public Integer getAltura() {
 		return altura;
 	}
-	public void setAltura(int altura) {
+	public void setAltura(Integer altura) {
 		this.altura = altura;
 	}
 
@@ -87,11 +87,11 @@ public class Address {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + altura;
+		result = prime * result + ((altura == null) ? 0 : altura.hashCode());
 		result = prime * result + ((calle == null) ? 0 : calle.hashCode());
 		result = prime * result + ((departamento == null) ? 0 : departamento.hashCode());
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
-		result = prime * result + id;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((piso == null) ? 0 : piso.hashCode());
 		return result;
 	}
@@ -105,7 +105,10 @@ public class Address {
 		if (getClass() != obj.getClass())
 			return false;
 		Address other = (Address) obj;
-		if (altura != other.altura)
+		if (altura == null) {
+			if (other.altura != null)
+				return false;
+		} else if (!altura.equals(other.altura))
 			return false;
 		if (calle == null) {
 			if (other.calle != null)
@@ -121,6 +124,11 @@ public class Address {
 			if (other.descripcion != null)
 				return false;
 		} else if (!descripcion.equals(other.descripcion))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (piso == null) {
 			if (other.piso != null)
