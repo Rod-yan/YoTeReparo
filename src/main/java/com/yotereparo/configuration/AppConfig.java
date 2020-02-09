@@ -45,16 +45,24 @@ public class AppConfig {
 	@Bean
 	public ModelMapper modelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
+		// UserDto -> User
 		modelMapper.createTypeMap(UserDto.class, User.class).addMappings(mapper -> {
 			mapper.skip(User::setCiudad);
 			mapper.skip(User::setServicios);
 		});
+		// User -> UserDto
 		modelMapper.createTypeMap(User.class, UserDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getCiudad().getId(), UserDto::setCiudad);
 			mapper.skip(UserDto::setServicios);
 		});
-		modelMapper.createTypeMap(ServiceDto.class, Service.class).addMappings(mapper -> mapper.skip(Service::setUsuarioPrestador));
+		// ServiceDto -> Service
+		modelMapper.createTypeMap(ServiceDto.class, Service.class).addMappings(mapper -> {
+			mapper.skip(Service::setTipoServicio);
+			mapper.skip(Service::setUsuarioPrestador);
+		});
+		// Service -> ServiceDto
 		modelMapper.createTypeMap(Service.class, ServiceDto.class).addMappings(mapper -> {
+			mapper.map(src -> src.getTipoServicio().getDescripcion(), ServiceDto::setTipoServicio);
 			mapper.map(src -> src.getUsuarioPrestador().getId(), ServiceDto::setUsuarioPrestador);
 		});
 	    return modelMapper;

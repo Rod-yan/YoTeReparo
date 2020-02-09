@@ -8,6 +8,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -25,6 +27,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Service {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_servicio", nullable = false)
 	private Integer id;
 	
@@ -62,6 +65,10 @@ public class Service {
 	
 	private byte[] imagen;
 	
+	@ManyToOne
+    @JoinColumn(name="id_tiposervicio", nullable=false, updatable = true, insertable = true)
+	private ServiceType tipoServicio;
+	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	@Column(name = "fecha_creacion", nullable = true)
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -69,14 +76,12 @@ public class Service {
 	
 	private String estado;
 	
-	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE},fetch=FetchType.EAGER)
+	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
     @JoinTable(name="servicio_mediodepago",
         joinColumns = {@JoinColumn(name="id_servicio")},
         inverseJoinColumns = {@JoinColumn(name="id_mediodepago")}    
     )
 	private Set<PaymentMethod> mediosDePago = new HashSet<PaymentMethod>(0);
-	
-	//TODO: Tipo servicio
 	
 	//TODO: Requerimiento
 	
@@ -137,7 +142,7 @@ public class Service {
 		return precioPromedio;
 	}
 
-	public void setPrecioPromedio() {
+	public void setPrecioPromedio(Float precioPromedio) {
 		this.precioPromedio = (precioMaximo+precioMinimo)/2;
 	}
 
@@ -189,6 +194,14 @@ public class Service {
 		this.imagen = imagen;
 	}
 
+	public ServiceType getTipoServicio() {
+		return tipoServicio;
+	}
+
+	public void setTipoServicio(ServiceType tipoServicio) {
+		this.tipoServicio = tipoServicio;
+	}
+
 	public DateTime getFechaCreacion() {
 		return fechaCreacion;
 	}
@@ -219,29 +232,6 @@ public class Service {
     public void removeDireccion(PaymentMethod medioDePago) {
     	mediosDePago.remove(medioDePago);
     }
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((cantidadTrabajadores == null) ? 0 : cantidadTrabajadores.hashCode());
-		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
-		result = prime * result + ((disponibilidad == null) ? 0 : disponibilidad.hashCode());
-		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
-		result = prime * result + (facturaEmitida ? 1231 : 1237);
-		result = prime * result + ((fechaCreacion == null) ? 0 : fechaCreacion.hashCode());
-		result = prime * result + ((horasEstimadasEjecucion == null) ? 0 : horasEstimadasEjecucion.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + Arrays.hashCode(imagen);
-		result = prime * result + ((mediosDePago == null) ? 0 : mediosDePago.hashCode());
-		result = prime * result + ((precioAdicionales == null) ? 0 : precioAdicionales.hashCode());
-		result = prime * result + ((precioInsumos == null) ? 0 : precioInsumos.hashCode());
-		result = prime * result + ((precioMaximo == null) ? 0 : precioMaximo.hashCode());
-		result = prime * result + ((precioMinimo == null) ? 0 : precioMinimo.hashCode());
-		result = prime * result + ((precioPromedio == null) ? 0 : precioPromedio.hashCode());
-		result = prime * result + ((usuarioPrestador == null) ? 0 : usuarioPrestador.hashCode());
-		return result;
-	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -284,11 +274,11 @@ public class Service {
 				return false;
 		} else if (!horasEstimadasEjecucion.equals(other.horasEstimadasEjecucion))
 			return false;
-		if (id == null) {
+		/*if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
+			return false;*/
 		if (!Arrays.equals(imagen, other.imagen))
 			return false;
 		if (mediosDePago == null) {
@@ -316,10 +306,15 @@ public class Service {
 				return false;
 		} else if (!precioMinimo.equals(other.precioMinimo))
 			return false;
-		if (precioPromedio == null) {
+		/*if (precioPromedio == null) {
 			if (other.precioPromedio != null)
 				return false;
 		} else if (!precioPromedio.equals(other.precioPromedio))
+			return false;*/
+		if (tipoServicio == null) {
+			if (other.tipoServicio != null)
+				return false;
+		} else if (!tipoServicio.equals(other.tipoServicio))
 			return false;
 		if (usuarioPrestador == null) {
 			if (other.usuarioPrestador != null)
@@ -336,7 +331,7 @@ public class Service {
 				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
 				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
 				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", imagen="
-				+ Arrays.toString(imagen) + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", mediosDePago=" + mediosDePago + "]";
+				+ Arrays.toString(imagen) + ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion
+				+ ", estado=" + estado + ", mediosDePago=" + mediosDePago + "]";
 	}
 }

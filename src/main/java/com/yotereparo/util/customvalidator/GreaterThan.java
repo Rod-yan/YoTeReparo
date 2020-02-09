@@ -9,7 +9,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Constraint(validatedBy = GreaterThanValidator.class)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GreaterThan {
 	String message();
@@ -18,9 +18,11 @@ public @interface GreaterThan {
 	
 	Class<? extends Payload>[] payload() default {};
 	 
-    String field();
+    String valueOf();
+    
+    String greaterThanValueOf();
  
-    @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
+    @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
         GreaterThan[] value();

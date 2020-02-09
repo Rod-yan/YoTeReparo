@@ -107,34 +107,41 @@ public class ServiceController {
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
-    public ResponseEntity<?> createService(@RequestBody ServiceDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
-		
-		if (!ValidationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
-			logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getId()));
-			if (!serviceManager.exist(clientInput.getId())) {
-				try {
-					serviceManager.createService(serviceConverter.convertToEntity(clientInput));
+    public ResponseEntity<?> createService(@RequestBody ServiceDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {	
+		logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getDescripcion()));
+		try {
+			if (!ValidationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
+				// Seteamos id en null ya que el mismo es autogenerado en tiempo de creación
+				clientInput.setId(null);
+				Service service = serviceConverter.convertToEntity(clientInput);
+				if (!serviceManager.exist(service)) {
+					serviceManager.createService(service);
 					
 					HttpHeaders headers = new HttpHeaders();
-			        headers.setLocation(ucBuilder.path("/services/{id}").buildAndExpand(clientInput.getId()).toUri());
+			        headers.setLocation(ucBuilder.path("/services/{id}").buildAndExpand(service.getId()).toUri());
 			        
 			        logger.info("CreateService - POST - Exiting method, providing response resource to client.");
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 				}
-				catch (CustomResponseError error) {
-					logger.error(String.format("CreateService - POST - Request failed - Error procesing request: <%s>", error.toString()));
-					return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+				else {
+					logger.info(String.format("CreateService - POST - Request failed - Unable to create service. Service <%s> already exist.", service.getId()));
+		            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.already.exist", new Integer[]{service.getId()}, Locale.getDefault()));
+		            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
 				}
-	        }
-			else {
-				logger.info(String.format("CreateService - POST - Request failed - Unable to create service. Service <%s> already exist.", clientInput.getId()));
-	            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.already.exist", new Integer[]{clientInput.getId()}, Locale.getDefault()));
-	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
 			}
+			else {
+				logger.info("CreateService - POST - Request failed - Input validation error(s) detected.");
+				return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+			}
+        }
+		catch (CustomResponseError error) {
+			logger.error(String.format("CreateService - POST - Request failed - Error procesing request: <%s>", error.toString()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		else {
-			logger.info("CreateService - POST - Request failed - Input validation error(s) detected.");
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
-		}	
+		catch (Exception e) {
+			logger.error(String.format("CreateService - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
     }
 }

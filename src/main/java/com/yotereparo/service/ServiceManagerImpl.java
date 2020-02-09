@@ -1,24 +1,18 @@
 package com.yotereparo.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yotereparo.dao.RoleDaoImpl;
 import com.yotereparo.dao.ServiceDaoImpl;
 import com.yotereparo.model.City;
 import com.yotereparo.model.District;
 import com.yotereparo.model.PaymentMethod;
-import com.yotereparo.model.Role;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
-import com.yotereparo.util.SpringEnvironmentUtils;
 
 /**
  * Capa de servicio para Servicios.
@@ -83,8 +77,18 @@ public class ServiceManagerImpl implements ServiceManager {
 	}
 	
 	@Override
+	public boolean exist(Service service) {
+		logger.debug(String.format("Verifying existence of service with description <%s>", service.getDescripcion()));
+		User relatedUser = service.getUsuarioPrestador();
+		for (Service s : relatedUser.getServicios())
+			if (service.equals(s)) 
+				return true;
+		return false;
+	}
+	
+	@Override
 	public boolean exist(Integer id) {
-		logger.debug(String.format("Verifying existence of service <%s>", id));
+		logger.debug(String.format("Verifying existence of service with id <%s>", id));
 		return (getServiceById(id) != null);
 	}
 	

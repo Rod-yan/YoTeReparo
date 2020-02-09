@@ -24,6 +24,8 @@ public interface ServiceManager {
     
     void updateServicePhotoById(Integer id, byte[] b64photo);
     
+    boolean exist(Service service);
+    
     boolean exist(Integer id);
     
     List<Service> getAllServices(); 

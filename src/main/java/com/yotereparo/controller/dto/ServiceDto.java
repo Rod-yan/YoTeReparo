@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import com.yotereparo.model.PaymentMethod;
 import com.yotereparo.util.customvalidator.GreaterThan;
 
+@GreaterThan(valueOf = "precioMaximo", greaterThanValueOf = "precioMinimo", message = "{service.precioMaximo.less.than.min}")
 public class ServiceDto {
 	
 	private Integer id;
@@ -27,7 +28,6 @@ public class ServiceDto {
 	
 	@NotNull(message = "{service.precioMaximo.not.null}")
 	@Digits(integer = 9, fraction = 2, message = "{service.precioMaximo.out.of.boundaries}")
-	@GreaterThan(field = "precioMinimo", message = "{service.precioMaximo.less.than.min}")
 	private Float precioMaximo;
 	
 	@NotNull(message = "{service.precioMinimo.not.null}")
@@ -58,6 +58,9 @@ public class ServiceDto {
 
 	@NotNull(message = "{service.facturaEmitida.not.null}")
 	private boolean facturaEmitida;
+	
+	@NotEmpty(message = "{service.tipoServicio.not.empty}")
+	private String tipoServicio;
 	
 	private DateTime fechaCreacion;
 
@@ -121,7 +124,7 @@ public class ServiceDto {
 		return precioPromedio;
 	}
 
-	public void setPrecioPromedio() {
+	public void setPrecioPromedio(Float precioPromedio) {
 		this.precioPromedio = (precioMaximo+precioMinimo)/2;
 	}
 
@@ -163,6 +166,14 @@ public class ServiceDto {
 
 	public void setFacturaEmitida(boolean facturaEmitida) {
 		this.facturaEmitida = facturaEmitida;
+	}
+
+	public String getTipoServicio() {
+		return tipoServicio;
+	}
+
+	public void setTipoServicio(String tipoServicio) {
+		this.tipoServicio = tipoServicio;
 	}
 
 	public DateTime getFechaCreacion() {
@@ -207,6 +218,7 @@ public class ServiceDto {
 		result = prime * result + ((precioMaximo == null) ? 0 : precioMaximo.hashCode());
 		result = prime * result + ((precioMinimo == null) ? 0 : precioMinimo.hashCode());
 		result = prime * result + ((precioPromedio == null) ? 0 : precioPromedio.hashCode());
+		result = prime * result + ((tipoServicio == null) ? 0 : tipoServicio.hashCode());
 		result = prime * result + ((usuarioPrestador == null) ? 0 : usuarioPrestador.hashCode());
 		return result;
 	}
@@ -287,6 +299,11 @@ public class ServiceDto {
 				return false;
 		} else if (!precioPromedio.equals(other.precioPromedio))
 			return false;
+		if (tipoServicio == null) {
+			if (other.tipoServicio != null)
+				return false;
+		} else if (!tipoServicio.equals(other.tipoServicio))
+			return false;
 		if (usuarioPrestador == null) {
 			if (other.usuarioPrestador != null)
 				return false;
@@ -302,6 +319,7 @@ public class ServiceDto {
 				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
 				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
 				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida
-				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago + "]";
+				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
+				+ ", mediosDePago=" + mediosDePago + "]";
 	}
 }

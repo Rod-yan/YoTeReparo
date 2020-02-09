@@ -6,23 +6,23 @@ import javax.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
 
 public class GreaterThanValidator implements ConstraintValidator<GreaterThan, Object> {
-	private String field;
+	private String valueOf;
+	private String greaterThanValueOf;
  
     public void initialize(GreaterThan constraintAnnotation) {
-        this.field = constraintAnnotation.field();
+    	this.valueOf = constraintAnnotation.valueOf();
+        this.greaterThanValueOf = constraintAnnotation.greaterThanValueOf();
     }
  
     public boolean isValid(Object value,
       ConstraintValidatorContext context) {
-    	if ( value == null ) {
-            return true;
-        }
- 
-        Object fieldValue = new BeanWrapperImpl(value)
-          .getPropertyValue(field);
+    	Object lowerValue = new BeanWrapperImpl(value)
+    	          .getPropertyValue(valueOf);
+        Object upperValue = new BeanWrapperImpl(value)
+          .getPropertyValue(greaterThanValueOf);
         
         // Lógica de validación.
-        if ((float) value >= (float) fieldValue) 
+        if ((Float) lowerValue >= (Float) upperValue) 
         	return true;
         else
         	return false;
