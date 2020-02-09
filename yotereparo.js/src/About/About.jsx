@@ -3,11 +3,13 @@ import ElementContainer from "../Container/ElementContainer";
 
 function About(props) {
   return (
-    <div className="row">
-      <ElementContainer>
-        <div>About page related to YoTeRepaso.js</div>
-      </ElementContainer>
-    </div>
+    <ElementContainer>
+      <div className="row">
+        <div className="col-12">
+          About page of <strong>YoTeReparo.js</strong>
+        </div>
+      </div>
+    </ElementContainer>
   );
 }
 

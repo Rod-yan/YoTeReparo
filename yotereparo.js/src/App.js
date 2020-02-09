@@ -1,6 +1,7 @@
 import React from "react";
 import Home from "./Home/Home";
 import About from "./About/About";
+import Header from "./Header/Header";
 import {
   BrowserRouter as Router,
   Switch,
@@ -27,14 +28,16 @@ function App() {
   return (
     <>
       <Router>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-        </ul>
+        <Header>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+          </ul>
+        </Header>
 
         <Switch>
           <Route exact path="/">

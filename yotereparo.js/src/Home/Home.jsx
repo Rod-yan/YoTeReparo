@@ -20,13 +20,9 @@ function Home(props) {
   }
 
   return (
-    <div className="row">
-      <div className="col-12">
-        <ElementContainer>
-          Welcome to <strong>YoTeReparo</strong>
-        </ElementContainer>
-      </div>
-    </div>
+    <ElementContainer>
+      Welcome to <strong>YoTeReparo</strong>
+    </ElementContainer>
   );
 }
 
