@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
 import com.yotereparo.model.PaymentMethod;
 import com.yotereparo.util.customvalidator.GreaterThan;
 
-@GreaterThan(valueOf = "precioMaximo", greaterThanValueOf = "precioMinimo", message = "{service.precioMaximo.less.than.min}")
+@GreaterThan(valueOf = "precioMaximo", greaterThanValueOf = "precioMinimo", message = "{sservice.precioMaximo.less.than.precioMinimo}")
 public class ServiceDto {
 	
 	private Integer id;
@@ -28,6 +28,7 @@ public class ServiceDto {
 	
 	@NotNull(message = "{service.precioMaximo.not.null}")
 	@Digits(integer = 9, fraction = 2, message = "{service.precioMaximo.out.of.boundaries}")
+	@Min(value = 0, message="{service.precioMaximo.less.than.min}")
 	private Float precioMaximo;
 	
 	@NotNull(message = "{service.precioMinimo.not.null}")
@@ -64,7 +65,6 @@ public class ServiceDto {
 	
 	private DateTime fechaCreacion;
 
-	@NotEmpty(message = "{service.estado.not.empty}")
 	private String estado;
 
 	@NotEmpty(message = "{service.mediosDePago.not.empty}")

@@ -47,14 +47,15 @@ public class ValidationUtils {
         				"Address", propertyPath, message));
 		    }
 		
-		for (ServiceDto serviceDto : userDto.getServicios())
-			for (ConstraintViolation<ServiceDto> violation : validator.validate(serviceDto)) {
-		        String propertyPath = violation.getPropertyPath().toString();
-		        String message = violation.getMessage();
-		        result.addError(new FieldError("Service", propertyPath, message));
-		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-        				"Service", propertyPath, message));
-		    }
+		if (userDto.getServicios() != null) 
+			for (ServiceDto serviceDto : userDto.getServicios())
+				for (ConstraintViolation<ServiceDto> violation : validator.validate(serviceDto)) {
+			        String propertyPath = violation.getPropertyPath().toString();
+			        String message = violation.getMessage();
+			        result.addError(new FieldError("Service", propertyPath, message));
+			        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
+	        				"Service", propertyPath, message));
+			    }
 		
 		if (userDto.getMembresia() != null)
 			if (userDto.getBarrios() != null)

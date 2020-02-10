@@ -19,12 +19,17 @@ public class GreaterThanValidator implements ConstraintValidator<GreaterThan, Ob
     	Object lowerValue = new BeanWrapperImpl(value)
     	          .getPropertyValue(valueOf);
         Object upperValue = new BeanWrapperImpl(value)
-          .getPropertyValue(greaterThanValueOf);
+        		  .getPropertyValue(greaterThanValueOf);
         
         // Lógica de validación.
-        if ((Float) lowerValue >= (Float) upperValue) 
-        	return true;
+        if ((Float) lowerValue < (Float) upperValue) {
+        	context.disableDefaultConstraintViolation();
+    		context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+    			.addPropertyNode(valueOf)
+    			.addConstraintViolation();
+    		return false;
+        }
         else
-        	return false;
+        	return true;
     }
 }

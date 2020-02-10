@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,12 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public void createService(Service service) {
+		service.setFechaCreacion(new DateTime());
+		// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
+		service.setImagen(null);
+		service.setEstado("ACTIVO");
+		
+		logger.info(String.format("Commiting creation of service <%s>", service.getId()));
 		dao.persist(service);		
 	}
 	
@@ -48,6 +55,7 @@ public class ServiceManagerImpl implements ServiceManager {
 	public void enableServiceById(Integer id) {
 		Service service = getServiceById(id);
 		if (service != null && service.getEstado() != "ACTIVO") {
+			logger.info(String.format("Enabling service <%s>", service.getId()));
 			service.setEstado("ACTIVO");
 		}
 	}
@@ -56,6 +64,7 @@ public class ServiceManagerImpl implements ServiceManager {
 	public void disableServiceById(Integer id) {
 		Service service = getServiceById(id);
 		if (service != null && service.getEstado() != "INACTIVO") {
+			logger.info(String.format("Disabling service <%s>", service.getId()));
 			service.setEstado("INACTIVO");
 		}
 	}

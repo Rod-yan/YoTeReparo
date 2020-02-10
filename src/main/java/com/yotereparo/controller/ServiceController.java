@@ -144,4 +144,91 @@ public class ServiceController {
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
     }
+	
+	/*
+	 * Habilita un servicio.
+	 */
+	@RequestMapping(
+			value = { "/services/{id}/enable" }, 
+			produces = MediaType.APPLICATION_JSON_VALUE,			
+			method = RequestMethod.POST)
+    public ResponseEntity<?> enableService(@PathVariable("id") Integer id) {
+		logger.info(String.format("EnableService - POST - Processing request for service <%s>.", id));
+		try {
+			if (serviceManager.exist(id)) {
+				serviceManager.enableServiceById(id);
+	        	
+	        	logger.info("EnableService - POST - Exiting method, providing response resource to client.");
+	            return new ResponseEntity<>(HttpStatus.OK);
+	        }
+	        else {
+	        	logger.info(String.format("EnableService - POST - Request failed - Unable to enable service. Service <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	        }
+		}
+		catch (Exception e) {
+			logger.error(String.format("EnableService - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}  
+    }
+	
+	/*
+	 * Deshabilita un servicio.
+	 */
+	@RequestMapping(
+			value = { "/services/{id}/disable" }, 
+			produces = MediaType.APPLICATION_JSON_VALUE,			
+			method = RequestMethod.POST)
+    public ResponseEntity<?> disableService(@PathVariable("id") Integer id) {
+		logger.info(String.format("DisableService - POST - Processing request for service <%s>.", id));
+		try {
+			if (serviceManager.exist(id)) {
+				serviceManager.disableServiceById(id);
+	        	
+	        	logger.info("DisableService - POST - Exiting method, providing response resource to client.");
+	            return new ResponseEntity<>(HttpStatus.OK);
+	        }
+	        else {
+	        	logger.info(String.format("DisableService - POST - Request failed - Unable to disable service. Service <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	        }
+		}
+		catch (Exception e) {
+			logger.error(String.format("DisableService - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}  
+    }
+	
+	/*
+	 * Elimina físicamente un servicio.
+	 */
+	@RequestMapping(
+			value = { "/services/{id}" }, 
+			produces = MediaType.APPLICATION_JSON_VALUE,			
+			method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteService(@PathVariable("id") Integer id) {
+		logger.info(String.format("DeleteService - DELETE - Processing request for service <%s>.", id));
+		try {
+			if (serviceManager.exist(id)) {
+				serviceManager.deleteServiceById(id);
+	        	
+	        	logger.info("DeleteService - DELETE - Exiting method, providing response resource to client.");
+	            return new ResponseEntity<>(HttpStatus.OK);
+	        }
+	        else {
+	        	logger.info(String.format("DeleteService - DELETE - Request failed - Unable to delete service. Service <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	        }
+		}
+		catch (Exception e) {
+			logger.error(String.format("DeleteService - DELETE - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}  
+    }
 }

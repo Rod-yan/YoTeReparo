@@ -42,19 +42,25 @@ public class CityController {
 			value = { "/cities/" }, 
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
-	public ResponseEntity<List<City>> listCities() {
+	public ResponseEntity<?> listCities() {
 		logger.info("ListCities - GET - Processing request for a list with all existing cities.");
-        
-		List<City> cities = cityService.getAllCities();
-        
-		if (!cities.isEmpty()) {
-        	logger.info("ListCities - GET - Exiting method, providing response resource to client.");
-            return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
+        try {
+        	List<City> cities = cityService.getAllCities();
+            
+    		if (!cities.isEmpty()) {
+            	logger.info("ListCities - GET - Exiting method, providing response resource to client.");
+                return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
+            }
+            else {
+            	logger.info("ListCities - GET - Request failed - No cities were found.");
+            	return new ResponseEntity<List<City>>(HttpStatus.NO_CONTENT);
+            }
         }
-        else {
-        	logger.info("ListCities - GET - Request failed - No cities were found.");
-        	return new ResponseEntity<List<City>>(HttpStatus.NO_CONTENT);
-        }
+		catch (Exception e) {
+			logger.error(String.format("ListCities - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("City","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}   
     }
 	
 	/*
@@ -67,17 +73,23 @@ public class CityController {
 	public ResponseEntity<?> getCity(@PathVariable("id") String id) {
 		id = id.toLowerCase();
 		logger.info(String.format("GetCity - GET - Processing request for city <%s>.", id));
-        
-		City city = cityService.getCityById(id);
-        
-		if (city != null) {
-        	logger.info("GetCity - GET - Exiting method, providing response resource to client.");
-            return new ResponseEntity<City>(city, HttpStatus.OK);
+        try {
+        	City city = cityService.getCityById(id);
+            
+    		if (city != null) {
+            	logger.info("GetCity - GET - Exiting method, providing response resource to client.");
+                return new ResponseEntity<City>(city, HttpStatus.OK);
+            }
+            else {
+            	logger.info(String.format("GetCity - GET - Request failed - City with id <%s> not found.", id));
+                FieldError error = new FieldError("City","error",messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
+                return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+            } 
         }
-        else {
-        	logger.info(String.format("GetCity - GET - Request failed - City with id <%s> not found.", id));
-            FieldError error = new FieldError("City","error",messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
-            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
-        } 
+        catch (Exception e) {
+			logger.error(String.format("GetCity - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("City","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}  
     }
 }
