@@ -71,11 +71,13 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public void deleteServiceById(Integer id) {
+		logger.info(String.format("Commiting deletion of service <%s>", id));
 		dao.deleteServiceById(id);
 	}
 	
 	@Override
 	public Service getServiceById(Integer id) {
+		logger.debug(String.format("Fetching service <%s>", id));
 		return dao.getByKey(id);
 	}
 	
@@ -103,26 +105,31 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public List<Service> getAllServices() {
+		logger.debug("Fetching all services");
 		return dao.getAllServices(null);
 	}
 	
 	@Override
 	public List<Service> getAllServices(User user) {
+		logger.debug(String.format("Fetching all services of user <%s>", user.getId()));
 		return dao.getAllServices(user);
 	}
 	
 	@Override
 	public List<Service> getAllServices(District district) {
+		logger.debug(String.format("Fetching all services within district <%s>", district.getDescripcion()));
 		return dao.getAllServices(district);
 	}
 	
 	@Override
 	public List<Service> getAllServices(City city) {
+		logger.debug(String.format("Fetching all services within city <%s>", city.getDescripcion()));
 		return dao.getAllServices(city);
 	}
 	
 	@Override
 	public List<Service> getAllServices(PaymentMethod paymentMethod) {
+		logger.debug(String.format("Fetching all services accepting payment method <%s>", paymentMethod.getDescripcion()));
 		return dao.getAllServices(paymentMethod);
 	}
 }
