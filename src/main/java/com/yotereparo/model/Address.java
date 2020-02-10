@@ -125,16 +125,22 @@ public class Address {
 				return false;
 		} else if (!descripcion.equals(other.descripcion))
 			return false;
-		if (id == null) {
+		/*if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
+			return false;*/
 		if (piso == null) {
 			if (other.piso != null)
 				return false;
 		} else if (!piso.equals(other.piso))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Address [id=" + id + ", calle=" + calle + ", altura=" + altura + ", piso=" + piso + ", departamento="
+				+ departamento + ", descripcion=" + descripcion + "]";
 	}
 }
