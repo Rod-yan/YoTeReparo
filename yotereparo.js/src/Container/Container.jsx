@@ -1,4 +1,5 @@
 import React from "react";
+import "../Container/Container.css";
 
 function Container(props) {
   return (

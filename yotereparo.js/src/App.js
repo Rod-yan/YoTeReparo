@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Container from "./Container/Container";
+import UserList from "./Users/UserList";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -26,7 +27,7 @@ const NoMatch = () => {
 
 function App() {
   return (
-    <>
+    <div>
       <Router>
         <Header>
           <ul>
@@ -35,6 +36,9 @@ function App() {
             </li>
             <li>
               <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/users">Users</Link>
             </li>
           </ul>
         </Header>
@@ -50,6 +54,11 @@ function App() {
               <About />
             </Container>
           </Route>
+          <Route path="/users">
+            <Container type="card">
+              <UserList />
+            </Container>
+          </Route>
           <Route path="*">
             <Container type="card">
               <NoMatch />
@@ -57,7 +66,7 @@ function App() {
           </Route>
         </Switch>
       </Router>
-    </>
+    </div>
   );
 }
 
