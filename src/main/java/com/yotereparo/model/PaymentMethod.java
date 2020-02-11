@@ -62,8 +62,6 @@ public class PaymentMethod {
 				return false;
 		} else if (!descripcion.equals(other.descripcion))
 			return false;
-		/*if (id != other.id)
-		return false;*/
 		return true;
 	}
 

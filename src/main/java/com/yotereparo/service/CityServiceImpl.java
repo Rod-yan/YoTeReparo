@@ -43,7 +43,7 @@ public class CityServiceImpl implements CityService {
 		return dao.getCityById(id);
 	}
 	
-	public Set<District> filterValidDistricts(City city, Set<District> districts){
+	public Set<District> getValidDistricts(City city, Set<District> districts){
 		Set<District> validDistricts = new HashSet<District>();
 		for (District district : districts)
 			if (cityContainsDistrict(city, district)) {
@@ -54,7 +54,7 @@ public class CityServiceImpl implements CityService {
 		return validDistricts;
 	}
 	
-	public Set<District> filterInvalidDistricts(City city, Set<District> districts){
+	public Set<District> getInvalidDistricts(City city, Set<District> districts){
 		Set<District> invalidDistricts = new HashSet<District>();
 		for (District district : districts)
 			if (!cityContainsDistrict(city, district)) {

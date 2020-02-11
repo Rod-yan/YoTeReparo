@@ -155,7 +155,7 @@ public class UserController {
 		}
 		catch (CustomResponseError error) {
 			logger.error(String.format("CreateUser - POST - Request failed - Error procesing request: <%s>", error.toString()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error(String.format("CreateUser - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
@@ -200,7 +200,7 @@ public class UserController {
 		}
 		catch (CustomResponseError error) {
 			logger.error(String.format("UpdateUser - PUT - Request failed - Error procesing request: <%s>", error.toString()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error(String.format("UpdateUser - PUT - Request failed - Error procesing request: <%s>", e.getMessage()));

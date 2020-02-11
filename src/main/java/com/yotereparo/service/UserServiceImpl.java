@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
 			user.addRole(role);
 			
 			// Filtramos los barrios elegidos que no sean de la ciudad elegida. Si no quedan barrios válidos, levantamos excepción.
-			user.getBarrios().removeAll(cityService.filterInvalidDistricts(user.getCiudad(), user.getBarrios()));
+			user.getBarrios().removeAll(cityService.getInvalidDistricts(user.getCiudad(), user.getBarrios()));
 			if (user.getBarrios().size() == 0) {
 				throw new CustomResponseError("User","barrios",messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
 			}
@@ -101,12 +101,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void updateUser(User user) {
-		User entity = dao.getUserById(user.getId());
+		User entity = getUserById(user.getId());
 		
 		if (!user.getNombre().equals(entity.getNombre())) {
 			logger.debug(String.format("Updating attribute 'Nombre' from user <%s>", user.getId()));
 			entity.setNombre(user.getNombre());
-		}	
+		}
 		
 		if (!user.getApellido().equals(entity.getApellido())) {
 			logger.debug(String.format("Updating attribute 'Apellido' from user <%s>", user.getId()));
@@ -239,7 +239,7 @@ public class UserServiceImpl implements UserService {
 		 * Si la ciudad cambió, o si cambiaron los barrios, descartamos los barrios anteriores por los nuevos.
 		 */
 		if (user.getMembresia() != null) {
-			user.getBarrios().removeAll(cityService.filterInvalidDistricts(user.getCiudad(), user.getBarrios()));
+			user.getBarrios().removeAll(cityService.getInvalidDistricts(user.getCiudad(), user.getBarrios()));
 			if (user.getBarrios().size() == 0) {
 				throw new CustomResponseError("User","barrios",messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
 			}

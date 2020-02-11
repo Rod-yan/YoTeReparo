@@ -136,10 +136,55 @@ public class ServiceController {
         }
 		catch (CustomResponseError error) {
 			logger.error(String.format("CreateService - POST - Request failed - Error procesing request: <%s>", error.toString()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error(String.format("CreateService - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+    }
+	
+	/*
+	 * Actualiza los atributos del servicio con los valores recibidos en el JSON payload. 
+	 * Si estos no se incluyen en el request body entonces se considera que se está intentando vaciar su valor. 
+	 * Esto es legal solo para atributos no mandatorios en la entidad.
+	 * Las imagenes del servicio seran ignoradas por este método (Ignorados, no ilegales).
+	 */
+	@RequestMapping(
+			value = { "/services/{id}" }, 
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.PUT)
+    public ResponseEntity<?> updateService(@PathVariable("id") Integer id, @RequestBody ServiceDto clientInput, BindingResult result) {	
+		logger.info(String.format("UpdateService - PUT - Processing request for service <%s>.", id));
+		try {
+			clientInput.setId(id);
+
+			if (serviceManager.exist(id)) {
+				if (!ValidationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
+					serviceManager.updateService(serviceConverter.convertToEntity(clientInput));
+					
+					logger.info("UpdateService - PUT - Exiting method, providing response resource to client.");
+					return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
+				}
+				else {
+					logger.info("UpdateService - PUT - Request failed - Input validation error(s) detected.");
+					return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+				}
+	        }
+			else {
+				logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> doesn't exist.", id));
+	            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+			}
+		}
+		catch (CustomResponseError error) {
+			logger.error(String.format("UpdateService - PUT - Request failed - Error procesing request: <%s>", error.toString()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			logger.error(String.format("UpdateService - PUT - Request failed - Error procesing request: <%s>", e.getMessage()));
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -151,7 +196,7 @@ public class ServiceController {
 	@RequestMapping(
 			value = { "/services/{id}/enable" }, 
 			produces = MediaType.APPLICATION_JSON_VALUE,			
-			method = RequestMethod.POST)
+			method = RequestMethod.PUT)
     public ResponseEntity<?> enableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("EnableService - POST - Processing request for service <%s>.", id));
 		try {
@@ -180,7 +225,7 @@ public class ServiceController {
 	@RequestMapping(
 			value = { "/services/{id}/disable" }, 
 			produces = MediaType.APPLICATION_JSON_VALUE,			
-			method = RequestMethod.POST)
+			method = RequestMethod.PUT)
     public ResponseEntity<?> disableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("DisableService - POST - Processing request for service <%s>.", id));
 		try {

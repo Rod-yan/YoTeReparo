@@ -12,9 +12,9 @@ public interface CityService {
      
     City getCityById(String id);
     
-    Set<District> filterValidDistricts(City city, Set<District> districts);
+    Set<District> getValidDistricts(City city, Set<District> districts);
     
-    Set<District> filterInvalidDistricts(City city, Set<District> districts);
+    Set<District> getInvalidDistricts(City city, Set<District> districts);
     
     boolean exist(String id);
  

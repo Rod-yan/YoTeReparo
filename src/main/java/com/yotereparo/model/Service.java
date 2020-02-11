@@ -65,6 +65,8 @@ public class Service {
 	
 	private byte[] imagen;
 	
+	private byte[] thumbnail;
+	
 	@ManyToOne
     @JoinColumn(name="id_tiposervicio", nullable=false, updatable = true, insertable = true)
 	private ServiceType tipoServicio;
@@ -194,6 +196,14 @@ public class Service {
 		this.imagen = imagen;
 	}
 
+	public byte[] getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(byte[] thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
 	public ServiceType getTipoServicio() {
 		return tipoServicio;
 	}
@@ -274,11 +284,6 @@ public class Service {
 				return false;
 		} else if (!horasEstimadasEjecucion.equals(other.horasEstimadasEjecucion))
 			return false;
-		/*if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;*/
 		if (!Arrays.equals(imagen, other.imagen))
 			return false;
 		if (mediosDePago == null) {
@@ -306,11 +311,8 @@ public class Service {
 				return false;
 		} else if (!precioMinimo.equals(other.precioMinimo))
 			return false;
-		/*if (precioPromedio == null) {
-			if (other.precioPromedio != null)
-				return false;
-		} else if (!precioPromedio.equals(other.precioPromedio))
-			return false;*/
+		if (!Arrays.equals(thumbnail, other.thumbnail))
+			return false;
 		if (tipoServicio == null) {
 			if (other.tipoServicio != null)
 				return false;
@@ -331,7 +333,8 @@ public class Service {
 				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
 				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
 				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", imagen="
-				+ Arrays.toString(imagen) + ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion
-				+ ", estado=" + estado + ", mediosDePago=" + mediosDePago + "]";
+				+ Arrays.toString(imagen) + ", thumbnail=" + Arrays.toString(thumbnail) + ", tipoServicio="
+				+ tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago="
+				+ mediosDePago + "]";
 	}
 }
