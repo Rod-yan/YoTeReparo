@@ -1,13 +1,23 @@
 package com.yotereparo.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.controller.dto.ServiceDto;
@@ -276,4 +287,136 @@ public class ServiceController {
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }
+	
+	/*
+	 * Obtiene la imagen del servicio, o el thumbnail de la misma, 
+	 * de acuerdo con el URI path al que se suscriba el request.
+	 */
+	@RequestMapping(
+			value = { "/services/{id}/photo", "/services/{id}/photo/thumbnail" }, 
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.GET)
+    public ResponseEntity<?> getServiceImage(@PathVariable("id") Integer id) {
+		logger.info(String.format("GetServiceImage - GET - Processing request for service's <%s> image.", id));
+		try {
+			if (serviceManager.exist(id)) {			
+				// evaluamos el uri path del request para determinar si vamos a estar trabajando con la foto o con el thumbnail
+				String requestUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
+				byte[] serviceImage;
+	 			if (requestUri.contains("thumbnail")) {
+	 				serviceImage = serviceManager.getServiceById(id).getThumbnail();
+	 			}
+				else {
+					serviceImage = serviceManager.getServiceById(id).getImagen();
+				}
+	 			// procesamos el request
+	 			if (serviceImage != null) {
+					ByteArrayOutputStream bao = new ByteArrayOutputStream();
+			        InputStream is = new ByteArrayInputStream(serviceImage);
+			        BufferedImage img = ImageIO.read(is);
+			        ImageIO.write(img, "png", bao);
+			        
+			        HttpHeaders headers = new HttpHeaders();
+					headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+					headers.setContentType(MediaType.IMAGE_PNG);
+					
+					serviceImage = bao.toByteArray();
+					bao.close();
+					img.flush();
+					
+					logger.info("GetServiceImage - GET - Exiting method, providing response resource to client.");
+					return new ResponseEntity<byte[]>(serviceImage, headers, HttpStatus.OK);
+				}
+				else {
+					logger.info(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. No image was found for service <%s>.", id));
+		        	FieldError error = new FieldError("Service","imagen",messageSource.getMessage("service.doesnt.have.image", new Integer[]{id}, Locale.getDefault()));
+		        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+				}
+	        }
+			else {
+				logger.info(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. Service <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+			}
+		}
+		catch (Exception e) {
+			logger.error(String.format("GetServiceImage - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}  
+	}
+	
+	/*
+	 * Actualiza la imagen (y su thumbnail) del servicio. 
+	 * El JSON payload es la foto codificada en un string base64.
+	 */
+	@RequestMapping(
+			value = { "/services/{id}/photo" }, 
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.PUT)
+    public ResponseEntity<?> updateServiceImage(@PathVariable("id") Integer id, @RequestBody String photoPayload) {
+		logger.info(String.format("UpdateServiceImage - PUT - Processing request for service's <%s> image.", id));
+		
+		// parseamos el json object recibido y generamos el byte array validando la estructura del request al mismo tiempo.
+		try { 
+			JSONObject jsonPhotoPayload = new JSONObject(photoPayload);
+			byte[] b64photo = jsonPhotoPayload.getString("foto").getBytes();
+			if (serviceManager.exist(id)) {
+				serviceManager.updateServiceImageById(id, Base64.getDecoder().decode(b64photo));
+				
+				logger.info("UpdateServiceImage - PUT - Exiting method, providing response resource to client.");
+				return new ResponseEntity<String>(HttpStatus.OK);
+	        }
+			else {
+				logger.info(String.format("UpdateServiceImage - PUT - Request failed - Unable to update service's image. Service <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+			}
+		}
+		catch (IllegalArgumentException e){
+			logger.error("UpdateServiceImage - PUT - Request failed - Received invalid base64 image, returning error to client.");
+        	FieldError error =new FieldError("Service","error",messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
+        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+		}
+		catch (JSONException e) {
+			logger.error("UpdateServiceImage - PUT - Request failed - Received malformed request, returning error to client.");
+        	FieldError error = new FieldError("Service","error",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
+        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			logger.error(String.format("UpdateServiceImage - PUT - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} 
+	}
+	
+	/*
+	 * Elimina la foto y el thumbnail del usuario.
+	 */
+	@RequestMapping(
+			value = { "/services/{id}/photo" },
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteServiceImage(@PathVariable("id") Integer id) {
+		logger.info(String.format("DeleteServiceImage - DELETE - Processing request for service's <%s> image.", id));
+		try {
+			if (serviceManager.exist(id)) {
+				serviceManager.updateServiceImageById(id, null);
+				
+				logger.info("DeleteServiceImage - DELETE - Exiting method, providing response resource to client.");
+				return new ResponseEntity<String>(HttpStatus.OK);
+	        }
+			else {
+				logger.info(String.format("DeleteServiceImage - DELETE - Request failed - Unable to delete service's image. Service <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+			}
+		}
+		catch (Exception e) {
+			logger.error(String.format("DeleteServiceImage - DELETE - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

@@ -1,10 +1,20 @@
 package com.yotereparo.service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
+import javax.imageio.ImageIO;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Method;
+import org.imgscalr.Scalr.Mode;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -191,10 +201,54 @@ public class ServiceManagerImpl implements ServiceManager {
 		return dao.getByKey(id);
 	}
 	
+	/*
+	 *  Actualiza la imagen y el thumbnail del Servicio haciendo un resize de la imagen suscripta,
+	 *  si el procesamiento del thumbnail levanta excepcion, no suscribe la actualizacion
+	 *  de la imagen. Si la imagen es nula, eliminamos la imagen y thumbnail actual del servicio.
+	 */
 	@Override
-	public void updateServicePhotoById(Integer id, byte[] b64photo) {
-		// TODO Auto-generated method stub
-		
+	public void updateServiceImageById(Integer id, byte[] image) {
+		Service entity = dao.getServiceById(id);
+		if (image != null) {
+	        try {
+	        	logger.debug(String.format("Updating attribute 'Imagen' from service <%s>",id));
+	        	entity.setImagen(image);
+	        	
+				// construye y guarda el thumbnail a partir de la foto suscripta
+	        	logger.debug("Building thumbnail from input image");
+	        	InputStream is = new ByteArrayInputStream(image);
+		        BufferedImage img = ImageIO.read(is);
+		        BufferedImage thumbImg = Scalr.resize(img, Method.ULTRA_QUALITY,
+	                    Mode.AUTOMATIC, 100, 100);
+		        
+		        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        	ImageIO.write(thumbImg, "png", baos);
+	        	
+	        	logger.debug(String.format("Updating attribute 'Thumbnail' from service <%s>",id));
+		        entity.setThumbnail(baos.toByteArray());
+		        
+		        img.flush();
+		        thumbImg.flush();
+		        baos.close();		        
+	        }
+	        catch (IOException e) {
+	        	logger.error("IOException: "+e.getMessage());
+		        throw new RuntimeException(e.getMessage());
+	        }
+	        finally {
+	        	logger.info(String.format("Commiting update for service <%s>", id));
+	        }
+		}
+		else {
+			if (entity.getImagen() != null || entity.getThumbnail() != null) {
+				logger.debug(String.format("Deleting attribute 'Imagen' and 'Thumbnail' from service <%s>",id));
+				
+				entity.setImagen(null);
+				entity.setThumbnail(null);
+			}
+			
+			logger.debug(String.format("No 'Imagen' nor 'Thumbnail' registered for service <%s>, discarding transaction.",id));
+		}
 	}
 	
 	@Override

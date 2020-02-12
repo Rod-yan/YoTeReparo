@@ -22,7 +22,7 @@ public interface ServiceManager {
      
     Service getServiceById(Integer id);
     
-    void updateServicePhotoById(Integer id, byte[] b64photo);
+    void updateServiceImageById(Integer id, byte[] image);
     
     boolean exist(Service service);
     
