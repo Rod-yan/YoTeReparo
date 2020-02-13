@@ -29,7 +29,7 @@ function App() {
   return (
     <div>
       <Router>
-        <Header>
+        {/* <Header>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -41,7 +41,7 @@ function App() {
               <Link to="/users">Users</Link>
             </li>
           </ul>
-        </Header>
+        </Header> */}
 
         <Switch>
           <Route exact path="/">
@@ -49,15 +49,16 @@ function App() {
               <Home />
             </Container>
           </Route>
-          <Route path="/about">
+          <Route path="/help">
             <Container type="card">
               <About />
             </Container>
           </Route>
-          <Route path="/users">
-            <Container type="card">
-              <UserList />
-            </Container>
+          <Route path="/buscar">
+            <Container type="card"></Container>
+          </Route>
+          <Route path="/encontrar">
+            <Container type="card"></Container>
           </Route>
           <Route path="*">
             <Container type="card">

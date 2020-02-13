@@ -1,0 +1,24 @@
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.home-text-welcome {
+  font-weight: 500;
+  padding: 20px 0px 20px 0px;
+  margin-top: -40px;
+  font-size: 20px;
+}
+
+.home-icon-logo {
+  text-shadow: 3px 3px 16px #272634;
+  margin: auto;
+  padding-top: 0px;
+  transform: translateY(-50px);
+}
+
+.home-icon-color {
+  color: white;
+}
