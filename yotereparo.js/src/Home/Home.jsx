@@ -1,6 +1,5 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import ElementContainer from "../Container/ElementContainer";
 import "../Home/Home.css";
 import CardElement from "../Container/Card";
 

@@ -11,7 +11,6 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Container from "./Container/Container";
-import UserList from "./Users/UserList";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -35,7 +34,7 @@ function App() {
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/about">About</Link>
+              <Link to="/help">About</Link>
             </li>
           </ul>
         </Header>
