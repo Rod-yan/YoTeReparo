@@ -13,10 +13,11 @@ ul {
   position: static;
   overflow: hidden;
   background-color: #53354a;
+  transition: ease-in all 0.5s;
 }
 
 li {
-  float: right;
+  float: left;
 }
 
 li a {
@@ -50,10 +51,11 @@ li a:hover {
     min-width: 75px;
     width: 15%;
     background-color: #e84545;
+    transition: ease-in all 0.5s;
   }
 
   li {
-    float: left;
+    float: right;
   }
 
   li a:hover {

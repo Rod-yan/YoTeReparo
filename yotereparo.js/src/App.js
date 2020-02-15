@@ -40,26 +40,18 @@ function App() {
         </Header>
 
         <Switch>
-          <Route exact path="/">
-            <Container type="card">
+          <Container type="card">
+            <Route exact path="/">
               <Home />
-            </Container>
-          </Route>
-          <Route path="/help">
-            <Container type="card">
+            </Route>
+            <Route path="/help">
               <About />
-            </Container>
-          </Route>
-          <Route path="/buscar">
-            <Container type="card"></Container>
-          </Route>
-          <Route path="/encontrar">
-            <Container type="card"></Container>
-          </Route>
+            </Route>
+            <Route path="/buscar"></Route>
+            <Route path="/encontrar"></Route>
+          </Container>
           <Route path="*">
-            <Container type="card">
-              <NoMatch />
-            </Container>
+            <NoMatch />
           </Route>
         </Switch>
       </Router>
