@@ -2,7 +2,7 @@ import React from "react";
 
 function CardElement(props) {
   return (
-    <div className="container">
+    <div className="container-fluid">
       <div className="container-child">
         <div className="card">
           <div className="card card-element">

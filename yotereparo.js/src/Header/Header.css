@@ -51,6 +51,7 @@ li a:hover {
     position: fixed;
     min-width: 75px;
     width: 10%;
+    opacity: 0.3;
     background-color: #e84545;
     transition: ease-in all 0.5s;
   }

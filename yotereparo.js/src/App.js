@@ -12,6 +12,7 @@ import {
 import "./App.css";
 import Container from "./Container/Container";
 import SelectorDeCategorias from "./Login/SelectorDeCategorias";
+import FormRegistro from "./Login/RegistroUsuarios";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -41,8 +42,12 @@ function App() {
         </Header>
 
         <Switch>
-          <Route path="/registrar-usuario"></Route>
-          <Route path="/registrar-empleador"></Route>
+          <Route path="/registrar-usuario">
+            <FormRegistro></FormRegistro>
+          </Route>
+          <Route path="/registrar-empleador">
+            <FormRegistro></FormRegistro>
+          </Route>
           <Container>
             <Route exact path="/">
               <Home />
