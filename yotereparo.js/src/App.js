@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Container from "./Container/Container";
+import Login from "./Login/Login";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -40,7 +41,7 @@ function App() {
         </Header>
 
         <Switch>
-          <Container type="card">
+          <Container>
             <Route exact path="/">
               <Home />
             </Route>
@@ -49,6 +50,9 @@ function App() {
             </Route>
             <Route path="/buscar"></Route>
             <Route path="/encontrar"></Route>
+            <Route path="/registro">
+              <Login />
+            </Route>
           </Container>
           <Route path="*">
             <NoMatch />

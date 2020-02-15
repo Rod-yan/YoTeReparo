@@ -38,6 +38,7 @@ li a:hover {
     list-style-type: none;
     background-color: #2b2e4a;
     width: 15%;
+    display: inline-flexbox;
   }
 
   ul {
@@ -49,7 +50,7 @@ li a:hover {
     left: 0;
     position: fixed;
     min-width: 75px;
-    width: 15%;
+    width: 10%;
     background-color: #e84545;
     transition: ease-in all 0.5s;
   }
