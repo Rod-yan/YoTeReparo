@@ -29,7 +29,7 @@ function App() {
   return (
     <div>
       <Router>
-        {/* <Header>
+        <Header>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -37,11 +37,8 @@ function App() {
             <li>
               <Link to="/about">About</Link>
             </li>
-            <li>
-              <Link to="/users">Users</Link>
-            </li>
           </ul>
-        </Header> */}
+        </Header>
 
         <Switch>
           <Route exact path="/">
