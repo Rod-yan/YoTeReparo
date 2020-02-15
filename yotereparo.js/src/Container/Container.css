@@ -19,6 +19,7 @@
 
 .container-child {
   padding-top: 50px;
+  display: inline-block;
 }
 
 @media screen and (max-width: 596px) {

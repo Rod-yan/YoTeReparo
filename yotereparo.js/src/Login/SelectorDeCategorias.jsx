@@ -1,7 +1,7 @@
 import React from "react";
 import CardContent from "../Container/CardContent";
 
-function Login(props) {
+function SelectorDeCategorias(props) {
   return (
     <>
       <div className="centered">
@@ -20,7 +20,7 @@ function Login(props) {
               cardIcon="fa-briefcase"
               cardDescription="Si estas buscando crear un nuevo usuario, puedes registrarte normalmente"
               cardUrl="/registrar-empleador"
-              cardButtonText="REGISTRARTE COMO EMPLEADOR"
+              cardButtonText="REGISTRAR EMPLEADOR"
               cardButtonStyle="info"
             />
           </div>
@@ -30,4 +30,4 @@ function Login(props) {
   );
 }
 
-export default Login;
+export default SelectorDeCategorias;
