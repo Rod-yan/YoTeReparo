@@ -22,7 +22,7 @@
   padding-top: 50px;
   display: inline-block;
 }
-
+/* 
 @media screen and (max-width: 596px) {
   .container-child {
     padding-top: 50px;
@@ -47,4 +47,4 @@
     background-image: initial;
     max-height: 500px;
   }
-}
+} */
