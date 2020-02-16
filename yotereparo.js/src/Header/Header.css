@@ -5,6 +5,18 @@
   background-color: #2b2e4a;
 }
 
+.icon-picture {
+  height: 40px;
+  width: 80px;
+  padding: 0px 0px 0px 20px;
+}
+
+.stick-header {
+  text-align: center;
+  padding: 5px 5px 5px 5px;
+  margin: 0;
+}
+
 ul {
   list-style-type: none;
   margin: 0;
@@ -32,44 +44,13 @@ li a {
 li a:hover {
   background-color: #e84545;
 }
-/* 
+
 @media screen and (max-width: 596px) {
-  .navbar {
-    list-style-type: none;
-    background-color: #2b2e4a;
-    width: 15%;
-    display: inline-flexbox;
+  .stick-header {
+    display: none;
   }
 
-  ul {
-    list-style-type: none;
-    margin: 0;
-    height: 100%;
-    padding: 0;
-    overflow: hidden;
-    left: 0;
-    position: fixed;
-    min-width: 75px;
-    width: 10%;
-    opacity: 0.3;
-    background-color: #e84545;
-    transition: ease-in all 0.5s;
+  .icon-picture {
+    display: none;
   }
-
-  li {
-    float: right;
-  }
-
-  li a:hover {
-    background-color: #2b2e4a;
-  }
-
-  li a {
-    display: block;
-    color: white;
-    text-align: center;
-    font-weight: bolder;
-    padding: 14px 16px;
-    text-decoration: none;
-  }
-} */
+}

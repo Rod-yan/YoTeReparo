@@ -14,7 +14,7 @@ import ElementContainer from "../Container/ElementContainer";
 
 const FormRegistro = props => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
-  let isFormUsuario = props.type === "usuario" ? true : false;
+  // let isFormUsuario = props.type === "usuario" ? true : false;
 
   let [account, setAccount] = useState({
     email: "",
@@ -64,7 +64,7 @@ const FormRegistro = props => {
   };
 
   return (
-    <div className="centered">
+    <div className="centered card-center-form">
       <div className="row">
         <div className="col-md-12">
           <ElementContainer>

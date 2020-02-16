@@ -5,7 +5,7 @@ function Container(props) {
   return (
     <div className="container">
       <div className="row">
-        <div className="col-12">{props.children}</div>
+        <div className="col-xs-12">{props.children}</div>
       </div>
     </div>
   );
