@@ -43,10 +43,10 @@ function App() {
 
         <Switch>
           <Route path="/registrar-usuario">
-            <FormRegistro></FormRegistro>
+            <FormRegistro type="usuario"></FormRegistro>
           </Route>
           <Route path="/registrar-empleador">
-            <FormRegistro></FormRegistro>
+            <FormRegistro type="empleador"></FormRegistro>
           </Route>
           <Container>
             <Route exact path="/">
