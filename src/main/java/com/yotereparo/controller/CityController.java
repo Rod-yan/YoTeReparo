@@ -39,7 +39,7 @@ public class CityController {
 	 * Devuelve todas las ciudades registradas en formato JSON.
 	 */
 	@RequestMapping(
-			value = { "/cities/" }, 
+			value = { "/cities" }, 
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listCities() {

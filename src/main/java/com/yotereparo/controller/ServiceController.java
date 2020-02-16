@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -64,27 +66,33 @@ public class ServiceController {
 	 * Devuelve todos los servicios registrados en formato JSON.
 	 */
 	@RequestMapping(
-			value = { "/services/" }, 
+			value = { "/services" }, 
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
-	public ResponseEntity<List<ServiceDto>> listServices() {
+	public ResponseEntity<?> listServices(@RequestParam(required = false) Map<String,String> filters) {
 		logger.info("ListServices - GET - Processing request for a list with all existing services.");
-
-        List<Service> services = serviceManager.getAllServices();
-        
-		if (!services.isEmpty()) {
-			
-			List<ServiceDto> servicesDto = services.stream()
-	                .map(service -> serviceConverter.convertToDto(service))
-	                .collect(Collectors.toList());
-			
-        	logger.info("ListServices - GET - Exiting method, providing response resource to client.");
-            return new ResponseEntity<List<ServiceDto>>(servicesDto, HttpStatus.OK);
-        }
-        else {
-        	logger.info("ListServices - GET - Request failed - No services were found.");
-        	return new ResponseEntity<List<ServiceDto>>(HttpStatus.NO_CONTENT);
-        }
+		try {
+			List<Service> services = serviceManager.getAllServices();
+	        
+			if (!services.isEmpty()) {
+				
+				List<ServiceDto> servicesDto = services.stream()
+		                .map(service -> serviceConverter.convertToDto(service))
+		                .collect(Collectors.toList());
+				
+	        	logger.info("ListServices - GET - Exiting method, providing response resource to client.");
+	            return new ResponseEntity<List<ServiceDto>>(servicesDto, HttpStatus.OK);
+	        }
+	        else {
+	        	logger.info("ListServices - GET - Request failed - No services were found.");
+	        	return new ResponseEntity<List<ServiceDto>>(HttpStatus.NO_CONTENT);
+	        }
+		}
+		catch (Exception e) {
+			logger.error(String.format("ListServices - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
     }
 	
 	/*
@@ -96,25 +104,31 @@ public class ServiceController {
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getService(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetService - GET - Processing request for service <%s>.", id));
-        
-		Service service = serviceManager.getServiceById(id);
-        
-		if (service != null) {
-        	logger.info("GetService - GET - Exiting method, providing response resource to client.");
-            return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(service), HttpStatus.OK);
+        try {
+        	Service service = serviceManager.getServiceById(id);
+            
+    		if (service != null) {
+            	logger.info("GetService - GET - Exiting method, providing response resource to client.");
+                return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(service), HttpStatus.OK);
+            }
+            else {
+            	logger.info(String.format("GetService - GET - Request failed - Service with id <%s> not found.", id));
+                FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+                return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+            }
         }
-        else {
-        	logger.info(String.format("GetService - GET - Request failed - Service with id <%s> not found.", id));
-            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
-            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
-        } 
+        catch (Exception e) {
+			logger.error(String.format("GetService - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
     }
 	
 	/*
 	 * Crea un servicio con los valores del JSON payload recibido.
 	 */
 	@RequestMapping(
-			value = { "/services/" }, 
+			value = { "/services" }, 
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
@@ -357,7 +371,6 @@ public class ServiceController {
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateServiceImage(@PathVariable("id") Integer id, @RequestBody String photoPayload) {
 		logger.info(String.format("UpdateServiceImage - PUT - Processing request for service's <%s> image.", id));
-		
 		// parseamos el json object recibido y generamos el byte array validando la estructura del request al mismo tiempo.
 		try { 
 			JSONObject jsonPhotoPayload = new JSONObject(photoPayload);

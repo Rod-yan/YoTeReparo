@@ -62,7 +62,7 @@ public class UserController {
 	 * Devuelve todos los usuarios registrados en formato JSON.
 	 */
 	@RequestMapping(
-			value = { "/users/" }, 
+			value = { "/users" }, 
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listUsers() {
@@ -125,7 +125,7 @@ public class UserController {
 	 * Crea un usuario con los valores del JSON payload recibido.
 	 */
 	@RequestMapping(
-			value = { "/users/" }, 
+			value = { "/users" }, 
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
