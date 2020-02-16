@@ -32,6 +32,11 @@ a:hover {
   width: 100%;
 }
 
+.box-message-letter {
+  max-width: 280px;
+  padding: 10px;
+}
+
 html {
   height: 100%;
 }

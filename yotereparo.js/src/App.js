@@ -36,7 +36,10 @@ function App() {
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/help">About</Link>
+              <Link to="/help">Sobre Nosotros</Link>
+            </li>
+            <li>
+              <Link to="/registro">Registrarte</Link>
             </li>
           </ul>
         </Header>

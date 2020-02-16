@@ -18,7 +18,7 @@ function SelectorDeCategorias(props) {
           <div className="col-md-6">
             <CardContent
               cardIcon="fa-briefcase"
-              cardDescription="Si estas buscando crear un nuevo usuario, puedes registrarte normalmente"
+              cardDescription="Si estas buscando realizar trabajos, puedes registrarte como empleador"
               cardUrl="/registrar-empleador"
               cardButtonText="REGISTRAR EMPLEADOR"
               cardButtonStyle="info"

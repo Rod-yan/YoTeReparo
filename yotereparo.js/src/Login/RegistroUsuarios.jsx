@@ -4,6 +4,7 @@ import {
   Button,
   Form,
   FormGroup,
+  CustomInput,
   FormFeedback,
   Label,
   Input,
@@ -12,6 +13,9 @@ import {
 import ElementContainer from "../Container/ElementContainer";
 
 const FormRegistro = props => {
+  let isFormEmpleador = props.type === "empleador" ? true : false;
+  let isFormUsuario = props.type === "usuario" ? true : false;
+
   let [account, setAccount] = useState({
     email: "",
     password: "",
@@ -50,12 +54,30 @@ const FormRegistro = props => {
     }
   };
 
+  let validatePassword = event => {
+    var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+    if (strongRegex.test(event.target.value)) {
+      account["validate"].passwordState = "success";
+    } else {
+      account["validate"].passwordState = "danger";
+    }
+  };
+
   return (
     <div className="centered">
       <div className="row">
         <div className="col-md-12">
           <ElementContainer>
-            <Form className="text-center" onSubmit={handleSubmit}>
+            <div className="text-center">
+              <div className="lead mb-2">
+                {isFormEmpleador ? (
+                  <strong>REGISTRARSE COMO TRABAJADOR</strong>
+                ) : (
+                  <strong>REGISTRARSE COMO USUARIO</strong>
+                )}
+              </div>
+            </div>
+            <Form onSubmit={handleSubmit}>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="emailLabel" className="mr-sm-2 font-weight-bold">
                   EMAIL
@@ -72,7 +94,7 @@ const FormRegistro = props => {
                     validateEmail(e);
                   }}
                 />
-                <FormFeedback>
+                <FormFeedback className="lead box-message-letter">
                   El email que ingresaste no cumple con las politicas
                 </FormFeedback>
               </FormGroup>
@@ -81,16 +103,42 @@ const FormRegistro = props => {
                   CONTRASEÑA
                 </Label>
                 <Input
+                  valid={account["validate"].passwordState === "success"}
+                  invalid={account["validate"].passwordState === "danger"}
                   type="password"
                   name="password"
                   id="passwordLabel"
                   placeholder="********"
-                  onChange={handleChange}
+                  onChange={e => {
+                    handleChange(e);
+                    validatePassword(e);
+                  }}
                 />
-                <FormFeedback>
-                  La contraseña que ingresaste no cumple con las politicas
+                <FormFeedback className="lead box-message-letter">
+                  La contraseña que ingresaste debe poseer una letra mayuscula,
+                  un caracter numerico y debe ser de 8 caracteres o más.
                 </FormFeedback>
               </FormGroup>
+              {isFormEmpleador ? (
+                <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-0">
+                  <Label for="rubroSelect" className="mr-sm-2 font-weight-bold">
+                    RUBRO
+                  </Label>
+                  <CustomInput type="checkbox" id="rubroHogar" label="Hogar" />
+                  <CustomInput
+                    type="checkbox"
+                    id="rubroInformatica"
+                    label="Informatica/Electronica"
+                  />
+                  <CustomInput
+                    type="checkbox"
+                    id="rubroOtros"
+                    label="Otros..."
+                  />
+                </FormGroup>
+              ) : (
+                <></>
+              )}
               {infomessage === "" ? (
                 <></>
               ) : (
@@ -98,7 +146,11 @@ const FormRegistro = props => {
                   {infomessage}
                 </FormText>
               )}
-              <Button className="mt-4 mb-1">INGRESAR</Button>
+              <div className="text-center">
+                <Button color="primary" size="lg" block className="mt-4">
+                  INGRESAR
+                </Button>
+              </div>
             </Form>
           </ElementContainer>
         </div>
