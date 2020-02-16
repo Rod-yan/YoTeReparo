@@ -25,7 +25,7 @@ const FormRegistro = props => {
 
   useEffect(() => {
     if (account["validate"].emailState === "") {
-      setMessage("Ingresa correctamente los datos...");
+      setMessage("Ingresa los datos necesarios...");
     } else {
       setMessage("");
     }
@@ -73,7 +73,7 @@ const FormRegistro = props => {
                   }}
                 />
                 <FormFeedback>
-                  El email que ingresaste no cumple con las poltiicas
+                  El email que ingresaste no cumple con las politicas
                 </FormFeedback>
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
@@ -91,8 +91,14 @@ const FormRegistro = props => {
                   La contraseña que ingresaste no cumple con las politicas
                 </FormFeedback>
               </FormGroup>
-              <Button className="mt-4">INGRESAR</Button>
-              <FormText>{infomessage}</FormText>
+              {infomessage === "" ? (
+                <></>
+              ) : (
+                <FormText className="mt-4 mb-1 alert alert-warning">
+                  {infomessage}
+                </FormText>
+              )}
+              <Button className="mt-4 mb-1">INGRESAR</Button>
             </Form>
           </ElementContainer>
         </div>
