@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import UserList from "./Users/UserList";
+import UserList from "../Users/UserList";
 import Axios from "axios";
-import Hoc from "./Utils/Hoc";
-import ElementContainer from "./Container/ElementContainer";
+import Hoc from "../Utils/Hoc";
+import ElementContainer from "../Container/ElementContainer";
 
 function FindHome(props) {
   const [users, setUsers] = useState([]);
@@ -31,10 +31,12 @@ function FindHome(props) {
 
   return (
     <ElementContainer>
-      <div className="mx-auto">
-        <div className="row">
-          <div className="col-12">
-            <Users></Users>
+      <div className="container">
+        <div className="center-content">
+          <div className="row">
+            <div className="col-xs-12">
+              <Users></Users>
+            </div>
           </div>
         </div>
       </div>

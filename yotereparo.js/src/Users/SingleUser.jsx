@@ -1,5 +1,4 @@
 import React from "react";
-import ElementContainer from "../Container/ElementContainer";
 
 const SingleUser = props => (
   <>

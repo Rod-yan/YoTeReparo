@@ -13,7 +13,7 @@ import "./App.css";
 import Container from "./Container/Container";
 import SelectorDeCategorias from "./Login/SelectorDeCategorias";
 import FormRegistro from "./Login/RegistroUsuarios";
-import FindHome from "./FindHome";
+import FindHome from "./Find/FindHome";
 
 const NoMatch = () => {
   let location = useLocation();
