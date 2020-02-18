@@ -2,12 +2,15 @@ import React from "react";
 import ElementContainer from "../Container/ElementContainer";
 
 const SingleUser = props => (
-  <ElementContainer>
-    <p>{props.data.nombre} </p>
-    <p>{props.data.apellido} </p>
-    <p>{props.data.email} </p>
-    <p>{props.data.ciudad} </p>
-  </ElementContainer>
+  <>
+    <div className="row">
+      <div className="col-xs-12">
+        <h1>{props.data.id} </h1>
+        <p>{props.data.title} </p>
+        <p>{props.data.completed} </p>
+      </div>
+    </div>
+  </>
 );
 
 export default SingleUser;

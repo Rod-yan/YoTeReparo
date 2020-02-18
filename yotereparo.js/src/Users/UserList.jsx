@@ -1,26 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Axios from "axios";
+import React from "react";
 import ElementContainer from "../Container/ElementContainer";
 import SingleUser from "./SingleUser";
 
 const UserList = props => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await Axios("http://localhost:8080/yotereparo/users/");
-      setUsers(result.data);
-      setLoading(false);
-    }
-    fetchData();
-  }, []);
-
-  if (Array.isArray(users) && users.length) {
-    console.log(users);
-  }
-
-  if (loading) {
+  if (props.data.loading) {
     return (
       <ElementContainer>
         <div>
@@ -33,13 +16,13 @@ const UserList = props => {
   }
   return (
     <ElementContainer>
-      {users === undefined ? (
+      {props.data.users === undefined ? (
         <div className="col d-flex justify-content-center">
           <div className="cover-screen">No results.</div>
         </div>
       ) : (
         <div>
-          {users.map(item => (
+          {props.data.users.map(item => (
             <div>
               <SingleUser data={item}></SingleUser>
             </div>
