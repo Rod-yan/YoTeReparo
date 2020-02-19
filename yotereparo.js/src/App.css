@@ -69,7 +69,7 @@ body {
     left: auto;
     transform: translate(0, 0);
     display: block;
-    width: 100%;
+    width: auto;
     height: 100%;
   }
 

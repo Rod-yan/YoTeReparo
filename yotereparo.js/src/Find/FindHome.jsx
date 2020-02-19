@@ -31,12 +31,10 @@ function FindHome(props) {
 
   return (
     <ElementContainer>
-      <div className="container">
-        <div className="center-content">
-          <div className="row">
-            <div className="col-xs-12">
-              <Users></Users>
-            </div>
+      <div className="card-center-form d-flex align-items-center mx-auto">
+        <div className="row">
+          <div className="col-xs-12">
+            <Users></Users>
           </div>
         </div>
       </div>

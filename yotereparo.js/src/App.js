@@ -52,6 +52,7 @@ function App() {
           <Route path="/registrar-empleador">
             <FormRegistro type="empleador"></FormRegistro>
           </Route>
+
           <Container>
             <Route exact path="/">
               <Home />

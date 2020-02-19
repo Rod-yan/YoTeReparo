@@ -3,9 +3,9 @@ import "../Container/Container.css";
 
 function Container(props) {
   return (
-    <div className="container-fluid">
+    <div className="container">
       <div className="row">
-        <div className="col-xs-12">{props.children}</div>
+        <div className="col-md-12">{props.children}</div>
       </div>
     </div>
   );
