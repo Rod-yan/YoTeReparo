@@ -15,11 +15,12 @@ function FindHome(props) {
 
   useEffect(() => {
     try {
-      fetchData("https://jsonplaceholder.typicode.com/posts");
+      fetchData("https://jsonplaceholder.typicode.com/posts").then(resp => {
+        setLoading(false);
+      });
     } catch (error) {
       console.log(error);
     }
-    setLoading(false);
   }, [loading]);
 
   const UserData = {

@@ -3,6 +3,7 @@ import ElementContainer from "../Container/ElementContainer";
 import SingleUser from "./SingleUser";
 
 const UserList = props => {
+  console.log(props.data.loading);
   if (props.data.loading) {
     return (
       <ElementContainer>
@@ -15,21 +16,21 @@ const UserList = props => {
     );
   }
   return (
-    <ElementContainer>
+    <>
       {props.data.users === undefined ? (
         <div className="col d-flex justify-content-center">
           <div className="cover-screen">No results.</div>
         </div>
       ) : (
         <div>
-          {props.data.users.map(item => (
-            <div>
+          {props.data.users.map((item, i) => (
+            <div key={i}>
               <SingleUser data={item}></SingleUser>
             </div>
           ))}
         </div>
       )}
-    </ElementContainer>
+    </>
   );
 };
 

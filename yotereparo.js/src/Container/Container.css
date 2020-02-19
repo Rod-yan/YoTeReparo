@@ -21,6 +21,15 @@
   display: inline-block;
 }
 
+@media screen and (max-width: 596px) {
+  .container-child {
+    padding: 50px 5px 5px;
+    margin: auto;
+    margin-left: -15px;
+    display: block;
+  }
+}
+
 /* 
 @media screen and (max-width: 596px) {
   .container-child {
