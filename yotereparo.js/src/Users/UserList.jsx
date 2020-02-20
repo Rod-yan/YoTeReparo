@@ -3,7 +3,7 @@ import ElementContainer from "../Container/ElementContainer";
 import SingleUser from "./SingleUser";
 
 const UserList = props => {
-  console.log(props.data.loading);
+  console.log(props.data);
   if (props.data.loading) {
     return (
       <ElementContainer>
