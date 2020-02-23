@@ -125,7 +125,7 @@ public class ServiceDto {
 	}
 
 	public void setPrecioPromedio(Float precioPromedio) {
-		this.precioPromedio = (precioMaximo+precioMinimo)/2;
+		this.precioPromedio = (float) Math.ceil((precioMaximo+precioMinimo)/2);
 	}
 
 	public Float getPrecioInsumos() {
