@@ -1,6 +1,6 @@
 .navbar {
   list-style-type: none;
-  margin: 0;
+  margin: 0px 0px 20px 0px;
   padding: 0;
   background-color: #2b2e4a;
 }
@@ -8,7 +8,7 @@
 .icon-picture {
   height: 40px;
   width: 80px;
-  padding: 0px 0px 0px 20px;
+  padding: 0px 0px 0px 35px;
 }
 
 .stick-header {
