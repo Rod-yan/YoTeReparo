@@ -91,10 +91,8 @@ public class Service {
         joinColumns = {@JoinColumn(name="id_servicio")},
         inverseJoinColumns = {@JoinColumn(name="id_requerimiento")}    
     )
-	private Set<Requirement> requerimiento = new HashSet<Requirement>(0);
-	
-	//TODO: Contrato ?
-	
+	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
+		
 	public Service() { }
 	
 	/* Getters & Setters */
@@ -141,7 +139,6 @@ public class Service {
 	public Float getPrecioMinimo() {
 		return precioMinimo;
 	}
-
 	public void setPrecioMinimo(Float precioMinimo) {
 		this.precioMinimo = precioMinimo;
 	}
@@ -149,7 +146,6 @@ public class Service {
 	public Float getPrecioPromedio() {
 		return precioPromedio;
 	}
-
 	public void setPrecioPromedio(Float precioPromedio) {
 		this.precioPromedio = (precioMaximo+precioMinimo)/2;
 	}
@@ -157,7 +153,6 @@ public class Service {
 	public Float getPrecioInsumos() {
 		return precioInsumos;
 	}
-
 	public void setPrecioInsumos(Float precioInsumos) {
 		this.precioInsumos = precioInsumos;
 	}
@@ -165,7 +160,6 @@ public class Service {
 	public Float getPrecioAdicionales() {
 		return precioAdicionales;
 	}
-
 	public void setPrecioAdicionales(Float precioAdicionales) {
 		this.precioAdicionales = precioAdicionales;
 	}
@@ -173,7 +167,6 @@ public class Service {
 	public Float getHorasEstimadasEjecucion() {
 		return horasEstimadasEjecucion;
 	}
-
 	public void setHorasEstimadasEjecucion(Float horasEstimadasEjecucion) {
 		this.horasEstimadasEjecucion = horasEstimadasEjecucion;
 	}
@@ -181,7 +174,6 @@ public class Service {
 	public Integer getCantidadTrabajadores() {
 		return cantidadTrabajadores;
 	}
-
 	public void setCantidadTrabajadores(Integer cantidadTrabajadores) {
 		this.cantidadTrabajadores = cantidadTrabajadores;
 	}
@@ -189,7 +181,6 @@ public class Service {
 	public boolean isFacturaEmitida() {
 		return facturaEmitida;
 	}
-
 	public void setFacturaEmitida(boolean facturaEmitida) {
 		this.facturaEmitida = facturaEmitida;
 	}
@@ -197,7 +188,6 @@ public class Service {
 	public byte[] getImagen() {
 		return imagen;
 	}
-
 	public void setImagen(byte[] imagen) {
 		this.imagen = imagen;
 	}
@@ -205,7 +195,6 @@ public class Service {
 	public byte[] getThumbnail() {
 		return thumbnail;
 	}
-
 	public void setThumbnail(byte[] thumbnail) {
 		this.thumbnail = thumbnail;
 	}
@@ -213,7 +202,6 @@ public class Service {
 	public ServiceType getTipoServicio() {
 		return tipoServicio;
 	}
-
 	public void setTipoServicio(ServiceType tipoServicio) {
 		this.tipoServicio = tipoServicio;
 	}
@@ -221,7 +209,6 @@ public class Service {
 	public DateTime getFechaCreacion() {
 		return fechaCreacion;
 	}
-
 	public void setFechaCreacion(DateTime fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
 	}
@@ -229,7 +216,6 @@ public class Service {
 	public String getEstado() {
 		return estado;
 	}
-
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
@@ -237,16 +223,27 @@ public class Service {
 	public Set<PaymentMethod> getMediosDePago() {
 		return mediosDePago;
 	}
-
 	public void setMediosDePago(Set<PaymentMethod> mediosDePago) {
 		this.mediosDePago = mediosDePago;
 	}
-	
 	public void addMedioDePago(PaymentMethod medioDePago) {
 		mediosDePago.add(medioDePago);
     }
-    public void removeDireccion(PaymentMethod medioDePago) {
+    public void removeMedioDePago(PaymentMethod medioDePago) {
     	mediosDePago.remove(medioDePago);
+    }
+    
+	public Set<Requirement> getRequerimientos() {
+		return requerimientos;
+	}
+	public void setRequerimientos(Set<Requirement> requerimientos) {
+		this.requerimientos = requerimientos;
+	}
+	public void addRequerimiento(Requirement requerimiento) {
+		requerimientos.add(requerimiento);
+    }
+    public void removeRequerimiento(Requirement requerimiento) {
+    	requerimientos.remove(requerimiento);
     }
 
 	@Override
@@ -297,6 +294,11 @@ public class Service {
 				return false;
 		} else if (!mediosDePago.equals(other.mediosDePago))
 			return false;
+		if (requerimientos == null) {
+			if (other.requerimientos != null)
+				return false;
+		} else if (!requerimientos.equals(other.requerimientos))
+			return false;
 		if (precioAdicionales == null) {
 			if (other.precioAdicionales != null)
 				return false;
@@ -341,6 +343,6 @@ public class Service {
 				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", imagen="
 				+ Arrays.toString(imagen) + ", thumbnail=" + Arrays.toString(thumbnail) + ", tipoServicio="
 				+ tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago="
-				+ mediosDePago + "]";
+				+ mediosDePago + ", requerimientos=" + requerimientos + "]";
 	}
 }
