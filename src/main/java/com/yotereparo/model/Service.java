@@ -85,7 +85,13 @@ public class Service {
     )
 	private Set<PaymentMethod> mediosDePago = new HashSet<PaymentMethod>(0);
 	
-	//TODO: Requerimiento
+
+	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
+    @JoinTable(name="servicio_requerimiento",
+        joinColumns = {@JoinColumn(name="id_servicio")},
+        inverseJoinColumns = {@JoinColumn(name="id_requerimiento")}    
+    )
+	private Set<Requirement> requerimiento = new HashSet<Requirement>(0);
 	
 	//TODO: Contrato ?
 	
