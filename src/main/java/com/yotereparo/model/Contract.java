@@ -224,7 +224,7 @@ public class Contract {
 
 	@Override
 	public String toString() {
-		return "Service [id=" + id + ", servicio=" + servicio.getId() + ", descripcion=" + descripcion
+		return "Contract [id=" + id + ", servicio=" + servicio.getId() + ", descripcion=" + descripcion
 				+ ", usuarioFinal=" + usuarioFinal.getId() + ", fechaContratacion=" + fechaContratacion + ", fechaInicioEjecucion="
 				+ fechaInicioEjecucion + ", fechaFinEjecucion=" + fechaFinEjecucion + ", precioFinal=" + precioFinal
 				+ ", incluyeInsumos=" + incluyeInsumos + ", incluyeAdicionales=" + incluyeAdicionales
