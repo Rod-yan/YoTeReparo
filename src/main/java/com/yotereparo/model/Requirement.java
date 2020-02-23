@@ -15,7 +15,7 @@ public class Requirement {
 	@Id
 	@NotNull(message = "{Requirement.id.not.null}")
 	@Column(name = "id_requerimiento", nullable = false)
-	private String id;
+	private Integer id;
 	
 	@NotEmpty(message = "{Requirement.descripcion.not.empty}")
 	private String descripcion;
@@ -23,10 +23,10 @@ public class Requirement {
 	public Requirement() { }
 
 	/* Getters & Setters */
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -61,11 +61,6 @@ public class Requirement {
 			if (other.descripcion != null)
 				return false;
 		} else if (!descripcion.equals(other.descripcion))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
