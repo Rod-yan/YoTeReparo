@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -37,6 +38,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.converter.ServiceConverter;
 import com.yotereparo.model.Service;
+import com.yotereparo.service.CityService;
+import com.yotereparo.service.PaymentMethodService;
 import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
@@ -58,6 +61,10 @@ public class ServiceController {
 	@Autowired
     UserService userService;
 	@Autowired
+    CityService cityService;
+	@Autowired
+    PaymentMethodService paymentMethodService;
+	@Autowired
     MessageSource messageSource;
 	@Autowired
 	ServiceConverter serviceConverter;
@@ -72,9 +79,30 @@ public class ServiceController {
 	public ResponseEntity<?> listServices(@RequestParam(required = false) Map<String,String> filters) {
 		logger.info("ListServices - GET - Processing request for a list with all existing services.");
 		try {
-			List<Service> services = serviceManager.getAllServices();
-	        
-			if (!services.isEmpty()) {
+			List<Service> services = null;
+			
+			if (filters.size() == 1) {
+				Entry<String, String> filterBy = filters.entrySet().iterator().next();
+				String idValue = filterBy.getValue().toLowerCase();
+				switch (filterBy.getKey().toLowerCase()) {
+					case "user":
+						if (userService.exist(idValue))
+							services = serviceManager.getAllServices(userService.getUserById(idValue));
+						break;
+					case "district":
+						/*if (cityService.exist(idValue))
+							services = serviceManager.getAllServices(cityService.getCityById(idValue));*/
+						break;
+					case "city":
+						/*if (cityService.exist(idValue))
+							services = serviceManager.getAllServices(cityService.getCityById(idValue));*/
+						break;
+				}
+			}
+			else if (filters.size() == 0)
+				services = serviceManager.getAllServices();
+			
+			if (services != null && !services.isEmpty()) {
 				
 				List<ServiceDto> servicesDto = services.stream()
 		                .map(service -> serviceConverter.convertToDto(service))
@@ -89,7 +117,7 @@ public class ServiceController {
 	        }
 		}
 		catch (Exception e) {
-			logger.error(String.format("ListServices - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("ListServices - GET - Request failed - Error procesing request: <%s>", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -118,7 +146,7 @@ public class ServiceController {
             }
         }
         catch (Exception e) {
-			logger.error(String.format("GetService - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("GetService - GET - Request failed - Error procesing request: <%s>", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -164,7 +192,7 @@ public class ServiceController {
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
-			logger.error(String.format("CreateService - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("CreateService - POST - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -209,7 +237,7 @@ public class ServiceController {
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
-			logger.error(String.format("UpdateService - PUT - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("UpdateService - PUT - Request failed - Error procesing request: <%s>", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -238,7 +266,7 @@ public class ServiceController {
 	        }
 		}
 		catch (Exception e) {
-			logger.error(String.format("EnableService - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("EnableService - POST - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
@@ -267,7 +295,7 @@ public class ServiceController {
 	        }
 		}
 		catch (Exception e) {
-			logger.error(String.format("DisableService - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("DisableService - POST - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
@@ -296,7 +324,7 @@ public class ServiceController {
 	        }
 		}
 		catch (Exception e) {
-			logger.error(String.format("DeleteService - DELETE - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("DeleteService - DELETE - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
@@ -354,7 +382,7 @@ public class ServiceController {
 			}
 		}
 		catch (Exception e) {
-			logger.error(String.format("GetServiceImage - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("GetServiceImage - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
@@ -398,7 +426,7 @@ public class ServiceController {
         	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
-			logger.error(String.format("UpdateServiceImage - PUT - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("UpdateServiceImage - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		} 
@@ -427,7 +455,7 @@ public class ServiceController {
 			}
 		}
 		catch (Exception e) {
-			logger.error(String.format("DeleteServiceImage - DELETE - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("DeleteServiceImage - DELETE - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}

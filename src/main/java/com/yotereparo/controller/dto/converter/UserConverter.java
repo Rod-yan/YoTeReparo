@@ -37,7 +37,11 @@ public class UserConverter extends Converter {
 	}
 	
 	public User convertToEntity(UserDto userDto) {
+		// Quito ID a direcciones ya que estos son autogenerados
+		userDto.getDirecciones().forEach(direccion -> direccion.setId(null));
+		
 	    User user = modelMapper.map(userDto, User.class);
+	    
 	    if (cityService.exist(userDto.getCiudad()))
 	    	user.setCiudad(cityService.getCityById(userDto.getCiudad()));
 	    else

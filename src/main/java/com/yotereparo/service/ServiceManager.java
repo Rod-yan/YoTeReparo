@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.yotereparo.model.City;
 import com.yotereparo.model.District;
-import com.yotereparo.model.PaymentMethod;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
 
@@ -35,8 +34,6 @@ public interface ServiceManager {
     List<Service> getAllServices(District district);
     
     List<Service> getAllServices(City city);
-    
-    List<Service> getAllServices(PaymentMethod paymentMethod);
     
     //List<Service> getAllServices(ServiceType serviceType);
     

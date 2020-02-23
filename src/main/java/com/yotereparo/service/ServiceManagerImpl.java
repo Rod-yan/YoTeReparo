@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.yotereparo.dao.ServiceDaoImpl;
 import com.yotereparo.model.City;
 import com.yotereparo.model.District;
-import com.yotereparo.model.PaymentMethod;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
 import com.yotereparo.util.error.CustomResponseError;
@@ -289,11 +288,5 @@ public class ServiceManagerImpl implements ServiceManager {
 	public List<Service> getAllServices(City city) {
 		logger.debug(String.format("Fetching all services within city <%s>", city.getDescripcion()));
 		return dao.getAllServices(city);
-	}
-	
-	@Override
-	public List<Service> getAllServices(PaymentMethod paymentMethod) {
-		logger.debug(String.format("Fetching all services accepting payment method <%s>", paymentMethod.getDescripcion()));
-		return dao.getAllServices(paymentMethod);
 	}
 }
