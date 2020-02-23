@@ -4,7 +4,7 @@ import Axios from "axios";
 import Hoc from "../Utils/Hoc";
 import ElementContainer from "../Container/ElementContainer";
 
-function FindHome(props) {
+function FindUsers(props) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,4 +43,4 @@ function FindHome(props) {
   );
 }
 
-export default FindHome;
+export default FindUsers;

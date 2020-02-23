@@ -13,7 +13,8 @@ import "./App.css";
 import Container from "./Container/Container";
 import SelectorDeCategorias from "./Login/SelectorDeCategorias";
 import FormRegistro from "./Login/RegistroUsuarios";
-import FindHome from "./Find/FindHome";
+import FindUsers from "./Find/FindUsers";
+import Tour from "./Tour/Tour";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -52,6 +53,9 @@ function App() {
           <Route path="/registrar-empleador">
             <FormRegistro type="empleador"></FormRegistro>
           </Route>
+          <Route path="/tour">
+            <Tour />
+          </Route>
 
           <Container>
             <Route exact path="/">
@@ -61,7 +65,7 @@ function App() {
               <About />
             </Route>
             <Route path="/buscar">
-              <FindHome></FindHome>
+              <FindUsers></FindUsers>
             </Route>
             <Route path="/encontrar"></Route>
             <Route path="/registro">

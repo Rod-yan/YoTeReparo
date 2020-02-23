@@ -1,0 +1,18 @@
+.errors-list {
+  width: auto;
+  text-align: center;
+  max-height: 150px;
+  min-width: 300px;
+  padding: 20px 0px 20px 0px;
+  margin: 20px 0px 20px 0px;
+  overflow: scroll;
+  overflow-x: hidden;
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+:root {
+  scrollbar-face-color: rgb(210, 210, 210); /* Firefox 63 compatibility */
+  scrollbar-track-color: rgb(46, 54, 69); /* Firefox 63 compatibility */
+  scrollbar-color: rgb(210, 210, 210) rgb(46, 54, 69);
+  scrollbar-width: thin;
+}

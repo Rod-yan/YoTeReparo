@@ -11,19 +11,33 @@ import {
   FormText
 } from "reactstrap";
 import ElementContainer from "../Container/ElementContainer";
+import { useHistory } from "react-router-dom";
+import Axios from "axios";
+import "../Login/RegistroUsuarios.css";
 
 const FormRegistro = props => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
   // let isFormUsuario = props.type === "usuario" ? true : false;
 
+  let history = useHistory();
+
   let [account, setAccount] = useState({
     email: "",
     password: "",
+    nombre: "",
+    apellido: "",
+    ciudad: "",
     validate: {
       emailState: "",
       passwordState: true
     }
   });
+
+  let [formErrors, setErrors] = useState({
+    errors: []
+  });
+
+  let [isCreatingUser, setIsCreatingUser] = useState(false);
 
   let [infomessage, setMessage] = useState("");
 
@@ -38,6 +52,68 @@ const FormRegistro = props => {
   let handleSubmit = event => {
     event.preventDefault();
     console.log(account);
+
+    setIsCreatingUser(true);
+
+    let requestData = {
+      id: account.nombre + account.apellido,
+      nombre: account.nombre,
+      apellido: account.apellido,
+      ciudad: account.ciudad,
+      email: account.email,
+      contrasena: account.password,
+      direcciones: [
+        {
+          calle: "Alcorta",
+          altura: 332,
+          piso: "0",
+          departamento: "333",
+          descripcion: "TuVieja"
+        }
+      ]
+    };
+
+    let requestHeaders = {
+      "Access-Control-Allow-Origin": "*"
+    };
+
+    Axios.post(
+      "http://localhost:8080/yotereparo/users/",
+      requestData,
+      requestHeaders
+    )
+      .then(response => {
+        console.log(response.status);
+        if (response.status == 400) {
+          console.log(response.json);
+        } else {
+          history.push("/tour");
+        }
+      })
+      .catch(error => {
+        processErrors(error.response);
+        setIsCreatingUser(false);
+      });
+  };
+
+  let processErrors = incomingErrors => {
+    let errors = [];
+
+    if (incomingErrors.data.length >= 1) {
+      incomingErrors.data.forEach(error => {
+        errors.push({
+          type: error.field,
+          message: error.defaultMessage
+        });
+      });
+    } else {
+      errors.push({
+        type: incomingErrors.data.field,
+        message: incomingErrors.data.defaultMessage
+      });
+    }
+
+    setErrors({ ...formErrors, errors });
   };
 
   let handleChange = async event => {
@@ -77,7 +153,69 @@ const FormRegistro = props => {
                 )}
               </div>
             </div>
+            {formErrors.errors.length >= 1 ? (
+              <div className="errors-list">
+                {formErrors.errors.map((error, i) => (
+                  <p key={i} className="font-weight-light">
+                    <span className="fa-stack fa-1x">
+                      <i className={`fas fa-times fa-stack-1x`}></i>
+                    </span>{" "}
+                    {error.message}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <></>
+            )}
             <Form onSubmit={handleSubmit}>
+              <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                <Label for="nombreLabel" className="mr-sm-2 font-weight-bold">
+                  NOMBRE
+                </Label>
+                <Input
+                  type="text"
+                  name="nombre"
+                  id="nombreLabel"
+                  placeholder="Tu nombre..."
+                  onChange={e => {
+                    handleChange(e);
+                  }}
+                />
+              </FormGroup>
+              <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                <Label for="apellidoLabel" className="mr-sm-2 font-weight-bold">
+                  APELLIDO
+                </Label>
+                <Input
+                  type="text"
+                  name="apellido"
+                  id="apellidoLabel"
+                  placeholder="Tu apellido..."
+                  onChange={e => {
+                    handleChange(e);
+                  }}
+                />
+              </FormGroup>
+              <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
+                  CIUDAD
+                </Label>
+                <Input
+                  type="select"
+                  name="ciudad"
+                  id="ciudadLabel"
+                  defaultValue=""
+                  onChange={e => {
+                    handleChange(e);
+                  }}
+                >
+                  <option value="" disabled hidden>
+                    Selecciona una ciudad
+                  </option>
+                  <option value="rosario">Rosario</option>
+                  <option value="cordoba">Cordoba</option>
+                </Input>
+              </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="emailLabel" className="mr-sm-2 font-weight-bold">
                   EMAIL
@@ -148,7 +286,13 @@ const FormRegistro = props => {
               )}
               <div className="text-center">
                 <Button color="primary" size="lg" block className="mt-4">
-                  INGRESAR
+                  {!isCreatingUser ? (
+                    "INGRESAR"
+                  ) : (
+                    <div className="spinner-border" role="status">
+                      <span className="sr-only">Creando Usuario...</span>
+                    </div>
+                  )}
                 </Button>
               </div>
             </Form>
