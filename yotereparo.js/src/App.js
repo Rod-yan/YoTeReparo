@@ -15,16 +15,29 @@ import SelectorDeCategorias from "./Login/SelectorDeCategorias";
 import FormRegistro from "./Login/RegistroUsuarios";
 import FindUsers from "./Find/FindUsers";
 import Tour from "./Tour/Tour";
+import ElementContainer from "./Container/ElementContainer";
 
 const NoMatch = () => {
   let location = useLocation();
 
   return (
-    <div>
-      <h3>
-        No match for <code>{location.pathname}</code>
-      </h3>
-    </div>
+    <>
+      {" "}
+      <ElementContainer>
+        <div className="card-center-form d-flex align-items-center mx-auto">
+          <div className="row">
+            <div className="col-xs-12">
+              Donde sea que estes yendo, este no es el camino.
+              <br></br>
+              <br></br>
+              <code>
+                <strong>{location.pathname}</strong>
+              </code>
+            </div>
+          </div>
+        </div>
+      </ElementContainer>
+    </>
   );
 };
 
@@ -38,42 +51,53 @@ function App() {
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/help">Sobre Nosotros</Link>
-            </li>
-            <li>
               <Link to="/registro">Registrarte</Link>
             </li>
           </ul>
         </Header>
 
         <Switch>
+          <Route exact path="/">
+            <Container>
+              <Home />
+            </Container>
+          </Route>
+          <Route path="/help">
+            <Container>
+              <About />
+            </Container>
+          </Route>
+          <Route path="/buscar">
+            <Container>
+              <FindUsers></FindUsers>
+            </Container>
+          </Route>
+          <Route path="/encontrar"></Route>
+          <Route path="/registro">
+            <Container>
+              <SelectorDeCategorias />
+            </Container>
+          </Route>
           <Route path="/registrar-usuario">
-            <FormRegistro type="usuario"></FormRegistro>
+            <Container>
+              <FormRegistro type="usuario"></FormRegistro>
+            </Container>
           </Route>
           <Route path="/registrar-empleador">
-            <FormRegistro type="empleador"></FormRegistro>
+            <Container>
+              <FormRegistro type="empleador"></FormRegistro>
+            </Container>
           </Route>
           <Route path="/tour">
-            <Tour />
+            <Container>
+              <Tour />
+            </Container>
           </Route>
 
-          <Container>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route path="/help">
-              <About />
-            </Route>
-            <Route path="/buscar">
-              <FindUsers></FindUsers>
-            </Route>
-            <Route path="/encontrar"></Route>
-            <Route path="/registro">
-              <SelectorDeCategorias />
-            </Route>
-          </Container>
-          <Route path="*">
-            <NoMatch />
+          <Route>
+            <Container>
+              <NoMatch></NoMatch>
+            </Container>
           </Route>
         </Switch>
       </Router>
