@@ -334,7 +334,7 @@ public class Service {
 
 	@Override
 	public String toString() {
-		return "Service [id=" + id + ", usuarioPrestador=" + usuarioPrestador + ", descripcion=" + descripcion
+		return "Service [id=" + id + ", usuarioPrestador=" + usuarioPrestador.getId() + ", descripcion=" + descripcion
 				+ ", disponibilidad=" + disponibilidad + ", precioMaximo=" + precioMaximo + ", precioMinimo="
 				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
 				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion

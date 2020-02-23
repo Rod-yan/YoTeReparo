@@ -5,13 +5,18 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.Subquery;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+import com.yotereparo.model.City;
+import com.yotereparo.model.District;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
 
@@ -25,6 +30,8 @@ import com.yotereparo.model.User;
  */
 @Repository
 public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements ServiceDao {
+	
+	private static final Logger logger = LogManager.getLogger(ServiceDaoImpl.class);
 
 	public Service getServiceById(Integer id) {
 		return getByKey(id);
@@ -41,30 +48,29 @@ public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements Ser
 	}
  
 	public List<Service> getAllServices(Object obj) {
-		Expression<Boolean> filter = null;
-		TypedQuery<Service> query = null;
-		CriteriaBuilder builder = getSession().getCriteriaBuilder();
-		CriteriaQuery<Service> criteriaQuery = builder.createQuery(Service.class);
-		Root<Service> s = criteriaQuery.from(Service.class);
+		Query<Service> query = null;
+		CriteriaBuilder cb = getSession().getCriteriaBuilder();
+		CriteriaQuery<Service> cq = cb.createQuery(Service.class);
+		Root<Service> service = cq.from(Service.class);
+		
 		if (obj != null)
 			switch (obj.getClass().getSimpleName()) {
 				case ("User"):
-					User user = (User) obj;
-					ParameterExpression<String> userId = builder.parameter(String.class);
-					filter = builder.equal(s.get("id_usuario_prestador"), userId);
-					query = getSession().createQuery(criteriaQuery.where(filter));
-					query.setParameter(userId, user.getId());
+					cq.select(service).where(cb.equal(service.get("usuarioPrestador"), (User) obj));
 					break;
-				case ("District"):
+				case ("District"):/*
+					Subquery sub = cq.subquery(Long.class);
+					Root<User> subRoot = sub.from(User.class);
+					SetJoin<User, District> subDistricts = subRoot.join(Book_.authors);
+					sub.select(cb.count(subRoot.get(Book_.id)));
+					sub.where(cb.equal(root.get(Author_.id), subAuthors.get(Author_.id)));*/
 					break;
 				case ("City"):
-					break;
-				case ("PaymentMethod"):
+					//cq.select(service).where(cb.equal(service.get("usuarioPrestador"), (City) obj));
 					break;
 			}
-		else
-			query = getSession().createQuery(criteriaQuery);
 		
+		query = getSession().createQuery(cq);
 		return query.getResultList();
 	}
 }

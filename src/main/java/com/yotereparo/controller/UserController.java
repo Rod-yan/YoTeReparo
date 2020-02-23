@@ -85,7 +85,7 @@ public class UserController {
 	        }
         }
 		catch (Exception e) {
-			logger.error(String.format("ListUsers - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("ListUsers - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -102,7 +102,7 @@ public class UserController {
 	public ResponseEntity<?> getUser(@PathVariable("id") String id) {
 		logger.info(String.format("GetUser - GET - Processing request for user <%s>.", id));
         try {
-        	User user = userService.getUserById(id);
+        	User user = userService.getUserById(id.toLowerCase());
             
     		if (user != null) {
             	logger.info("GetUser - GET - Exiting method, providing response resource to client.");
@@ -115,7 +115,7 @@ public class UserController {
             } 
         }
         catch (Exception e) {
-			logger.error(String.format("GetUser - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("GetUser - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
@@ -130,9 +130,10 @@ public class UserController {
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
-		logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId()));
+		logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId().toLowerCase()));
 		try {
 			if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
+				clientInput.setId(clientInput.getId().toLowerCase());
 				if (!userService.exist(clientInput.getId())) {
 					userService.createUser(userConverter.convertToEntity(clientInput));
 					
@@ -158,7 +159,7 @@ public class UserController {
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
-			logger.error(String.format("CreateUser - POST - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("CreateUser - POST - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
@@ -176,10 +177,10 @@ public class UserController {
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody UserDto clientInput, BindingResult result) {
+		id = id.toLowerCase();
 		logger.info(String.format("UpdateUser - PUT - Processing request for user <%s>.", id));
 		try {
 			clientInput.setId(id);
-
 			if (userService.exist(id)) {
 				if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
 					userService.updateUser(userConverter.convertToEntity(clientInput));
@@ -203,7 +204,7 @@ public class UserController {
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
-			logger.error(String.format("UpdateUser - PUT - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("UpdateUser - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
@@ -217,8 +218,10 @@ public class UserController {
 			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
+		id = id.toLowerCase();
 		logger.info(String.format("DeleteUser - DELETE - Processing request for user <%s>.", id));
 		try {
+			
 			if (userService.exist(id)) {
 	        	userService.deleteUserById(id);
 	        	
@@ -232,7 +235,7 @@ public class UserController {
 	        }
 		}
 		catch (Exception e) {
-			logger.error(String.format("DeleteUser - DELETE - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("DeleteUser - DELETE - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
@@ -247,6 +250,7 @@ public class UserController {
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.GET)
     public ResponseEntity<?> getUserPhoto(@PathVariable("id") String id) {
+		id = id.toLowerCase();
 		logger.info(String.format("GetUserPhoto - GET - Processing request for user's <%s> photo.", id));
 		try {
 			if (userService.exist(id)) {			
@@ -290,7 +294,7 @@ public class UserController {
 			}
 		}
 		catch (Exception e) {
-			logger.error(String.format("GetUserPhoto - GET - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("GetUserPhoto - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
@@ -306,6 +310,7 @@ public class UserController {
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody String photoPayload) {
+		id = id.toLowerCase();
 		logger.info(String.format("UpdateUserPhoto - PUT - Processing request for user's <%s> photo.", id));
 		
 		// parseamos el json object recibido y generamos el byte array validando la estructura del request al mismo tiempo.
@@ -335,7 +340,7 @@ public class UserController {
         	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
-			logger.error(String.format("UpdateUserPhoto - PUT - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("UpdateUserPhoto - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		} 
@@ -349,6 +354,7 @@ public class UserController {
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUserPhoto(@PathVariable("id") String id) {
+		id = id.toLowerCase();
 		logger.info(String.format("DeleteUserPhoto - DELETE - Processing request for user's <%s> photo.", id));
 		try {
 			if (userService.exist(id)) {
@@ -364,7 +370,7 @@ public class UserController {
 			}
 		}
 		catch (Exception e) {
-			logger.error(String.format("DeleteUserPhoto - DELETE - Request failed - Error procesing request: <%s>", e.getMessage()));
+			logger.error("DeleteUserPhoto - DELETE - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
