@@ -51,7 +51,6 @@ const FormRegistro = props => {
 
   let handleSubmit = event => {
     event.preventDefault();
-    console.log(account);
 
     setIsCreatingUser(true);
 
@@ -64,7 +63,7 @@ const FormRegistro = props => {
       contrasena: account.password,
       direcciones: [
         {
-          calle: "Alcorta",
+          calle: "Aaaa",
           altura: 332,
           piso: "0",
           departamento: "333",
@@ -84,10 +83,13 @@ const FormRegistro = props => {
     )
       .then(response => {
         console.log(response.status);
-        if (response.status == 400) {
+        if (response.status === 400) {
           console.log(response.json);
         } else {
-          history.push("/tour");
+          history.push({
+            pathname: "/tour",
+            state: { user: account }
+          });
         }
       })
       .catch(error => {

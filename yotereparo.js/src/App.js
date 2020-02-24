@@ -13,9 +13,10 @@ import "./App.css";
 import Container from "./Container/Container";
 import SelectorDeCategorias from "./Login/SelectorDeCategorias";
 import FormRegistro from "./Login/RegistroUsuarios";
-import FindUsers from "./Find/FindUsers";
+import EncontrarServicios from "./Find/EncontrarServicios";
 import Tour from "./Tour/Tour";
 import ElementContainer from "./Container/ElementContainer";
+import PerfilUsuario from "./Usuarios/PerfilUsuario";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -62,32 +63,50 @@ function App() {
               <Home />
             </Container>
           </Route>
+
           <Route path="/help">
             <Container>
               <About />
             </Container>
           </Route>
-          <Route path="/buscar">
-            <Container>
-              <FindUsers></FindUsers>
-            </Container>
-          </Route>
+
+          <Route
+            path="/perfil/:userId"
+            render={props => (
+              <Container>
+                <PerfilUsuario {...props} />
+              </Container>
+            )}
+          />
+          <Route
+            path="/buscar"
+            render={props => (
+              <Container>
+                <EncontrarServicios {...props}></EncontrarServicios>
+              </Container>
+            )}
+          />
+
           <Route path="/encontrar"></Route>
+
           <Route path="/registro">
             <Container>
               <SelectorDeCategorias />
             </Container>
           </Route>
+
           <Route path="/registrar-usuario">
             <Container>
               <FormRegistro type="usuario"></FormRegistro>
             </Container>
           </Route>
+
           <Route path="/registrar-empleador">
             <Container>
               <FormRegistro type="empleador"></FormRegistro>
             </Container>
           </Route>
+
           <Route path="/tour">
             <Container>
               <Tour />

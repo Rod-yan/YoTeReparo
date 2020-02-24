@@ -1,8 +1,8 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import SingleUser from "./SingleUser";
+import UnicoServicio from "./UnicoServicio";
 
-const UserList = props => {
+const ListaServicios = props => {
   console.log(props.data);
   if (props.data.loading) {
     return (
@@ -25,7 +25,7 @@ const UserList = props => {
         <div>
           {props.data.users.map((item, i) => (
             <div key={i}>
-              <SingleUser data={item}></SingleUser>
+              <UnicoServicio data={item}></UnicoServicio>
             </div>
           ))}
         </div>
@@ -34,4 +34,4 @@ const UserList = props => {
   );
 };
 
-export default UserList;
+export default ListaServicios;
