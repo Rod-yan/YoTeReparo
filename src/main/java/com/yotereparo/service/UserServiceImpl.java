@@ -78,7 +78,6 @@ public class UserServiceImpl implements UserService {
 		 */
 		Role role = roleService.getRoleById(environment.getProperty("role.id.usuariofinal"));
 		logger.debug(String.format("Adding role <%s> to user <%s>", role.toString(), user.getId()));
-		user.getRoles().clear();
 		user.addRole(role);
 		if (user.getMembresia() != null) {
 			role = roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase()));
@@ -234,6 +233,9 @@ public class UserServiceImpl implements UserService {
 		}
 		entity.getDirecciones().addAll(addressesToBeAdded);
 		entity.getDirecciones().removeAll(addressesToBeRemoved);
+		// Si el usuario tiene servicios registrados no puede vaciar sus direcciones
+		if (entity.getDirecciones().size() == 0 && user.getMembresia() != null && (user.getServicios() != null || user.getServicios().size() != 0))
+			throw new CustomResponseError("User","direcciones",messageSource.getMessage("user.direcciones.not.empty", null, Locale.getDefault()));
 		
 		/* Si el usuario es prestador (su membresía no es nula), validamos y procesamos los barrios, de lo contrario
 		 * descartamos los barrios del usuario.

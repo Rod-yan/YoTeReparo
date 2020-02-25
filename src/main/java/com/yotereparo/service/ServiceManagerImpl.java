@@ -52,18 +52,23 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public void createService(Service service) {
-		if (userService.isPrestador(service.getUsuarioPrestador())) {
-			service.setFechaCreacion(new DateTime());
-			// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
-			service.setImagen(null);
-			service.setThumbnail(null);
-			service.setEstado("ACTIVO");
-			
-			logger.info(String.format("Commiting creation of service <%s>", service.getId()));
-			dao.persist(service);
-		}
+		if (userService.isPrestador(service.getUsuarioPrestador()))
+			if (service.getUsuarioPrestador().getDirecciones() != null && service.getUsuarioPrestador().getDirecciones().size() != 0) {
+				service.setFechaCreacion(new DateTime());
+				// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
+				service.setImagen(null);
+				service.setThumbnail(null);
+				service.setEstado("ACTIVO");
+				
+				logger.info(String.format("Commiting creation of service <%s>", service.getTitulo()));
+				dao.persist(service);
+			}
+			else {
+				logger.info(String.format("Service <%s> can't be created. User <%s> has no registered address", service.getTitulo(), service.getUsuarioPrestador().getId()));
+				throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.addresses.is.empty", new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
+			}
 		else {
-			logger.info(String.format("Service <%s> can't be created. User <%s> is not of type Prestador", service.getId(), service.getUsuarioPrestador().getId()));
+			logger.info(String.format("Service <%s> can't be created. User <%s> is not of type Prestador", service.getTitulo(), service.getUsuarioPrestador().getId()));
 			throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.unauthorized", new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
 		}
 			
