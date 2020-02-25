@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import org.joda.time.DateTime;
 
 import com.yotereparo.model.PaymentMethod;
+import com.yotereparo.model.Requirement;
 import com.yotereparo.util.customvalidator.GreaterThan;
 
 @GreaterThan(valueOf = "precioMaximo", greaterThanValueOf = "precioMinimo", message = "{sservice.precioMaximo.less.than.precioMinimo}")
@@ -78,6 +79,9 @@ public class ServiceDto {
 
 	@NotEmpty(message = "{service.mediosDePago.not.empty}")
 	private Set<PaymentMethod> mediosDePago = new HashSet<PaymentMethod>(0);
+	
+	@NotEmpty(message = "{service.requerimientos.not.empty}")
+	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
 	
 	public ServiceDto() { }
 
@@ -216,6 +220,14 @@ public class ServiceDto {
 	public void setMediosDePago(Set<PaymentMethod> mediosDePago) {
 		this.mediosDePago = mediosDePago;
 	}
+	
+	public Set<Requirement> getRequerimiento() {
+		return requerimientos;
+	}
+
+	public void setMRequerimiento(Set<Requirement> requerimientos) {
+		this.requerimientos = requerimientos;
+	}
 
 	@Override
 	public int hashCode() {
@@ -229,6 +241,7 @@ public class ServiceDto {
 		result = prime * result + ((fechaCreacion == null) ? 0 : fechaCreacion.hashCode());
 		result = prime * result + ((horasEstimadasEjecucion == null) ? 0 : horasEstimadasEjecucion.hashCode());
 		result = prime * result + ((mediosDePago == null) ? 0 : mediosDePago.hashCode());
+		result = prime * result + ((requerimientos == null) ? 0 : requerimientos.hashCode());
 		result = prime * result + ((precioAdicionales == null) ? 0 : precioAdicionales.hashCode());
 		result = prime * result + ((precioInsumos == null) ? 0 : precioInsumos.hashCode());
 		result = prime * result + ((precioMaximo == null) ? 0 : precioMaximo.hashCode());
@@ -285,6 +298,11 @@ public class ServiceDto {
 				return false;
 		} else if (!mediosDePago.equals(other.mediosDePago))
 			return false;
+		if (requerimientos == null) {
+			if (other.requerimientos != null)
+				return false;
+		} else if (!requerimientos.equals(other.requerimientos))
+			return false;
 		if (precioAdicionales == null) {
 			if (other.precioAdicionales != null)
 				return false;
@@ -331,6 +349,7 @@ public class ServiceDto {
 				+ ", precioInsumos=" + precioInsumos + ", precioAdicionales=" + precioAdicionales
 				+ ", horasEstimadasEjecucion=" + horasEstimadasEjecucion + ", cantidadTrabajadores="
 				+ cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", tipoServicio=" + tipoServicio
-				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago + "]";
+				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago
+				+ ", requerimientos=" + requerimientos + "]";
 	}
 }
