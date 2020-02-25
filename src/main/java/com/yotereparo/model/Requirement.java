@@ -1,12 +1,13 @@
 package com.yotereparo.model;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.NaturalId;
 
 @Entity
 @Table(name="requerimiento")
@@ -17,6 +18,7 @@ public class Requirement {
 	@Column(name = "id_requerimiento", nullable = false)
 	private Integer id;
 	
+	@NaturalId
 	@NotEmpty(message = "{Requirement.descripcion.not.empty}")
 	private String descripcion;
 	
