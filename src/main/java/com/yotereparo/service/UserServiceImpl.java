@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 		user.setFoto(null);
 		user.setThumbnail(null);
 		// Unstable:
-		user.setEstado("TEST");
+		user.setEstado("ACTIVO");
 		user.setIntentosIngreso(0);
 		
 		/*
@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService {
 		 */
 		Role role = roleService.getRoleById(environment.getProperty("role.id.usuariofinal"));
 		logger.debug(String.format("Adding role <%s> to user <%s>", role.toString(), user.getId()));
+		user.getRoles().clear();
 		user.addRole(role);
 		if (user.getMembresia() != null) {
 			role = roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase()));

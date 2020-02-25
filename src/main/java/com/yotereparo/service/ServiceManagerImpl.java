@@ -79,6 +79,11 @@ public class ServiceManagerImpl implements ServiceManager {
 			throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.cant.change", null, Locale.getDefault()));
 		}
 		
+		if (!service.getTitulo().equals(entity.getTitulo())) {
+			logger.debug(String.format("Updating attribute 'Titulo' from service <%s>", service.getId()));
+			entity.setTitulo(service.getTitulo());
+		}
+		
 		if (!service.getDescripcion().equals(entity.getDescripcion())) {
 			logger.debug(String.format("Updating attribute 'Descripcion' from service <%s>", service.getId()));
 			entity.setDescripcion(service.getDescripcion());
@@ -251,11 +256,11 @@ public class ServiceManagerImpl implements ServiceManager {
 	}
 	
 	@Override
-	public boolean exist(Service service) {
-		logger.debug(String.format("Verifying existence of service with description <%s>", service.getDescripcion()));
+	public boolean similarExist(Service service) {
+		logger.debug(String.format("Verifying that service with title <%s> is not similar to already registered services", service.getTitulo()));
 		User relatedUser = service.getUsuarioPrestador();
 		for (Service s : relatedUser.getServicios())
-			if (service.equals(s)) 
+			if (service.equals(s) || service.similarTo(s)) 
 				return true;
 		return false;
 	}
@@ -273,20 +278,27 @@ public class ServiceManagerImpl implements ServiceManager {
 	}
 	
 	@Override
-	public List<Service> getAllServices(User user) {
-		logger.debug(String.format("Fetching all services of user <%s>", user.getId()));
-		return dao.getAllServices(user);
-	}
-	
-	@Override
-	public List<Service> getAllServices(District district) {
-		logger.debug(String.format("Fetching all services within district <%s>", district.getDescripcion()));
-		return dao.getAllServices(district);
-	}
-	
-	@Override
-	public List<Service> getAllServices(City city) {
-		logger.debug(String.format("Fetching all services within city <%s>", city.getDescripcion()));
-		return dao.getAllServices(city);
+	public List<Service> getAllServices(Object filter) {
+		List<Service> services = null;
+		if (filter != null)
+			switch (filter.getClass().getSimpleName()) {
+				case "User":
+					User user = (User) filter;
+					logger.debug("Fetching all services by user: <"+user.getId()+">");
+					services = dao.getAllServices(user);
+					break;
+				case "District":
+					District district = (District) filter;
+					logger.debug("Fetching all services by district: <"+district.getDescripcion()+">");
+					services = dao.getAllServices(district);
+					break;
+				case "City":
+					City city = (City) filter;
+					logger.debug("Fetching all services by city: <"+city.getId()+">");
+					services = dao.getAllServices((City) filter);
+					break;
+				// TODO: más filtros y filtro compuesto
+			}
+		return services;
 	}
 }

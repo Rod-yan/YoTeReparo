@@ -12,6 +12,7 @@ import org.joda.time.LocalDate;
 
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
+import com.yotereparo.model.Role;
 import com.yotereparo.util.customvalidator.FieldsNullityMatch;
 
 @FieldsNullityMatch.List({ 
@@ -71,12 +72,13 @@ public class UserDto {
 	@Size(max=10, message = "{user.membresia.size}")
 	private String membresia;
 	
-	@NotEmpty(message = "{user.direcciones.not.empty}")
+	private Set<Role> roles = new HashSet<Role>(0);
+	
 	private Set<Address> direcciones = new HashSet<Address>(0);
 	
 	private Set<District> barrios;
 	
-	private Set<ServiceDto> servicios;
+	private Set<ServiceDto> servicios = new HashSet<ServiceDto>(0);
 	
 	public String getId() {
 		return id;
@@ -179,6 +181,12 @@ public class UserDto {
 	}
 	public void setMembresia(String membresia) {
 		this.membresia = membresia;
+	}
+	public Set<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 	public Set<Address> getDirecciones() {
 		return direcciones;
