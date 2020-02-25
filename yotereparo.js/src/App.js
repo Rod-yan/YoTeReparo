@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Home from "./Home/Home";
 import About from "./About/About";
 import Header from "./Header/Header";
@@ -17,6 +17,13 @@ import EncontrarServicios from "./Find/EncontrarServicios";
 import Tour from "./Tour/Tour";
 import ElementContainer from "./Container/ElementContainer";
 import PerfilUsuario from "./Usuarios/PerfilUsuario";
+import { createBrowserHistory } from "history";
+import {
+  setSessionCokie,
+  deleteSessionCookie,
+  getSessionCookie,
+  SessionContext
+} from "./Utils/SessionManage";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -42,84 +49,139 @@ const NoMatch = () => {
   );
 };
 
+const LoginHandler = ({ history }) => {
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async event => {
+    event.preventDefault();
+    //GOLPEAR LA API DE LOGUEO Y DEVOLVER ID DE USUARIO LOGUEADO
+    setSessionCokie({ email });
+    history.push("/");
+    window.location.reload();
+  };
+
+  return (
+    <div style={{ marginTop: "1rem" }}>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Ingresa tu correo electronico"
+          value={email}
+          onChange={event => setEmail(event.target.value)}
+        />
+        <input type="submit" value="Login" />
+      </form>
+    </div>
+  );
+};
+
+const LogOutHandler = ({ history }) => {
+  useEffect(() => {
+    deleteSessionCookie("userSession");
+    history.push("/ingresar");
+  }, [history]);
+
+  return <div>Has salido de la aplicación</div>;
+};
+
 function App() {
+  const history = createBrowserHistory();
+  const [session, setSession] = useState(getSessionCookie());
+
+  useEffect(() => {
+    setSession(getSessionCookie());
+  }, []);
+
+  console.log(session);
+
   return (
     <div>
-      <Router>
-        <Header>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/registro">Registrarte</Link>
-            </li>
-          </ul>
-        </Header>
+      <SessionContext.Provider value={session}>
+        <Router history={history}>
+          <Header>
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              {session.email === undefined ? (
+                <li>
+                  <Link to="/registro">Registrarte</Link>
+                </li>
+              ) : (
+                <li>
+                  <Link to={"/perfil/" + session.email}>Perfil</Link>
+                </li>
+              )}
+            </ul>
+          </Header>
 
-        <Switch>
-          <Route exact path="/">
-            <Container>
-              <Home />
-            </Container>
-          </Route>
-
-          <Route path="/help">
-            <Container>
-              <About />
-            </Container>
-          </Route>
-
-          <Route
-            path="/perfil/:userId"
-            render={props => (
+          <Switch>
+            <Route exact path="/">
               <Container>
-                <PerfilUsuario {...props} />
+                <Home />
               </Container>
-            )}
-          />
-          <Route
-            path="/buscar"
-            render={props => (
+            </Route>
+
+            <Route path="/help">
               <Container>
-                <EncontrarServicios {...props}></EncontrarServicios>
+                <About />
               </Container>
-            )}
-          />
+            </Route>
 
-          <Route path="/encontrar"></Route>
+            <Route path="/ingresar" component={LoginHandler} />
+            <Route path="/salir" component={LogOutHandler} />
 
-          <Route path="/registro">
-            <Container>
-              <SelectorDeCategorias />
-            </Container>
-          </Route>
+            <Route
+              path="/perfil/:userId"
+              render={props => (
+                <Container>
+                  <PerfilUsuario {...props} />
+                </Container>
+              )}
+            />
+            <Route
+              path="/buscar"
+              render={props => (
+                <Container>
+                  <EncontrarServicios {...props}></EncontrarServicios>
+                </Container>
+              )}
+            />
 
-          <Route path="/registrar-usuario">
-            <Container>
-              <FormRegistro type="usuario"></FormRegistro>
-            </Container>
-          </Route>
+            <Route path="/encontrar"></Route>
 
-          <Route path="/registrar-empleador">
-            <Container>
-              <FormRegistro type="empleador"></FormRegistro>
-            </Container>
-          </Route>
+            <Route path="/registro">
+              <Container>
+                <SelectorDeCategorias />
+              </Container>
+            </Route>
 
-          <Route path="/tour">
-            <Container>
-              <Tour />
-            </Container>
-          </Route>
+            <Route path="/registrar-usuario">
+              <Container>
+                <FormRegistro type="usuario"></FormRegistro>
+              </Container>
+            </Route>
 
-          <Route>
-            <Container>
-              <NoMatch></NoMatch>
-            </Container>
-          </Route>
-        </Switch>
-      </Router>
+            <Route path="/registrar-empleador">
+              <Container>
+                <FormRegistro type="empleador"></FormRegistro>
+              </Container>
+            </Route>
+
+            <Route path="/tour">
+              <Container>
+                <Tour />
+              </Container>
+            </Route>
+
+            <Route>
+              <Container>
+                <NoMatch></NoMatch>
+              </Container>
+            </Route>
+          </Switch>
+        </Router>
+      </SessionContext.Provider>
     </div>
   );
 }

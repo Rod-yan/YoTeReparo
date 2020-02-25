@@ -1,29 +1,51 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Axios from "axios";
 import { useEffect } from "react";
+import { SessionContext } from "../Utils/SessionManage";
 
 function PerfilUsuario(props) {
+  const session = useContext(SessionContext);
+
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
+  const [auth, setAuth] = useState(true);
 
   const fetchData = async urlToFetch => {
-    const result = await Axios(urlToFetch);
-    setProfile(result.data);
+    const result = await Axios(urlToFetch).catch(error => {
+      return error;
+    });
+
+    if (result.status === 404) {
+      console.log("ERROR: No se encuentra el usuario");
+    } else if (result !== undefined) {
+      if (session.email !== result.data.email) {
+        setAuth(false);
+      } else {
+        setAuth(true);
+        setProfile(result.data);
+      }
+    } else {
+      console.log("ERROR: No se encuentra el usuario");
+    }
   };
 
   useEffect(() => {
     try {
       fetchData(
         `http://localhost:8080/yotereparo/users/${props.match.params.userId}`
-      ).then(resp => {
+      ).then(() => {
         setLoading(false);
       });
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
     }
-  }, [loading]);
+  }, [loading, auth, props.match.params.userId]);
+
+  if (session.email === undefined) {
+    props.history.push("/ingresar");
+  }
 
   if (loading) {
     return (
@@ -35,13 +57,31 @@ function PerfilUsuario(props) {
         </div>
       </ElementContainer>
     );
+  } else if (auth === false) {
+    return (
+      <ElementContainer>
+        <div>
+          <div className="col d-flex justify-content-center">
+            <div className="cover-screen">
+              No estas autorizado para ver esta pagina
+            </div>
+          </div>
+        </div>
+      </ElementContainer>
+    );
   }
   return (
     <>
       {profile === undefined ? (
-        <div className="col d-flex justify-content-center">
-          <div className="cover-screen">No existe ese nombre de usuario.</div>
-        </div>
+        <ElementContainer>
+          <div>
+            <div className="col d-flex justify-content-center">
+              <div className="cover-screen">
+                No existe ese nombre de usuario.
+              </div>
+            </div>
+          </div>
+        </ElementContainer>
       ) : (
         <ElementContainer>
           <div className="d-flex align-items-center mx-auto">
@@ -66,10 +106,10 @@ function PerfilUsuario(props) {
                                   <div className="row">
                                     <div className="col-md-12">
                                       <h5>
-                                        <span class="badge badge-pill badge-success mt-1 mb-1 mr-1 ml-1">
+                                        <span className="badge badge-pill badge-success mt-1 mb-1 mr-1 ml-1">
                                           USUARIO
                                         </span>
-                                        <span class="badge badge-pill badge-danger mt-1 mb-1 mr-1 ml-1">
+                                        <span className="badge badge-pill badge-danger mt-1 mb-1 mr-1 ml-1">
                                           PRESTADOR
                                         </span>
                                       </h5>

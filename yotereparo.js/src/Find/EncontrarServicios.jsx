@@ -5,7 +5,6 @@ import Hoc from "../Utils/Hoc";
 import ElementContainer from "../Container/ElementContainer";
 
 function EncontrarServicios(props) {
-  console.log(props);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
