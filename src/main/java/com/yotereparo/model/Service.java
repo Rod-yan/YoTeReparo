@@ -35,6 +35,8 @@ public class Service {
     @JoinColumn(name="id_usuario_prestador", nullable=false, updatable = false, insertable = true)
 	private User usuarioPrestador;
 	
+	private String titulo;
+	
 	private String descripcion;
 	
 	private String disponibilidad;
@@ -85,7 +87,6 @@ public class Service {
     )
 	private Set<PaymentMethod> mediosDePago = new HashSet<PaymentMethod>(0);
 	
-
 	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
     @JoinTable(name="servicio_requerimiento",
         joinColumns = {@JoinColumn(name="id_servicio")},
@@ -110,6 +111,14 @@ public class Service {
 
 	public void setUsuarioPrestador(User usuarioPrestador) {
 		this.usuarioPrestador = usuarioPrestador;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 
 	public String getDescripcion() {
@@ -245,6 +254,28 @@ public class Service {
     public void removeRequerimiento(Requirement requerimiento) {
     	requerimientos.remove(requerimiento);
     }
+    
+    public boolean similarTo(Service service) {
+		if (service == null)
+			return false;
+		if (this.titulo.equalsIgnoreCase(service.titulo) ||
+				( this.descripcion.equalsIgnoreCase(service.descripcion) &&
+				  this.disponibilidad.equalsIgnoreCase(service.disponibilidad) &&
+				  this.precioMaximo.equals(service.precioMaximo) &&
+				  this.precioMinimo.equals(service.precioMinimo) &&
+				  this.precioInsumos.equals(service.precioInsumos) &&
+				  this.precioAdicionales.equals(service.precioAdicionales) &&
+				  this.horasEstimadasEjecucion.equals(service.horasEstimadasEjecucion) &&
+				  this.cantidadTrabajadores.equals(service.cantidadTrabajadores) &&
+				  this.facturaEmitida == service.facturaEmitida &&
+				  Arrays.equals(imagen, service.imagen) &&
+				  Arrays.equals(thumbnail, service.thumbnail) &&
+				  this.tipoServicio.equals(service.tipoServicio) &&
+				  this.mediosDePago.equals(service.mediosDePago) &&
+				  this.requerimientos.equals(service.requerimientos) ))
+			return true;
+		return false;
+    }
 
 	@Override
 	public boolean equals(Object obj) {
@@ -294,11 +325,6 @@ public class Service {
 				return false;
 		} else if (!mediosDePago.equals(other.mediosDePago))
 			return false;
-		if (requerimientos == null) {
-			if (other.requerimientos != null)
-				return false;
-		} else if (!requerimientos.equals(other.requerimientos))
-			return false;
 		if (precioAdicionales == null) {
 			if (other.precioAdicionales != null)
 				return false;
@@ -319,12 +345,22 @@ public class Service {
 				return false;
 		} else if (!precioMinimo.equals(other.precioMinimo))
 			return false;
+		if (requerimientos == null) {
+			if (other.requerimientos != null)
+				return false;
+		} else if (!requerimientos.equals(other.requerimientos))
+			return false;
 		if (!Arrays.equals(thumbnail, other.thumbnail))
 			return false;
 		if (tipoServicio == null) {
 			if (other.tipoServicio != null)
 				return false;
 		} else if (!tipoServicio.equals(other.tipoServicio))
+			return false;
+		if (titulo == null) {
+			if (other.titulo != null)
+				return false;
+		} else if (!titulo.equals(other.titulo))
 			return false;
 		if (usuarioPrestador == null) {
 			if (other.usuarioPrestador != null)
@@ -336,13 +372,13 @@ public class Service {
 
 	@Override
 	public String toString() {
-		return "Service [id=" + id + ", usuarioPrestador=" + usuarioPrestador.getId() + ", descripcion=" + descripcion
-				+ ", disponibilidad=" + disponibilidad + ", precioMaximo=" + precioMaximo + ", precioMinimo="
-				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
-				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
-				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", imagen="
-				+ Arrays.toString(imagen) + ", thumbnail=" + Arrays.toString(thumbnail) + ", tipoServicio="
-				+ tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago="
-				+ mediosDePago + ", requerimientos=" + requerimientos + "]";
+		return "Service [id=" + id + ", usuarioPrestador=" + usuarioPrestador.getId() + ", titulo=" + titulo + ", descripcion="
+				+ descripcion + ", disponibilidad=" + disponibilidad + ", precioMaximo=" + precioMaximo
+				+ ", precioMinimo=" + precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos="
+				+ precioInsumos + ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion="
+				+ horasEstimadasEjecucion + ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida="
+				+ facturaEmitida + ", imagen=" + Arrays.toString(imagen) + ", thumbnail=" + Arrays.toString(thumbnail)
+				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
+				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + "]";
 	}
 }

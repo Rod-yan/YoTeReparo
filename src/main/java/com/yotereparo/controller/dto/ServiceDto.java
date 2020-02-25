@@ -7,6 +7,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.joda.time.DateTime;
 
@@ -21,7 +22,15 @@ public class ServiceDto {
 	@NotEmpty(message = "{service.usuarioPrestador.not.empty}")
 	private String usuarioPrestador;
 	
+	@NotEmpty(message = "{service.titulo.not.empty}")
+	@Size.List({ 
+		@Size(min = 5, message = "{service.titulo.too.short}"), 
+		@Size(max = 127, message = "{service.titulo.too.long}")
+	})
+	private String titulo;
+	
 	@NotEmpty(message = "{service.descripcion.not.empty}")
+	@Size(max = 255, message = "{service.titulo.too.long}")
 	private String descripcion;
 	
 	private String disponibilidad;
@@ -86,6 +95,14 @@ public class ServiceDto {
 
 	public void setUsuarioPrestador(String usuarioPrestador) {
 		this.usuarioPrestador = usuarioPrestador;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 
 	public String getDescripcion() {
@@ -211,14 +228,13 @@ public class ServiceDto {
 		result = prime * result + (facturaEmitida ? 1231 : 1237);
 		result = prime * result + ((fechaCreacion == null) ? 0 : fechaCreacion.hashCode());
 		result = prime * result + ((horasEstimadasEjecucion == null) ? 0 : horasEstimadasEjecucion.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((mediosDePago == null) ? 0 : mediosDePago.hashCode());
 		result = prime * result + ((precioAdicionales == null) ? 0 : precioAdicionales.hashCode());
 		result = prime * result + ((precioInsumos == null) ? 0 : precioInsumos.hashCode());
 		result = prime * result + ((precioMaximo == null) ? 0 : precioMaximo.hashCode());
 		result = prime * result + ((precioMinimo == null) ? 0 : precioMinimo.hashCode());
-		result = prime * result + ((precioPromedio == null) ? 0 : precioPromedio.hashCode());
 		result = prime * result + ((tipoServicio == null) ? 0 : tipoServicio.hashCode());
+		result = prime * result + ((titulo == null) ? 0 : titulo.hashCode());
 		result = prime * result + ((usuarioPrestador == null) ? 0 : usuarioPrestador.hashCode());
 		return result;
 	}
@@ -264,11 +280,6 @@ public class ServiceDto {
 				return false;
 		} else if (!horasEstimadasEjecucion.equals(other.horasEstimadasEjecucion))
 			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
 		if (mediosDePago == null) {
 			if (other.mediosDePago != null)
 				return false;
@@ -294,15 +305,15 @@ public class ServiceDto {
 				return false;
 		} else if (!precioMinimo.equals(other.precioMinimo))
 			return false;
-		if (precioPromedio == null) {
-			if (other.precioPromedio != null)
-				return false;
-		} else if (!precioPromedio.equals(other.precioPromedio))
-			return false;
 		if (tipoServicio == null) {
 			if (other.tipoServicio != null)
 				return false;
 		} else if (!tipoServicio.equals(other.tipoServicio))
+			return false;
+		if (titulo == null) {
+			if (other.titulo != null)
+				return false;
+		} else if (!titulo.equals(other.titulo))
 			return false;
 		if (usuarioPrestador == null) {
 			if (other.usuarioPrestador != null)
@@ -314,12 +325,12 @@ public class ServiceDto {
 
 	@Override
 	public String toString() {
-		return "ServiceDto [id=" + id + ", usuarioPrestador=" + usuarioPrestador + ", descripcion=" + descripcion
-				+ ", disponibilidad=" + disponibilidad + ", precioMaximo=" + precioMaximo + ", precioMinimo="
-				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
-				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
-				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida
-				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", mediosDePago=" + mediosDePago + "]";
+		return "ServiceDto [id=" + id + ", usuarioPrestador=" + usuarioPrestador + ", titulo=" + titulo
+				+ ", descripcion=" + descripcion + ", disponibilidad=" + disponibilidad + ", precioMaximo="
+				+ precioMaximo + ", precioMinimo=" + precioMinimo + ", precioPromedio=" + precioPromedio
+				+ ", precioInsumos=" + precioInsumos + ", precioAdicionales=" + precioAdicionales
+				+ ", horasEstimadasEjecucion=" + horasEstimadasEjecucion + ", cantidadTrabajadores="
+				+ cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", tipoServicio=" + tipoServicio
+				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago + "]";
 	}
 }

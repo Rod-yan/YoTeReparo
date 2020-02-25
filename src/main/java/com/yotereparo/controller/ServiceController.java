@@ -39,6 +39,7 @@ import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.converter.ServiceConverter;
 import com.yotereparo.model.Service;
 import com.yotereparo.service.CityService;
+import com.yotereparo.service.DistrictService;
 import com.yotereparo.service.PaymentMethodService;
 import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
@@ -63,6 +64,8 @@ public class ServiceController {
 	@Autowired
     CityService cityService;
 	@Autowired
+    DistrictService districtService;
+	@Autowired
     PaymentMethodService paymentMethodService;
 	@Autowired
     MessageSource messageSource;
@@ -86,16 +89,13 @@ public class ServiceController {
 				String idValue = filterBy.getValue().toLowerCase();
 				switch (filterBy.getKey().toLowerCase()) {
 					case "user":
-						if (userService.exist(idValue))
-							services = serviceManager.getAllServices(userService.getUserById(idValue));
+						services = serviceManager.getAllServices(userService.getUserById(idValue));
 						break;
 					case "district":
-						/*if (cityService.exist(idValue))
-							services = serviceManager.getAllServices(cityService.getCityById(idValue));*/
+						services = serviceManager.getAllServices(districtService.getDistrictById(Integer.parseInt(idValue)));
 						break;
 					case "city":
-						/*if (cityService.exist(idValue))
-							services = serviceManager.getAllServices(cityService.getCityById(idValue));*/
+						services = serviceManager.getAllServices(cityService.getCityById(idValue));
 						break;
 				}
 			}
@@ -161,13 +161,13 @@ public class ServiceController {
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
     public ResponseEntity<?> createService(@RequestBody ServiceDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {	
-		logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getDescripcion()));
+		logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getTitulo()));
 		try {
 			if (!ValidationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
 				// Seteamos id en null ya que el mismo es autogenerado en tiempo de creación
 				clientInput.setId(null);
 				Service service = serviceConverter.convertToEntity(clientInput);
-				if (!serviceManager.exist(service)) {
+				if (!serviceManager.similarExist(service)) {
 					serviceManager.createService(service);
 					
 					HttpHeaders headers = new HttpHeaders();
@@ -177,8 +177,8 @@ public class ServiceController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 				}
 				else {
-					logger.info(String.format("CreateService - POST - Request failed - Unable to create service. Service <%s> already exist.", service.getId()));
-		            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.already.exist", new Integer[]{service.getId()}, Locale.getDefault()));
+					logger.info(String.format("CreateService - POST - Request failed - Unable to create service. Service <%s> is too similar to another service", service.getTitulo()));
+		            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
 		            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
 				}
 			}

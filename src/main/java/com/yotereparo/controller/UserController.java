@@ -134,6 +134,9 @@ public class UserController {
 		try {
 			if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
 				clientInput.setId(clientInput.getId().toLowerCase());
+				if (clientInput.getRoles() != null || clientInput.getRoles().size() != 0)
+					clientInput.getRoles().clear();
+				
 				if (!userService.exist(clientInput.getId())) {
 					userService.createUser(userConverter.convertToEntity(clientInput));
 					
@@ -183,6 +186,9 @@ public class UserController {
 			clientInput.setId(id);
 			if (userService.exist(id)) {
 				if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
+					if (clientInput.getRoles() != null || clientInput.getRoles().size() != 0)
+						clientInput.getRoles().clear();
+					
 					userService.updateUser(userConverter.convertToEntity(clientInput));
 					
 					logger.info("UpdateUser - PUT - Exiting method, providing response resource to client.");

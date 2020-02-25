@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 		user.setFoto(null);
 		user.setThumbnail(null);
 		// Unstable:
-		user.setEstado("TEST");
+		user.setEstado("ACTIVO");
 		user.setIntentosIngreso(0);
 		
 		/*
@@ -233,6 +233,9 @@ public class UserServiceImpl implements UserService {
 		}
 		entity.getDirecciones().addAll(addressesToBeAdded);
 		entity.getDirecciones().removeAll(addressesToBeRemoved);
+		// Si el usuario tiene servicios registrados no puede vaciar sus direcciones
+		if (entity.getDirecciones().size() == 0 && user.getMembresia() != null && (user.getServicios() != null || user.getServicios().size() != 0))
+			throw new CustomResponseError("User","direcciones",messageSource.getMessage("user.direcciones.not.empty", null, Locale.getDefault()));
 		
 		/* Si el usuario es prestador (su membresía no es nula), validamos y procesamos los barrios, de lo contrario
 		 * descartamos los barrios del usuario.
