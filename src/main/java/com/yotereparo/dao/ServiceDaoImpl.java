@@ -45,19 +45,19 @@ public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements Ser
         query.executeUpdate();
 	}
  
-	public List<Service> getAllServices(Object obj) {
+	public List<Service> getAllServices(Object filter) {
 		Query<Service> query = null;
 		CriteriaBuilder cb = getSession().getCriteriaBuilder();
 		CriteriaQuery<Service> cq = cb.createQuery(Service.class);
 		Root<Service> service = cq.from(Service.class);
-		if (obj != null)
-			switch (obj.getClass().getSimpleName()) {
+		if (filter != null)
+			switch (filter.getClass().getSimpleName()) {
 				case ("User"):
-					cq.select(service).where(cb.equal(service.get("usuarioPrestador"), (User) obj));
+					cq.select(service).where(cb.equal(service.get("usuarioPrestador"), (User) filter));
 					break;
 				case ("District"):
 					{
-						District district = (District) obj;
+						District district = (District) filter;
 						Subquery<User> sub = cq.subquery(User.class);
 						Root<User> subRoot = sub.from(User.class);
 						SetJoin<User, District> subDistricts = subRoot.join(User_.barrios);
@@ -69,7 +69,7 @@ public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements Ser
 					break;
 				case ("City"):
 					Join<Service, User> p = service.join("usuarioPrestador", JoinType.INNER);
-					cq.select(service).where(cb.equal(p.get("ciudad"), (City) obj));
+					cq.select(service).where(cb.equal(p.get("ciudad"), (City) filter));
 					break;
 			}
 		

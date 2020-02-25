@@ -12,5 +12,5 @@ public interface ServiceDao {
      
     void deleteServiceById(Integer id);
      
-    List<Service> getAllServices(Object obj);
+    List<Service> getAllServices(Object filter);
 }
