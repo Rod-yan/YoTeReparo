@@ -3,7 +3,6 @@ import ElementContainer from "../Container/ElementContainer";
 import UnicoServicio from "./UnicoServicio";
 
 const ListaServicios = props => {
-  console.log(props.data);
   if (props.data.loading) {
     return (
       <ElementContainer>

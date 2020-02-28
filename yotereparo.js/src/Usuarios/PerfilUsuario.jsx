@@ -12,26 +12,27 @@ function PerfilUsuario(props) {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState(true);
 
-  const fetchData = async urlToFetch => {
-    const result = await Axios(urlToFetch).catch(error => {
-      return error;
-    });
-
-    if (result.status === 404) {
-      console.log("ERROR: No se encuentra el usuario");
-    } else if (result !== undefined) {
-      if (session.email !== result.data.email) {
-        setAuth(false);
-      } else {
-        setAuth(true);
-        setProfile(result.data);
-      }
-    } else {
-      console.log("ERROR: No se encuentra el usuario");
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async urlToFetch => {
+      const result = await Axios(urlToFetch).catch(error => {
+        return error;
+      });
+
+      if (result.status === 404) {
+        console.log("ERROR: No se encuentra el usuario");
+        setAuth(false);
+      } else if (result.name !== "Error") {
+        if (session.email !== result.data.email) {
+          setAuth(false);
+        } else {
+          setAuth(true);
+          setProfile(result.data);
+        }
+      } else {
+        setAuth(false);
+        console.log("ERROR: Hay un error con la peticion al servidor");
+      }
+    };
     try {
       fetchData(
         `http://localhost:8080/yotereparo/users/${props.match.params.userId}`
@@ -41,7 +42,7 @@ function PerfilUsuario(props) {
     } catch (error) {
       console.log(error.response);
     }
-  }, [loading, auth, props.match.params.userId]);
+  }, [loading, auth, session.email, props.match.params.userId]);
 
   if (session.email === undefined) {
     props.history.push("/ingresar");
@@ -60,13 +61,13 @@ function PerfilUsuario(props) {
   } else if (auth === false) {
     return (
       <ElementContainer>
-        <div>
+        <>
           <div className="col d-flex justify-content-center">
             <div className="cover-screen">
               No estas autorizado para ver esta pagina
             </div>
           </div>
-        </div>
+        </>
       </ElementContainer>
     );
   }
