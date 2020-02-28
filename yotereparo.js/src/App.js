@@ -24,6 +24,7 @@ import {
   getSessionCookie,
   SessionContext
 } from "./Utils/SessionManage";
+import Servicio from "./Servicios/Servicio";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -79,6 +80,7 @@ const LogOutHandler = ({ history }) => {
   useEffect(() => {
     deleteSessionCookie("userSession");
     history.push("/ingresar");
+    window.location.reload();
   }, [history]);
 
   return <div>Has salido de la aplicación</div>;
@@ -89,10 +91,11 @@ function App() {
   const [session, setSession] = useState(getSessionCookie());
 
   useEffect(() => {
-    setSession(getSessionCookie());
-  }, []);
-
-  console.log(session);
+    const newCookie = getSessionCookie();
+    if (newCookie.uniqueId !== session.uniqueId) {
+      setSession(newCookie);
+    }
+  }, [session]);
 
   return (
     <div>
@@ -104,13 +107,23 @@ function App() {
                 <Link to="/">Home</Link>
               </li>
               {session.email === undefined ? (
-                <li>
-                  <Link to="/registro">Registrarte</Link>
-                </li>
+                <>
+                  <li>
+                    <Link to="/registro">Registrarte</Link>
+                  </li>
+                  <li>
+                    <Link to="/ingresar">Ingresar</Link>
+                  </li>
+                </>
               ) : (
-                <li>
-                  <Link to={"/perfil/" + session.email}>Perfil</Link>
-                </li>
+                <>
+                  <li>
+                    <Link to={"/perfil/" + session.email}>Perfil</Link>
+                  </li>
+                  <li>
+                    <Link to={"/salir"}>Salir</Link>
+                  </li>
+                </>
               )}
             </ul>
           </Header>
@@ -148,7 +161,14 @@ function App() {
               )}
             />
 
-            <Route path="/encontrar"></Route>
+            <Route
+              path="/servicio/:id"
+              render={props => (
+                <Container>
+                  <Servicio {...props}></Servicio>
+                </Container>
+              )}
+            />
 
             <Route path="/registro">
               <Container>

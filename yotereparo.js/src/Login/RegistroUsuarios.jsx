@@ -60,16 +60,7 @@ const FormRegistro = props => {
       apellido: account.apellido,
       ciudad: account.ciudad,
       email: account.email,
-      contrasena: account.password,
-      direcciones: [
-        {
-          calle: "Aaaa",
-          altura: 332,
-          piso: "0",
-          departamento: "333",
-          descripcion: "TuVieja"
-        }
-      ]
+      contrasena: account.password
     };
 
     let requestHeaders = {

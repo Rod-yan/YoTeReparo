@@ -3,6 +3,10 @@
   margin: 0px 0px 20px 0px;
   padding: 0;
   background-color: #2b2e4a;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1;
 }
 
 .icon-picture {
