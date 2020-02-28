@@ -80,7 +80,6 @@ public class ServiceDto {
 	@NotEmpty(message = "{service.mediosDePago.not.empty}")
 	private Set<PaymentMethod> mediosDePago = new HashSet<PaymentMethod>(0);
 	
-	@NotEmpty(message = "{service.requerimientos.not.empty}")
 	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
 	
 	public ServiceDto() { }
