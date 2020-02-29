@@ -35,7 +35,7 @@ function PerfilUsuario(props) {
     };
     try {
       fetchData(
-        `http://localhost:8080/yotereparo/users/${props.match.params.userId}`
+        `http://localhost:8080/YoTeReparo/users/${props.match.params.userId}`
       ).then(() => {
         setLoading(false);
       });
