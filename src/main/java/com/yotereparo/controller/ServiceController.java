@@ -86,16 +86,16 @@ public class ServiceController {
 			
 			if (filters.size() == 1) {
 				Entry<String, String> filterBy = filters.entrySet().iterator().next();
-				String idValue = filterBy.getValue().toLowerCase();
+				String filterValue = filterBy.getValue().toLowerCase();
 				switch (filterBy.getKey().toLowerCase()) {
 					case "user":
-						services = serviceManager.getAllServices(userService.getUserById(idValue));
+						services = serviceManager.getAllServices(userService.getUserById(filterValue));
 						break;
 					case "district":
-						services = serviceManager.getAllServices(districtService.getDistrictById(Integer.parseInt(idValue)));
+						services = serviceManager.getAllServices(districtService.getDistrictById(Integer.parseInt(filterValue)));
 						break;
 					case "city":
-						services = serviceManager.getAllServices(cityService.getCityById(idValue));
+						services = serviceManager.getAllServices(cityService.getCityById(filterValue));
 						break;
 				}
 			}
@@ -216,10 +216,18 @@ public class ServiceController {
 
 			if (serviceManager.exist(id)) {
 				if (!ValidationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
-					serviceManager.updateService(serviceConverter.convertToEntity(clientInput));
-					
-					logger.info("UpdateService - PUT - Exiting method, providing response resource to client.");
-					return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
+					Service service = serviceConverter.convertToEntity(clientInput);
+					if (!serviceManager.similarExist(service)) {
+						serviceManager.updateService(service);
+						
+						logger.info("UpdateService - PUT - Exiting method, providing response resource to client.");
+						return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
+					}
+					else {
+						logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> is too similar to another service", service.getTitulo()));
+			            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
+			            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
+					}
 				}
 				else {
 					logger.info("UpdateService - PUT - Request failed - Input validation error(s) detected.");
