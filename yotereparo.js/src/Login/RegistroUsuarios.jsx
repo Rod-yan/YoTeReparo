@@ -68,7 +68,7 @@ const FormRegistro = props => {
     };
 
     Axios.post(
-      "http://localhost:8080/yotereparo/users/",
+      "http://localhost:8080/YoTeReparo/users/",
       requestData,
       requestHeaders
     )
