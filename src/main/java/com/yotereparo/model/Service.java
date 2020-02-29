@@ -87,7 +87,7 @@ public class Service {
     )
 	private Set<PaymentMethod> mediosDePago = new HashSet<PaymentMethod>(0);
 	
-	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
+	@ManyToMany(cascade= {CascadeType.PERSIST, CascadeType.MERGE},fetch=FetchType.EAGER)
     @JoinTable(name="servicio_requerimiento",
         joinColumns = {@JoinColumn(name="id_servicio")},
         inverseJoinColumns = {@JoinColumn(name="id_requerimiento")}    
@@ -257,6 +257,8 @@ public class Service {
     
     public boolean similarTo(Service service) {
 		if (service == null)
+			return false;
+		if (this.id == service.id)
 			return false;
 		if (this.titulo.equalsIgnoreCase(service.titulo) ||
 				( this.descripcion.equalsIgnoreCase(service.descripcion) &&

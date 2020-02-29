@@ -14,12 +14,12 @@ import org.hibernate.annotations.NaturalId;
 public class Requirement {
 	
 	@Id
-	@NotNull(message = "{Requirement.id.not.null}")
+	@NotNull(message = "{requirement.id.not.null}")
 	@Column(name = "id_requerimiento", nullable = false)
 	private Integer id;
 	
 	@NaturalId
-	@NotEmpty(message = "{Requirement.descripcion.not.empty}")
+	@NotEmpty(message = "{requirement.descripcion.not.empty}")
 	private String descripcion;
 	
 	public Requirement() { }

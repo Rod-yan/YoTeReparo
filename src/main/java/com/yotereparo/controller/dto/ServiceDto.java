@@ -220,11 +220,11 @@ public class ServiceDto {
 		this.mediosDePago = mediosDePago;
 	}
 	
-	public Set<Requirement> getRequerimiento() {
+	public Set<Requirement> getRequerimientos() {
 		return requerimientos;
 	}
 
-	public void setMRequerimiento(Set<Requirement> requerimientos) {
+	public void setRequerimientos(Set<Requirement> requerimientos) {
 		this.requerimientos = requerimientos;
 	}
 

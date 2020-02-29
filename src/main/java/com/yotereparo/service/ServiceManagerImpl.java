@@ -177,6 +177,20 @@ public class ServiceManagerImpl implements ServiceManager {
 			entity.setMediosDePago(service.getMediosDePago());
 		}
 		
+		if (service.getRequerimientos() != null && !service.getRequerimientos().isEmpty()) {
+			if (!service.getRequerimientos().equals(entity.getRequerimientos())) {
+				logger.debug(String.format("Updating attribute 'Requerimientos' from service <%s>", service.getId()));
+				entity.getRequerimientos().clear();
+				entity.setRequerimientos(service.getRequerimientos());
+			}
+		}
+		else {
+			if (entity.getRequerimientos() != null && !entity.getRequerimientos().isEmpty()) {
+				logger.debug(String.format("Updating attribute 'Requerimientos' from service <%s>", service.getId()));
+				entity.getRequerimientos().clear();
+			}
+		}
+		
 		logger.info(String.format("Commiting update for service <%s>", service.getId()));
 	}
 	

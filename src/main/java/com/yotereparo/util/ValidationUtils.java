@@ -15,6 +15,7 @@ import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
 import com.yotereparo.model.PaymentMethod;
+import com.yotereparo.model.Requirement;
 
 /**
  * Clase utilitaria para métodos accesorios cuyo objetivo esté vinculado con la validación de entidades. 
@@ -90,6 +91,15 @@ public class ValidationUtils {
 		        result.addError(new FieldError("PaymentMethod", propertyPath, message));
 		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
         				"PaymentMethod", propertyPath, message));
+		    }
+		
+		for (Requirement requirement : serviceDto.getRequerimientos())
+			for (ConstraintViolation<Requirement> violation : validator.validate(requirement)) {
+		        String propertyPath = violation.getPropertyPath().toString();
+		        String message = violation.getMessage();
+		        result.addError(new FieldError("Requirement", propertyPath, message));
+		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
+        				"Requirement", propertyPath, message));
 		    }
 		
 		return result;
