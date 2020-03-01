@@ -44,14 +44,4 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
 		logger.debug(String.format("Fetching service type <%s>", description));
 		return dao.getServiceTypeByDescription(description);
 	}
-	
-	public boolean exist(Integer id) {
-		logger.debug(String.format("Verifying existence of service type with id <%s>", id));
-		return (getServiceTypeById(id) != null);
-	}
-	
-	public boolean exist(String description) {
-		logger.debug(String.format("Verifying existence of service type <%s>", description));
-		return (getServiceTypeByDescription(description) != null);
-	}
 }

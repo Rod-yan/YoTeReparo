@@ -234,7 +234,7 @@ public class UserServiceImpl implements UserService {
 		entity.getDirecciones().addAll(addressesToBeAdded);
 		entity.getDirecciones().removeAll(addressesToBeRemoved);
 		// Si el usuario tiene servicios registrados no puede vaciar sus direcciones
-		if (entity.getDirecciones().size() == 0 && user.getMembresia() != null && (user.getServicios() != null || user.getServicios().size() != 0))
+		if (entity.getDirecciones().size() == 0 && user.getMembresia() != null && (user.getServicios() != null && user.getServicios().size() != 0))
 			throw new CustomResponseError("User","direcciones",messageSource.getMessage("user.direcciones.not.empty", null, Locale.getDefault()));
 		
 		/* Si el usuario es prestador (su membresía no es nula), validamos y procesamos los barrios, de lo contrario
@@ -285,16 +285,6 @@ public class UserServiceImpl implements UserService {
 	public User getUserById(String id) {
 		logger.debug(String.format("Fetching user <%s>", id));
 		return dao.getUserById(id);
-	}
-	
-	public boolean exist(String id) {
-		logger.debug(String.format("Verifying existence of user <%s>", id));
-		return (getUserById(id) != null);
-	}
-
-	public boolean hasUniqueId(String id) {
-		logger.debug(String.format("Verifying uniqueness of user's <%s> ID", id));
-		return !exist(id);
 	}
 	
 	public boolean isPrestador(User user) {

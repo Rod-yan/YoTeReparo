@@ -65,14 +65,4 @@ public class RoleServiceImpl implements RoleService {
 		
 		return finalRoles;
 	}
-	
-	public boolean exist(String id) {
-		logger.debug(String.format("Verifying existence of role <%s>", id));
-		return (getRoleById(id) != null);
-	}
-
-	public boolean hasUniqueId(String id) {
-		logger.debug(String.format("Verifying uniqueness of role's <%s> ID", id));
-		return !exist(id);
-	}
 }

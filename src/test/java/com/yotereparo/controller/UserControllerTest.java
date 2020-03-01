@@ -139,7 +139,7 @@ public class UserControllerTest {
     @Test
     public void createUser_WithValidationError_InputErrors(){
     	when(result.hasErrors()).thenReturn(true);
-        when(userService.exist(anyString())).thenReturn(false);
+        when(userService.getUserById(anyString())).thenReturn(null);
         when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).createUser(any(User.class));
         Assert.assertEquals(userController.createUser(usersDto.get(0), ucBuilder, result).getStatusCode(), HttpStatus.BAD_REQUEST);
@@ -148,7 +148,7 @@ public class UserControllerTest {
     @Test
     public void createUser_WithValidationError_UserAlreadyExist(){
     	when(result.hasErrors()).thenReturn(false);
-        when(userService.exist(anyString())).thenReturn(true);
+    	when(userService.getUserById(anyString())).thenReturn(any(User.class));
         when(cityService.getCityById(anyString())).thenReturn(city);
         Assert.assertEquals(userController.createUser(usersDto.get(0), ucBuilder, result).getStatusCode(), HttpStatus.CONFLICT);
     }
@@ -158,9 +158,9 @@ public class UserControllerTest {
     	UserDto userDto = usersDto.get(0);
     	User user = users.get(0);
         when(result.hasErrors()).thenReturn(false);
-        when(userService.exist(anyString())).thenReturn(false);
+        when(userService.getUserById(anyString())).thenReturn(null);
         when(modelMapper.map(any(UserDto.class), eq(User.class))).thenReturn(user);
-        when(cityService.exist(anyString())).thenReturn(true);
+        when(cityService.getCityById(anyString())).thenReturn(any(City.class));
         when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).createUser(any(User.class));
         Assert.assertEquals(userController.createUser(userDto, ucBuilder, result).getStatusCode(), HttpStatus.CREATED);
@@ -169,7 +169,7 @@ public class UserControllerTest {
     @Test
     public void updateUser_WithValidationError_InputErrors(){
     	when(result.hasErrors()).thenReturn(true);
-        when(userService.exist(anyString())).thenReturn(true);
+        when(userService.getUserById(anyString())).thenReturn(any(User.class));
         when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).updateUser(any(User.class));
         Assert.assertEquals(userController.updateUser(usersDto.get(0).getId(), usersDto.get(0), result).getStatusCode(), HttpStatus.BAD_REQUEST);
@@ -178,7 +178,7 @@ public class UserControllerTest {
     @Test
     public void updateUser_WithValidationError_UserDoesntExist(){
     	when(result.hasErrors()).thenReturn(false);
-        when(userService.exist(anyString())).thenReturn(false);
+        when(userService.getUserById(anyString())).thenReturn(null);
         Assert.assertEquals(userController.updateUser(usersDto.get(0).getId(), usersDto.get(0), result).getStatusCode(), HttpStatus.NOT_FOUND);
     }
  
@@ -191,7 +191,7 @@ public class UserControllerTest {
 	        );
     	
         when(result.hasErrors()).thenReturn(false);
-        when(userService.exist(anyString())).thenReturn(true);
+        when(userService.getUserById(anyString())).thenReturn(any(User.class));
         when(userService.getUserById(anyString())).thenReturn(user);
         when(cityService.getCityById(anyString())).thenReturn(city);
         doNothing().when(userService).updateUser(any(User.class));
@@ -201,20 +201,20 @@ public class UserControllerTest {
     @Test
     public void deleteUser_WithValidationError_UserDoesntExist(){
     	when(result.hasErrors()).thenReturn(false);
-        when(userService.exist(anyString())).thenReturn(false);
+        when(userService.getUserById(anyString())).thenReturn(null);
         Assert.assertEquals(userController.deleteUser(anyString()).getStatusCode(), HttpStatus.NOT_FOUND);
     }
      
     @Test
     public void deleteUser_Success(){
-    	when(userService.exist(anyString())).thenReturn(true);
+    	when(userService.getUserById(anyString())).thenReturn(any(User.class));
         doNothing().when(userService).deleteUserById(anyString());
         Assert.assertEquals(userController.deleteUser(anyString()).getStatusCode(), HttpStatus.OK);
     }
     
     @Test
     public void getUserPhoto_WithValidationError_UserDoesntExist(){
-        when(userService.exist(anyString())).thenReturn(false);
+        when(userService.getUserById(anyString())).thenReturn(null);
         Assert.assertEquals(userController.getUserPhoto(anyString()).getStatusCode(), HttpStatus.NOT_FOUND);
     }
     
@@ -226,7 +226,7 @@ public class UserControllerTest {
     	request.setRequestURI("/yotereparo/./photo");
     	RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     	
-        when(userService.exist(anyString())).thenReturn(true);
+        when(userService.getUserById(anyString())).thenReturn(any(User.class));
         when(userService.getUserById(anyString())).thenReturn(user);
         Assert.assertEquals(userController.getUserPhoto(anyString()).getStatusCode(), HttpStatus.NOT_FOUND);
     }
@@ -246,7 +246,7 @@ public class UserControllerTest {
     	request.setRequestURI("/yotereparo/./photo");
     	RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     	
-        when(userService.exist(anyString())).thenReturn(true);
+        when(userService.getUserById(anyString())).thenReturn(any(User.class));
         when(userService.getUserById(anyString())).thenReturn(user);
         Assert.assertEquals(userController.getUserPhoto(anyString()).getStatusCode(), HttpStatus.OK);
     }
@@ -258,7 +258,7 @@ public class UserControllerTest {
     
     @Test
     public void updateUserPhoto_WithValidationError_UserDoesntExist() {
-    	when(userService.exist(anyString())).thenReturn(false);
+    	when(userService.getUserById(anyString())).thenReturn(null);
         Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), new String("{\"foto\":\"b64code\"}")).getStatusCode(), HttpStatus.NOT_FOUND);
     }
     
@@ -267,7 +267,7 @@ public class UserControllerTest {
     	byte[] buffer = ((DataBufferByte)ImageIO.read(getClass().getClassLoader().getResource("tstimage.png")).getRaster().getDataBuffer()).getData();
     	String encodedPhoto = new String(Base64.getEncoder().encode(buffer), "UTF-8");
     	
-    	when(userService.exist(anyString())).thenReturn(true);
+    	when(userService.getUserById(anyString())).thenReturn(any(User.class));
     	doNothing().when(userService).updateUserPhotoById(anyString(), any(byte[].class));
         Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), new String("{\"foto\":\""+encodedPhoto+"\"}")).getStatusCode(), HttpStatus.OK);
     }

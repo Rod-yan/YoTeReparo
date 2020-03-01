@@ -56,6 +56,8 @@ public class UserController {
 	@Autowired
     MessageSource messageSource;
 	@Autowired
+	ValidationUtils validationUtils;
+	@Autowired
 	UserConverter userConverter;
 
 	/*
@@ -93,7 +95,6 @@ public class UserController {
 	
 	/*
 	 * Devuelve el usuario solicitado en formato JSON.
-	 * TODO: Definir si queremos incluir foto y thumbnail en esta response (mucho overhead).
 	 */
 	@RequestMapping(
 			value = { "/users/{id}" }, 
@@ -132,12 +133,12 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
 		logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId().toLowerCase()));
 		try {
-			if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
+			if (!validationUtils.userInputValidation(clientInput, result).hasErrors()) {
 				clientInput.setId(clientInput.getId().toLowerCase());
 				if (clientInput.getRoles() != null || clientInput.getRoles().size() != 0)
 					clientInput.getRoles().clear();
 				
-				if (!userService.exist(clientInput.getId())) {
+				if (userService.getUserById(clientInput.getId()) == null) {
 					userService.createUser(userConverter.convertToEntity(clientInput));
 					
 					HttpHeaders headers = new HttpHeaders();
@@ -184,8 +185,8 @@ public class UserController {
 		logger.info(String.format("UpdateUser - PUT - Processing request for user <%s>.", id));
 		try {
 			clientInput.setId(id);
-			if (userService.exist(id)) {
-				if (!ValidationUtils.userInputValidation(clientInput, result).hasErrors()) {
+			if (userService.getUserById(id) != null) {
+				if (!validationUtils.userInputValidation(clientInput, result).hasErrors()) {
 					if (clientInput.getRoles() != null || clientInput.getRoles().size() != 0)
 						clientInput.getRoles().clear();
 					
@@ -228,7 +229,7 @@ public class UserController {
 		logger.info(String.format("DeleteUser - DELETE - Processing request for user <%s>.", id));
 		try {
 			
-			if (userService.exist(id)) {
+			if (userService.getUserById(id) != null) {
 	        	userService.deleteUserById(id);
 	        	
 	        	logger.info("DeleteUser - DELETE - Exiting method, providing response resource to client.");
@@ -259,15 +260,16 @@ public class UserController {
 		id = id.toLowerCase();
 		logger.info(String.format("GetUserPhoto - GET - Processing request for user's <%s> photo.", id));
 		try {
-			if (userService.exist(id)) {			
+			User user = userService.getUserById(id);
+			if (user != null) {			
 				// evaluamos el uri path del request para determinar si vamos a estar trabajando con la foto o con el thumbnail
 				String requestUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
 				byte[] userPhoto;
 	 			if (requestUri.contains("thumbnail")) {
-	 				userPhoto = userService.getUserById(id).getThumbnail();
+	 				userPhoto = user.getThumbnail();
 	 			}
 				else {
-					userPhoto = userService.getUserById(id).getFoto();
+					userPhoto = user.getFoto();
 				}
 	 			// procesamos el request
 	 			if (userPhoto != null) {
@@ -323,7 +325,7 @@ public class UserController {
 		try { 
 			JSONObject jsonPhotoPayload = new JSONObject(photoPayload);
 			byte[] b64photo = jsonPhotoPayload.getString("foto").getBytes();
-			if (userService.exist(id)) {
+			if (userService.getUserById(id) != null) {
 				userService.updateUserPhotoById(id, Base64.getDecoder().decode(b64photo));
 				
 				logger.info("UpdateUserPhoto - PUT - Exiting method, providing response resource to client.");
@@ -363,7 +365,7 @@ public class UserController {
 		id = id.toLowerCase();
 		logger.info(String.format("DeleteUserPhoto - DELETE - Processing request for user's <%s> photo.", id));
 		try {
-			if (userService.exist(id)) {
+			if (userService.getUserById(id) != null) {
 				userService.updateUserPhotoById(id, null);
 				
 				logger.info("DeleteUserPhoto - DELETE - Exiting method, providing response resource to client.");

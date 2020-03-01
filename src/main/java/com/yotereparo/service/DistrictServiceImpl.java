@@ -39,9 +39,4 @@ public class DistrictServiceImpl implements DistrictService {
 		logger.debug(String.format("Fetching district <%s>", id));
 		return dao.getDistrictById(id);
 	}
-	
-	public boolean exist(Integer id) {
-		logger.debug(String.format("Verifying existence of district <%s>", id));
-		return (getDistrictById(id) != null);
-	}
 }

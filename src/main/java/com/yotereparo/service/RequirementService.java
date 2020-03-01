@@ -11,9 +11,4 @@ public interface RequirementService {
 	 Requirement getRequirementById(Integer id);
 	    
 	 Requirement getRequirementByDescription(String description);
-	    
-	    boolean exist(Integer id);
-	    
-	    boolean exist(String description);
-
 }

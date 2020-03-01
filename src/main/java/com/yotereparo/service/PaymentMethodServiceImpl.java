@@ -44,14 +44,4 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 		logger.debug(String.format("Fetching payment method <%s>", description));
 		return dao.getPaymentMethodByDescription(description);
 	}
-	
-	public boolean exist(Integer id) {
-		logger.debug(String.format("Verifying existence of payment method with id <%s>", id));
-		return (getPaymentMethodById(id) != null);
-	}
-	
-	public boolean exist(String description) {
-		logger.debug(String.format("Verifying existence of payment method <%s>", description));
-		return (getPaymentMethodByDescription(description) != null);
-	}
 }

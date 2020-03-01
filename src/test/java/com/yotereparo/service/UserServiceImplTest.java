@@ -114,20 +114,6 @@ public class UserServiceImplTest {
         Assert.assertEquals(userService.getAllUsers(), users);
     }
      
-    @Test
-    public void exist(){
-        User user = users.get(0);
-        when(dao.getUserById(anyString())).thenReturn(user);
-        Assert.assertEquals(userService.exist(anyString()), true);
-    }
- 
-    @Test
-    public void hasUniqueId(){
-        User user = users.get(0);
-        when(userService.getUserById(anyString())).thenReturn(null);
-        Assert.assertEquals(userService.hasUniqueId(user.getId()), true);
-    }
-     
      
     public List<User> getUsersList(){
     	User testUser1 = new User();

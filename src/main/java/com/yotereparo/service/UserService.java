@@ -18,10 +18,6 @@ public interface UserService {
     
     void updateUserPhotoById(String id, byte[] b64photo);
     
-    boolean exist(String id);
- 
-    boolean hasUniqueId(String id);
-    
     boolean isPrestador(User user);
     
     boolean isFinal(User user);

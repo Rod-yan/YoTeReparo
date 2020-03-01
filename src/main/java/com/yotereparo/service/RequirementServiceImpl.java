@@ -42,17 +42,7 @@ public class RequirementServiceImpl implements RequirementService {
 	}
 	
 	public Requirement getRequirementByDescription(String description) {
-		logger.debug(String.format("Fetching requirement <%s>", description));
+		logger.debug(String.format("Fetching requirement by description <%s>", description));
 		return dao.getRequirementByDescription(description);
-	}
-	
-	public boolean exist(Integer id) {
-		logger.debug(String.format("Verifying existence of requirement with id <%s>", id));
-		return (getRequirementById(id) != null);
-	}
-	
-	public boolean exist(String description) {
-		logger.debug(String.format("Verifying existence of requirement <%s>", description));
-		return (getRequirementByDescription(description) != null);
 	}
 }

@@ -16,9 +16,5 @@ public interface CityService {
     
     Set<District> getInvalidDistricts(City city, Set<District> districts);
     
-    boolean exist(String id);
- 
-    boolean hasUniqueId(String id);
-    
     boolean cityContainsDistrict(City city, District district);
 }

@@ -285,12 +285,6 @@ public class ServiceManagerImpl implements ServiceManager {
 	}
 	
 	@Override
-	public boolean exist(Integer id) {
-		logger.debug(String.format("Verifying existence of service with id <%s>", id));
-		return (getServiceById(id) != null);
-	}
-	
-	@Override
 	public List<Service> getAllServices() {
 		logger.debug("Fetching all services");
 		return dao.getAllServices(null);

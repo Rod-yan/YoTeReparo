@@ -13,8 +13,4 @@ public interface RoleService {
     List<Role> getAllPrestadorRoles();
     
     List<Role> getAllFinalRoles();
-    
-    boolean exist(String id);
- 
-    boolean hasUniqueId(String id);
 }

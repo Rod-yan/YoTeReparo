@@ -11,8 +11,4 @@ public interface PaymentMethodService {
     PaymentMethod getPaymentMethodById(Integer id);
     
     PaymentMethod getPaymentMethodByDescription(String description);
-    
-    boolean exist(Integer id);
-    
-    boolean exist(String description);
 }

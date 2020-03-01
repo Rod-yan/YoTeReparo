@@ -11,8 +11,4 @@ public interface ServiceTypeService {
     ServiceType getServiceTypeById(Integer id);
     
     ServiceType getServiceTypeByDescription(String description);
-    
-    boolean exist(Integer id);
-    
-    boolean exist(String description);
 }

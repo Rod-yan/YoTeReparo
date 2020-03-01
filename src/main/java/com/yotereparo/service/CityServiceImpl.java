@@ -65,16 +65,6 @@ public class CityServiceImpl implements CityService {
 		return invalidDistricts;
 	}
 	
-	public boolean exist(String id) {
-		logger.debug(String.format("Verifying existence of city <%s>", id));
-		return (getCityById(id) != null);
-	}
-
-	public boolean hasUniqueId(String id) {
-		logger.debug(String.format("Verifying uniqueness of cities' <%s> ID", id));
-		return !exist(id);
-	}
-	
 	public boolean cityContainsDistrict(City city, District district) {
 		logger.debug(String.format("Validating that district <%s> belongs in city with ID <%s>", district.toString(), city.getId()));
 		return city.getBarrios().contains(district);

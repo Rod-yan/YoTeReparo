@@ -9,6 +9,4 @@ public interface DistrictService {
     List<District> getAllDistricts(); 
      
     District getDistrictById(Integer id);
-    
-    boolean exist(Integer id);
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.joda.time.DateTime;
@@ -70,6 +71,7 @@ public class UserDto {
 	private DateTime fechaCreacion;
 	
 	@Size(max=10, message = "{user.membresia.size}")
+	@Pattern(regexp = "GRATUITA|PLATA|ORO", flags = Pattern.Flag.CASE_INSENSITIVE, message = "{user.membresia.unsupported.value}")
 	private String membresia;
 	
 	private Set<Role> roles = new HashSet<Role>(0);

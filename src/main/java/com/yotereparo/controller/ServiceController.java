@@ -70,6 +70,8 @@ public class ServiceController {
 	@Autowired
     MessageSource messageSource;
 	@Autowired
+	ValidationUtils validationUtils;
+	@Autowired
 	ServiceConverter serviceConverter;
 
 	/*
@@ -163,7 +165,7 @@ public class ServiceController {
     public ResponseEntity<?> createService(@RequestBody ServiceDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {	
 		logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getTitulo()));
 		try {
-			if (!ValidationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
+			if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
 				// Seteamos id en null ya que el mismo es autogenerado en tiempo de creación
 				clientInput.setId(null);
 				Service service = serviceConverter.convertToEntity(clientInput);
@@ -213,20 +215,32 @@ public class ServiceController {
 		logger.info(String.format("UpdateService - PUT - Processing request for service <%s>.", id));
 		try {
 			clientInput.setId(id);
-
-			if (serviceManager.exist(id)) {
-				if (!ValidationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
+			
+			if (serviceManager.getServiceById(id) != null) {
+				if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
 					Service service = serviceConverter.convertToEntity(clientInput);
-					if (!serviceManager.similarExist(service)) {
-						serviceManager.updateService(service);
-						
-						logger.info("UpdateService - PUT - Exiting method, providing response resource to client.");
-						return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
-					}
+					Boolean serviceIsRegisteredToUser = false;
+					for (Service s : service.getUsuarioPrestador().getServicios())
+						if (s.getId().equals(id)) {
+							serviceIsRegisteredToUser = true;
+							break;
+						}
+					if (serviceIsRegisteredToUser)
+						if (!serviceManager.similarExist(service)) {
+							serviceManager.updateService(service);
+							
+							logger.info("UpdateService - PUT - Exiting method, providing response resource to client.");
+							return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
+						}
+						else {
+							logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> is too similar to another service", service.getTitulo()));
+				            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
+				            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
+						}
 					else {
-						logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> is too similar to another service", service.getTitulo()));
-			            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
-			            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
+						logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> doesn't belong to user <%s>.", id, service.getUsuarioPrestador().getId()));
+						FieldError error = new FieldError("Service","servicios",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+						return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 					}
 				}
 				else {
@@ -261,7 +275,7 @@ public class ServiceController {
     public ResponseEntity<?> enableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("EnableService - POST - Processing request for service <%s>.", id));
 		try {
-			if (serviceManager.exist(id)) {
+			if (serviceManager.getServiceById(id) != null) {
 				serviceManager.enableServiceById(id);
 	        	
 	        	logger.info("EnableService - POST - Exiting method, providing response resource to client.");
@@ -290,7 +304,7 @@ public class ServiceController {
     public ResponseEntity<?> disableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("DisableService - POST - Processing request for service <%s>.", id));
 		try {
-			if (serviceManager.exist(id)) {
+			if (serviceManager.getServiceById(id) != null) {
 				serviceManager.disableServiceById(id);
 	        	
 	        	logger.info("DisableService - POST - Exiting method, providing response resource to client.");
@@ -319,7 +333,7 @@ public class ServiceController {
     public ResponseEntity<?> deleteService(@PathVariable("id") Integer id) {
 		logger.info(String.format("DeleteService - DELETE - Processing request for service <%s>.", id));
 		try {
-			if (serviceManager.exist(id)) {
+			if (serviceManager.getServiceById(id) != null) {
 				serviceManager.deleteServiceById(id);
 	        	
 	        	logger.info("DeleteService - DELETE - Exiting method, providing response resource to client.");
@@ -349,15 +363,16 @@ public class ServiceController {
     public ResponseEntity<?> getServiceImage(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetServiceImage - GET - Processing request for service's <%s> image.", id));
 		try {
-			if (serviceManager.exist(id)) {			
+			Service service = serviceManager.getServiceById(id);
+			if (service != null) {			
 				// evaluamos el uri path del request para determinar si vamos a estar trabajando con la foto o con el thumbnail
 				String requestUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
 				byte[] serviceImage;
 	 			if (requestUri.contains("thumbnail")) {
-	 				serviceImage = serviceManager.getServiceById(id).getThumbnail();
+	 				serviceImage = service.getThumbnail();
 	 			}
 				else {
-					serviceImage = serviceManager.getServiceById(id).getImagen();
+					serviceImage = service.getImagen();
 				}
 	 			// procesamos el request
 	 			if (serviceImage != null) {
@@ -411,7 +426,7 @@ public class ServiceController {
 		try { 
 			JSONObject jsonPhotoPayload = new JSONObject(photoPayload);
 			byte[] b64photo = jsonPhotoPayload.getString("foto").getBytes();
-			if (serviceManager.exist(id)) {
+			if (serviceManager.getServiceById(id) != null) {
 				serviceManager.updateServiceImageById(id, Base64.getDecoder().decode(b64photo));
 				
 				logger.info("UpdateServiceImage - PUT - Exiting method, providing response resource to client.");
@@ -450,7 +465,7 @@ public class ServiceController {
     public ResponseEntity<?> deleteServiceImage(@PathVariable("id") Integer id) {
 		logger.info(String.format("DeleteServiceImage - DELETE - Processing request for service's <%s> image.", id));
 		try {
-			if (serviceManager.exist(id)) {
+			if (serviceManager.getServiceById(id) != null) {
 				serviceManager.updateServiceImageById(id, null);
 				
 				logger.info("DeleteServiceImage - DELETE - Exiting method, providing response resource to client.");

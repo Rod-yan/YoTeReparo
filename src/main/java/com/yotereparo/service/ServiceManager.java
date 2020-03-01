@@ -22,8 +22,6 @@ public interface ServiceManager {
     
     boolean similarExist(Service service);
     
-    boolean exist(Integer id);
-    
     List<Service> getAllServices(); 
     
     List<Service> getAllServices(Object filter);
