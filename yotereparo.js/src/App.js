@@ -25,6 +25,7 @@ import {
   SessionContext
 } from "./Utils/SessionManage";
 import Servicio from "./Servicios/Servicio";
+import Axios from "axios";
 
 const NoMatch = () => {
   let location = useLocation();
@@ -51,12 +52,22 @@ const NoMatch = () => {
 };
 
 const LoginHandler = ({ history }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
 
   const handleSubmit = async event => {
     event.preventDefault();
-    //GOLPEAR LA API DE LOGUEO Y DEVOLVER ID DE USUARIO LOGUEADO
-    setSessionCokie({ email });
+
+    try {
+      await Axios(`http://localhost:8080/YoTeReparo/users/${username}`).then(
+        response => {
+          console.log(response);
+        }
+      );
+    } catch (error) {
+      console.log(error.response);
+    }
+
+    setSessionCokie({ username });
     history.push("/");
     window.location.reload();
   };
@@ -65,10 +76,10 @@ const LoginHandler = ({ history }) => {
     <div style={{ marginTop: "1rem" }}>
       <form onSubmit={handleSubmit}>
         <input
-          type="email"
-          placeholder="Ingresa tu correo electronico"
-          value={email}
-          onChange={event => setEmail(event.target.value)}
+          type="string"
+          placeholder="Ingresa tu nombre de usuario"
+          value={username}
+          onChange={event => setUsername(event.target.value)}
         />
         <input type="submit" value="Login" />
       </form>
@@ -106,7 +117,7 @@ function App() {
               <li>
                 <Link to="/">Home</Link>
               </li>
-              {session.email === undefined ? (
+              {session.username === undefined ? (
                 <>
                   <li>
                     <Link to="/registro">Registrarte</Link>
@@ -118,7 +129,7 @@ function App() {
               ) : (
                 <>
                   <li>
-                    <Link to={"/perfil/" + session.email}>Perfil</Link>
+                    <Link to={"/perfil/" + session.username}>Perfil</Link>
                   </li>
                   <li>
                     <Link to={"/salir"}>Salir</Link>

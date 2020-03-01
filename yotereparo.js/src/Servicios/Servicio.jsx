@@ -1,9 +1,10 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 
 const Servicio = props => {
   let location = useLocation();
+  let history = useHistory();
 
   const body = location.state.body;
   const title = location.state.title;
@@ -31,6 +32,27 @@ const Servicio = props => {
                         {body}
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row mx-auto">
+                <div className="col-md-12">
+                  {" "}
+                  <div
+                    className="btn btn-info ml-2 mr-2"
+                    onClick={() => {
+                      history.go(-1);
+                    }}
+                  >
+                    <i className="fas fa-chevron-circle-left fa-2x"></i>
+                  </div>
+                  <div
+                    className="btn btn-danger ml-2 mr-2"
+                    onClick={() => {
+                      console.log("MESSAGE: Contactar servicio");
+                    }}
+                  >
+                    <i className="fas fa-concierge-bell fa-2x"></i>
                   </div>
                 </div>
               </div>

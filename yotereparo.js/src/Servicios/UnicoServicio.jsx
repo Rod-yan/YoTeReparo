@@ -36,7 +36,7 @@ const UnicoServicio = props => {
                       onClick={() => {
                         handleClick(props.data);
                       }}
-                      className="btn btn-dark btn-block"
+                      className="btn btn-danger btn-block"
                     >
                       VER SERVICIO
                     </button>
