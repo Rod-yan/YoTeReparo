@@ -47,7 +47,7 @@ const Servicio = props => {
                     <i className="fas fa-chevron-circle-left fa-2x"></i>
                   </div>
                   <div
-                    className="btn btn-success ml-2 mr-2"
+                    className="btn btn-danger ml-2 mr-2"
                     onClick={() => {
                       console.log("MESSAGE: Contactar servicio");
                     }}

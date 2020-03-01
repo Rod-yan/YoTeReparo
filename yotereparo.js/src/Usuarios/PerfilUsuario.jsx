@@ -22,15 +22,21 @@ function PerfilUsuario(props) {
         console.log("ERROR: No se encuentra el usuario");
         setAuth(false);
       } else if (result.name !== "Error") {
-        if (session.email !== result.data.email) {
-          setAuth(false);
-        } else {
+        if (session.username === result.data.id) {
           setAuth(true);
           setProfile(result.data);
+          console.log("OK: Ingresaste correctamente");
+        } else {
+          console.log(
+            "ERROR: El usuario ingresado no corresponde con la informacion de sesion"
+          );
+          setAuth(false);
         }
       } else {
         setAuth(false);
-        console.log("ERROR: Hay un error con la peticion al servidor");
+        console.log(
+          "ERROR: Hay un error con la peticion al servidor y/o No estas autorizado para entrar aca"
+        );
       }
     };
     try {
@@ -42,9 +48,9 @@ function PerfilUsuario(props) {
     } catch (error) {
       console.log(error.response);
     }
-  }, [loading, auth, session.email, props.match.params.userId]);
+  }, [loading, auth, session.username, props.match.params.userId]);
 
-  if (session.email === undefined) {
+  if (session.username === undefined) {
     props.history.push("/ingresar");
   }
 
@@ -107,12 +113,16 @@ function PerfilUsuario(props) {
                                   <div className="row">
                                     <div className="col-md-12">
                                       <h5>
-                                        <span className="badge badge-pill badge-success mt-1 mb-1 mr-1 ml-1">
-                                          USUARIO
-                                        </span>
-                                        <span className="badge badge-pill badge-danger mt-1 mb-1 mr-1 ml-1">
-                                          PRESTADOR
-                                        </span>
+                                        {profile.roles.map(rol => {
+                                          return (
+                                            <span
+                                              key={rol.id}
+                                              className="badge badge-pill badge-danger mt-1 mb-1 mr-1 ml-1"
+                                            >
+                                              {rol.descripcion.toUpperCase()}
+                                            </span>
+                                          );
+                                        })}
                                       </h5>
                                       <h3 className="card-title">
                                         {profile.nombre + profile.apellido}
