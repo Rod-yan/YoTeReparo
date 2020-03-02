@@ -4,6 +4,7 @@ import { useState, useContext } from "react";
 import Axios from "axios";
 import { useEffect } from "react";
 import { SessionContext } from "../Utils/SessionManage";
+import "../Usuarios/PerfilUsuario.css";
 
 function PerfilUsuario(props) {
   const session = useContext(SessionContext);
@@ -104,8 +105,9 @@ function PerfilUsuario(props) {
                               <div className="col-md-4 my-auto">
                                 <img
                                   src="https://via.placeholder.com/150/92c952"
-                                  className="card-img rounded-circle"
+                                  className="card-img rounded-circle on-profile-click"
                                   alt="placeholder"
+                                  onClick={() => alert("Hello")}
                                 ></img>
                               </div>
                               <div className="col-md-8 text-right">

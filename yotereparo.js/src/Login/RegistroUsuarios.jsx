@@ -54,13 +54,17 @@ const FormRegistro = props => {
 
     setIsCreatingUser(true);
 
+    //TODO: SET membresia en funcion del formulario de entrada
+    let membresiaObject = isFormEmpleador ? "BASICA" : null;
+
     let requestData = {
       id: account.nombre + account.apellido,
       nombre: account.nombre,
       apellido: account.apellido,
       ciudad: account.ciudad,
       email: account.email,
-      contrasena: account.password
+      contrasena: account.password,
+      membresia: membresiaObject
     };
 
     let requestHeaders = {
