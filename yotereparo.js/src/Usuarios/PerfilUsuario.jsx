@@ -15,9 +15,15 @@ function PerfilUsuario(props) {
 
   useEffect(() => {
     const fetchData = async urlToFetch => {
-      const result = await Axios(urlToFetch).catch(error => {
-        return error;
-      });
+      let result;
+
+      await Axios(urlToFetch)
+        .then(resp => {
+          result = resp;
+        })
+        .catch(error => {
+          return error;
+        });
 
       if (result.status === 404) {
         console.log("ERROR: No se encuentra el usuario");
