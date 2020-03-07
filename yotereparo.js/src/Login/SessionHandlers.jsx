@@ -54,13 +54,18 @@ export const LoginHandler = ({ history }) => {
       console.log(error.response);
     }
 
-    if (username && result.status !== 404) {
-      setSessionCokie({ username });
-      history.push("/");
-      window.location.reload();
-    } else {
+    if (typeof result == "undefined") {
       setLoadingUser(false);
       setErrors(true);
+    } else {
+      if (username && result.status !== 404) {
+        setSessionCokie({ username });
+        history.push("/");
+        window.location.reload();
+      } else {
+        setLoadingUser(false);
+        setErrors(true);
+      }
     }
   };
 
@@ -72,7 +77,7 @@ export const LoginHandler = ({ history }) => {
             <ElementContainer>
               <div className="container">
                 {errors ? (
-                  <div class="alert alert-success" role="alert">
+                  <div class="alert alert-danger text-center" role="alert">
                     Los datos de sesion no son correctos
                   </div>
                 ) : (
