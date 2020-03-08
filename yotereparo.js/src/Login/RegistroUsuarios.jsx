@@ -20,6 +20,7 @@ const FormRegistro = props => {
   // let isFormUsuario = props.type === "usuario" ? true : false;
 
   let history = useHistory();
+  let membresiaObject = isFormEmpleador ? "BASICA" : null;
 
   let [account, setAccount] = useState({
     email: "",
@@ -55,7 +56,6 @@ const FormRegistro = props => {
     setIsCreatingUser(true);
 
     //TODO: SET membresia en funcion del formulario de entrada
-    let membresiaObject = isFormEmpleador ? "BASICA" : null;
 
     let requestData = {
       id: account.nombre + account.apellido,
@@ -134,6 +134,22 @@ const FormRegistro = props => {
     } else {
       account["validate"].passwordState = "danger";
     }
+  };
+
+  let updateMembresia = event => {
+    console.log(event.target.value);
+    switch (event.target.value) {
+      case "1":
+        membresiaObject = "BASICA";
+        break;
+      case "2":
+        membresiaObject = "PREMIUM";
+        break;
+      case "3":
+        membresiaObject = "GOLD";
+        break;
+    }
+    console.log(membresiaObject);
   };
 
   return (
@@ -257,19 +273,31 @@ const FormRegistro = props => {
               {isFormEmpleador ? (
                 <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-0">
                   <Label for="rubroSelect" className="mr-sm-2 font-weight-bold">
-                    RUBRO
+                    MEMBRESIA
                   </Label>
-                  <CustomInput type="checkbox" id="rubroHogar" label="Hogar" />
                   <CustomInput
-                    type="checkbox"
-                    id="rubroInformatica"
-                    label="Informatica/Electronica"
-                  />
-                  <CustomInput
-                    type="checkbox"
-                    id="rubroOtros"
-                    label="Otros..."
-                  />
+                    id="membresiaRange"
+                    type="range"
+                    step="1"
+                    defaultValue="1"
+                    min="1"
+                    max="3"
+                    onChange={updateMembresia}
+                  ></CustomInput>
+                  <div className="row my-auto text-center">
+                    <div className="col-4">
+                      <div className="h6">BASICA</div>
+                    </div>
+
+                    <div className="col-4">
+                      {" "}
+                      <div className="h6">PREMIUM</div>
+                    </div>
+                    <div className="col-4">
+                      {" "}
+                      <div className="h6">GOLD</div>
+                    </div>
+                  </div>
                 </FormGroup>
               ) : (
                 <></>
