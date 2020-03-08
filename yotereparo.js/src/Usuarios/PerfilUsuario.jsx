@@ -3,8 +3,9 @@ import ElementContainer from "../Container/ElementContainer";
 import { useState, useContext } from "react";
 import Axios from "axios";
 import { useEffect } from "react";
-import { SessionContext } from "../Utils/SessionManage";
+import { SessionContext, ProfileContext } from "../Utils/SessionManage";
 import "../Usuarios/PerfilUsuario.css";
+import Usuario from "./Usuario";
 
 function PerfilUsuario(props) {
   const session = useContext(SessionContext);
@@ -12,6 +13,7 @@ function PerfilUsuario(props) {
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState(true);
+  const [modify, activateModify] = useState(true);
 
   useEffect(() => {
     const fetchData = async urlToFetch => {
@@ -97,72 +99,16 @@ function PerfilUsuario(props) {
           </div>
         </ElementContainer>
       ) : (
-        <ElementContainer>
-          <div className="d-flex align-items-center mx-auto">
-            <div className="row">
-              <div className="col-xs-12">
-                <div>
-                  <div>
-                    <div className="row">
-                      <div className="col-12">
-                        <div className="card mb-2">
-                          <div className="card card-element">
-                            <div className="row no-gutters">
-                              <div className="col-md-4 my-auto">
-                                <img
-                                  src="https://via.placeholder.com/150/92c952"
-                                  className="card-img rounded-circle on-profile-click"
-                                  alt="placeholder"
-                                  onClick={() => alert("Hello")}
-                                ></img>
-                              </div>
-                              <div className="col-md-8 text-right">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-md-12">
-                                      <h5>
-                                        {profile.roles.map(rol => {
-                                          return (
-                                            <span
-                                              key={rol.id}
-                                              className="badge badge-pill badge-danger mt-1 mb-1 mr-1 ml-1"
-                                            >
-                                              {rol.descripcion.toUpperCase()}
-                                            </span>
-                                          );
-                                        })}
-                                      </h5>
-                                      <h3 className="card-title">
-                                        {profile.nombre + profile.apellido}
-                                      </h3>
-                                      <div className="card-text">
-                                        <div className="lead">
-                                          <strong>{profile.email}</strong>
-                                        </div>
-                                        <div className="lead">
-                                          {profile.nombre +
-                                            " " +
-                                            profile.apellido}
-                                        </div>
-                                        <div className="lead">
-                                          {profile.ciudad}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ElementContainer>
+        <ProfileContext.Provider value={profile}>
+          <Usuario
+            modify={modify}
+            activateEdit={() => activateModify(!modify)}
+            activateSave={() => {
+              console.log("Guardar usuario");
+              activateModify(!modify);
+            }}
+          ></Usuario>
+        </ProfileContext.Provider>
       )}
     </>
   );
