@@ -148,6 +148,8 @@ const FormRegistro = props => {
       case "3":
         membresiaObject = "GOLD";
         break;
+      default:
+        break;
     }
     console.log(membresiaObject);
   };
@@ -271,7 +273,7 @@ const FormRegistro = props => {
                 </FormFeedback>
               </FormGroup>
               {isFormEmpleador ? (
-                <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-0">
+                <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-2">
                   <Label for="rubroSelect" className="mr-sm-2 font-weight-bold">
                     MEMBRESIA
                   </Label>
@@ -284,18 +286,18 @@ const FormRegistro = props => {
                     max="3"
                     onChange={updateMembresia}
                   ></CustomInput>
-                  <div className="row my-auto text-center">
+                  <div className="row text-center membership">
                     <div className="col-4">
-                      <div className="h6">BASICA</div>
+                      <div className="small membership-text">BASICA</div>
                     </div>
 
                     <div className="col-4">
                       {" "}
-                      <div className="h6">PREMIUM</div>
+                      <div className="small membership-text">PREMIUM</div>
                     </div>
                     <div className="col-4">
                       {" "}
-                      <div className="h6">GOLD</div>
+                      <div className="small membership-text">GOLD</div>
                     </div>
                   </div>
                 </FormGroup>
@@ -305,7 +307,7 @@ const FormRegistro = props => {
               {infomessage === "" ? (
                 <></>
               ) : (
-                <FormText className="mt-4 mb-1 alert alert-warning">
+                <FormText className="mt-4 mb-1 text-center alert alert-warning">
                   {infomessage}
                 </FormText>
               )}
