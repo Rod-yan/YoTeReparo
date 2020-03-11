@@ -15,7 +15,7 @@ function EncontrarServicios(props) {
 
   useEffect(() => {
     try {
-      fetchData("https://jsonplaceholder.typicode.com/posts").then(resp => {
+      fetchData("http://localhost:8080/YoTeReparo/services/").then(resp => {
         setLoading(false);
       });
     } catch (error) {
