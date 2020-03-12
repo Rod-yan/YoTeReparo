@@ -6,14 +6,54 @@ import { useEffect } from "react";
 import { SessionContext, ProfileContext } from "../Utils/SessionManage";
 import "../Usuarios/PerfilUsuario.css";
 import Usuario from "./Usuario";
+import { useHistory } from "react-router-dom";
 
 function PerfilUsuario(props) {
   const session = useContext(SessionContext);
-
+  let history = useHistory();
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const [auth, setAuth] = useState(true);
   const [modify, activateModify] = useState(true);
+
+  const updateProfile = () => {
+    let requestHeaders = {
+      "Access-Control-Allow-Origin": "*"
+    };
+
+    let requestData = {
+      id: profile.id,
+      nombre: profile.nombre,
+      apellido: profile.apellido,
+      ciudad: profile.ciudad,
+      email: profile.email,
+      contrasena: profile.contrasena,
+      membresia: profile.membresia
+    };
+
+    setUpdating(true);
+    Axios.put(
+      `http://localhost:8080/YoTeReparo/users/${profile.id}`,
+      requestData,
+      requestHeaders
+    )
+      .then(response => {
+        if (response.status === 400) {
+          console.log(response.json);
+        } else {
+          setUpdating(false);
+          history.push({
+            pathname: `/perfil/${profile.id}`,
+            state: { user: profile }
+          });
+          console.log("INFO: Usuario actualizado correctamente");
+        }
+      })
+      .catch(error => {
+        throw new Error("ERROR: There is a problem with the update of an User");
+      });
+  };
 
   useEffect(() => {
     const fetchData = async urlToFetch => {
@@ -104,9 +144,10 @@ function PerfilUsuario(props) {
             modify={modify}
             activateEdit={() => activateModify(!modify)}
             activateSave={() => {
-              console.log("Guardar usuario");
+              updateProfile();
               activateModify(!modify);
             }}
+            updatingUser={updating}
           ></Usuario>
         </ProfileContext.Provider>
       )}

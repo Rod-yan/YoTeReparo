@@ -9,7 +9,44 @@ function Usuario(props) {
 
   const handleChange = event => {
     profile[event.target.id] = event.target.value;
-    console.log(profile);
+  };
+
+  const ButtonSave = () => {
+    if (props.updatingUser) {
+      return (
+        <button
+          type="button"
+          className="btn btn-success btn-block"
+          onClick={props.activateSave}
+        >
+          <div className="spinner-border" role="status">
+            <span className="sr-only">Creando Usuario...</span>
+          </div>
+        </button>
+      );
+    } else {
+      if (!props.modify) {
+        return (
+          <button
+            type="button"
+            className="btn btn-success btn-block"
+            onClick={props.activateSave}
+          >
+            <i className="fas fa-save fa-2x"></i>
+          </button>
+        );
+      } else {
+        return (
+          <button
+            type="button"
+            className="btn btn-danger btn-block"
+            onClick={props.activateEdit}
+          >
+            <i className="fas fa-user-edit fa-2x"></i>
+          </button>
+        );
+      }
+    }
   };
 
   return (
@@ -50,10 +87,8 @@ function Usuario(props) {
                                   </h5>
                                   <InputField
                                     fieldTitle="Username"
-                                    fieldValue={
-                                      profile.nombre + profile.apellido
-                                    }
-                                    fieldActivate={props.modify}
+                                    fieldValue={profile.id}
+                                    fieldActivate={true}
                                     fieldChange={handleChange}
                                     fieldId={"id"}
                                   ></InputField>
@@ -67,39 +102,28 @@ function Usuario(props) {
                                       fieldId={"email"}
                                     ></InputField>
                                     <InputField
-                                      fieldTitle="Nombre Completo"
-                                      fieldValue={
-                                        profile.nombre + " " + profile.apellido
-                                      }
-                                      fieldActivate={true}
+                                      fieldTitle="Nombre"
+                                      fieldValue={profile.nombre}
+                                      fieldActivate={props.modify}
                                       fieldChange={handleChange}
-                                      fieldId={""}
+                                      fieldId={"nombre"}
+                                    ></InputField>
+                                    <InputField
+                                      fieldTitle="Apellido"
+                                      fieldValue={profile.apellido}
+                                      fieldActivate={props.modify}
+                                      fieldChange={handleChange}
+                                      fieldId={"apellido"}
                                     ></InputField>
                                     <InputField
                                       fieldTitle="Ciudad"
                                       fieldValue={profile.ciudad}
-                                      fieldActivate={props.modify}
+                                      fieldActivate={true}
                                       fieldChange={handleChange}
-                                      fieldId={"email"}
+                                      fieldId={"ciudad"}
                                     ></InputField>
                                     <div className="text-center">
-                                      {!props.modify ? (
-                                        <button
-                                          type="button"
-                                          className="btn btn-success btn-block"
-                                          onClick={props.activateSave}
-                                        >
-                                          <i className="fas fa-save fa-2x"></i>
-                                        </button>
-                                      ) : (
-                                        <button
-                                          type="button"
-                                          className="btn btn-danger btn-block"
-                                          onClick={props.activateEdit}
-                                        >
-                                          <i className="fas fa-user-edit fa-2x"></i>
-                                        </button>
-                                      )}
+                                      {<ButtonSave></ButtonSave>}
                                     </div>
                                   </div>
                                 </div>
