@@ -14,6 +14,7 @@ import { createBrowserHistory } from "history";
 import { getSessionCookie, SessionContext } from "./Utils/SessionManage";
 import Servicio from "./Servicios/Servicio";
 import { LoginHandler, LogOutHandler, NoMatch } from "./Login/SessionHandlers";
+import CrearServicio from "./Servicios/CrearServicio";
 
 function App() {
   const history = createBrowserHistory();
@@ -98,6 +99,11 @@ function App() {
                   <EncontrarServicios {...props}></EncontrarServicios>
                 </Container>
               )}
+            />
+
+            <Route
+              path="/servicio/crear"
+              render={props => <CrearServicio {...props}></CrearServicio>}
             />
 
             <Route

@@ -28,6 +28,7 @@
     rgb(210, 210, 210),
     rgb(212, 175, 55)
   );
+
   display: flexbox;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -39,4 +40,5 @@
   border-radius: 20px;
   background-origin: border-box;
   background-clip: padding-box;
+  box-shadow: 0px 0px 8px #903749;
 }
