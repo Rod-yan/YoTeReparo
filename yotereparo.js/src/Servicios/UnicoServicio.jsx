@@ -7,7 +7,14 @@ const UnicoServicio = props => {
   const handleClick = data => {
     history.push({
       pathname: "/servicio/" + data.id,
-      state: { title: data.titulo, body: data.descripcion }
+      state: {
+        title: data.titulo,
+        body: data.descripcion,
+        provider: data.usuarioPrestador,
+        avaliable: data.disponibilidad,
+        estimateTime: data.horasEstimadasEjecucion,
+        averagePrice: data.precioPromedio
+      }
     });
   };
 

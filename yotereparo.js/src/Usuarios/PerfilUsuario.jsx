@@ -18,6 +18,7 @@ function PerfilUsuario(props) {
   const [modify, activateModify] = useState(true);
 
   const updateProfile = () => {
+    console.log(profile);
     let requestHeaders = {
       "Access-Control-Allow-Origin": "*"
     };
