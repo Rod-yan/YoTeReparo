@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-const UnicoServicio = props => {
+const SingleServicio = props => {
   let history = useHistory();
 
   const handleClick = data => {
@@ -58,4 +58,4 @@ const UnicoServicio = props => {
   );
 };
 
-export default UnicoServicio;
+export default SingleServicio;

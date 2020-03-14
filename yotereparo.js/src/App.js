@@ -11,9 +11,9 @@ import EncontrarServicios from "./Find/EncontrarServicios";
 import Tour from "./Tour/Tour";
 import PerfilUsuario from "./Usuarios/PerfilUsuario";
 import { createBrowserHistory } from "history";
-import { getSessionCookie, SessionContext } from "./Utils/SessionManage";
 import Servicio from "./Servicios/Servicio";
-import { LoginHandler, LogOutHandler, NoMatch } from "./Login/SessionHandlers";
+import { getSessionCookie, SessionContext } from "./Utils/SessionManage";
+import { LoginHandler, LogOutHandler, NoMatch } from "./Utils/SessionHandlers";
 
 function App() {
   const history = createBrowserHistory();
