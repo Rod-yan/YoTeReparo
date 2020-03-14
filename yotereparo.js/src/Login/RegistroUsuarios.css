@@ -1,11 +1,10 @@
 .errors-list {
   width: auto;
   text-align: center;
-  max-height: 150px;
+  max-height: 200px;
   min-width: 300px;
   padding: 20px 0px 20px 0px;
   margin: 20px 0px 20px 0px;
-  overflow: scroll;
   overflow-x: hidden;
   background-color: rgba(255, 0, 0, 0.2);
 }

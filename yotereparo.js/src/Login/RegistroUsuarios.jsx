@@ -155,7 +155,7 @@ const FormRegistro = props => {
   };
 
   return (
-    <div className="centered card-center-form">
+    <div className="registercentered card-center-form">
       <div className="row">
         <div className="col-md-12">
           <ElementContainer>
