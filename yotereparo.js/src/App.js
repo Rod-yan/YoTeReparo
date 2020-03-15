@@ -2,100 +2,18 @@ import React, { useState, useEffect } from "react";
 import Home from "./Home/Home";
 import About from "./About/About";
 import Header from "./Header/Header";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useLocation
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
 import Container from "./Container/Container";
 import SelectorDeCategorias from "./Login/SelectorDeCategorias";
 import FormRegistro from "./Login/RegistroUsuarios";
 import EncontrarServicios from "./Find/EncontrarServicios";
 import Tour from "./Tour/Tour";
-import ElementContainer from "./Container/ElementContainer";
 import PerfilUsuario from "./Usuarios/PerfilUsuario";
 import { createBrowserHistory } from "history";
-import {
-  setSessionCokie,
-  deleteSessionCookie,
-  getSessionCookie,
-  SessionContext
-} from "./Utils/SessionManage";
 import Servicio from "./Servicios/Servicio";
-import Axios from "axios";
-
-const NoMatch = () => {
-  let location = useLocation();
-
-  return (
-    <>
-      {" "}
-      <ElementContainer>
-        <div className="card-center-form d-flex align-items-center mx-auto">
-          <div className="row">
-            <div className="col-xs-12">
-              Donde sea que estes yendo, este no es el camino.
-              <br></br>
-              <br></br>
-              <code>
-                <strong>{location.pathname}</strong>
-              </code>
-            </div>
-          </div>
-        </div>
-      </ElementContainer>
-    </>
-  );
-};
-
-const LoginHandler = ({ history }) => {
-  const [username, setUsername] = useState("");
-
-  const handleSubmit = async event => {
-    event.preventDefault();
-
-    try {
-      await Axios(`http://localhost:8080/YoTeReparo/users/${username}`).then(
-        response => {
-          console.log(response);
-        }
-      );
-    } catch (error) {
-      console.log(error.response);
-    }
-
-    setSessionCokie({ username });
-    history.push("/");
-    window.location.reload();
-  };
-
-  return (
-    <div style={{ marginTop: "1rem" }}>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="string"
-          placeholder="Ingresa tu nombre de usuario"
-          value={username}
-          onChange={event => setUsername(event.target.value)}
-        />
-        <input type="submit" value="Login" />
-      </form>
-    </div>
-  );
-};
-
-const LogOutHandler = ({ history }) => {
-  useEffect(() => {
-    deleteSessionCookie("userSession");
-    history.push("/ingresar");
-    window.location.reload();
-  }, [history]);
-
-  return <div>Has salido de la aplicación</div>;
-};
+import { getSessionCookie, SessionContext } from "./Utils/SessionManage";
+import { LoginHandler, LogOutHandler, NoMatch } from "./Utils/SessionHandlers";
 
 function App() {
   const history = createBrowserHistory();
@@ -115,24 +33,34 @@ function App() {
           <Header>
             <ul>
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/">
+                  <i className="fas fa-home"></i>
+                </Link>
               </li>
               {session.username === undefined ? (
                 <>
                   <li>
-                    <Link to="/registro">Registrarte</Link>
+                    <Link to="/registro">
+                      <i className="fas fa-user-plus"></i>
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/ingresar">Ingresar</Link>
+                    <Link to="/ingresar">
+                      <i className="fas fa-sign-in-alt"></i>
+                    </Link>
                   </li>
                 </>
               ) : (
                 <>
                   <li>
-                    <Link to={"/perfil/" + session.username}>Perfil</Link>
+                    <Link to={"/perfil/" + session.username}>
+                      <i className="fas fa-user fa-1x"></i>
+                    </Link>
                   </li>
                   <li>
-                    <Link to={"/salir"}>Salir</Link>
+                    <Link to={"/salir"}>
+                      <i className="fas fa-sign-out-alt fa-1x"></i>
+                    </Link>
                   </li>
                 </>
               )}

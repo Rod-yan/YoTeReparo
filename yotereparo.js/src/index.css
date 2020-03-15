@@ -1,4 +1,5 @@
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+@import url("https://fonts.googleapis.com/css?family=Rubik&display=swap");
+
+body {
+  font-family: "Rubik", sans-serif, Arial, Helvetica, sans-serif;
 }

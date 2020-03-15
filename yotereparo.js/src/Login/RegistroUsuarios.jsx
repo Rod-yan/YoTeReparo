@@ -20,6 +20,7 @@ const FormRegistro = props => {
   // let isFormUsuario = props.type === "usuario" ? true : false;
 
   let history = useHistory();
+  let membresiaObject = isFormEmpleador ? "BASICA" : null;
 
   let [account, setAccount] = useState({
     email: "",
@@ -54,13 +55,16 @@ const FormRegistro = props => {
 
     setIsCreatingUser(true);
 
+    //TODO: SET membresia en funcion del formulario de entrada
+
     let requestData = {
       id: account.nombre + account.apellido,
       nombre: account.nombre,
       apellido: account.apellido,
       ciudad: account.ciudad,
       email: account.email,
-      contrasena: account.password
+      contrasena: account.password,
+      membresia: membresiaObject
     };
 
     let requestHeaders = {
@@ -130,6 +134,24 @@ const FormRegistro = props => {
     } else {
       account["validate"].passwordState = "danger";
     }
+  };
+
+  let updateMembresia = event => {
+    console.log(event.target.value);
+    switch (event.target.value) {
+      case "1":
+        membresiaObject = "BASICA";
+        break;
+      case "2":
+        membresiaObject = "PREMIUM";
+        break;
+      case "3":
+        membresiaObject = "GOLD";
+        break;
+      default:
+        break;
+    }
+    console.log(membresiaObject);
   };
 
   return (
@@ -251,21 +273,33 @@ const FormRegistro = props => {
                 </FormFeedback>
               </FormGroup>
               {isFormEmpleador ? (
-                <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-0">
+                <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-2">
                   <Label for="rubroSelect" className="mr-sm-2 font-weight-bold">
-                    RUBRO
+                    MEMBRESIA
                   </Label>
-                  <CustomInput type="checkbox" id="rubroHogar" label="Hogar" />
                   <CustomInput
-                    type="checkbox"
-                    id="rubroInformatica"
-                    label="Informatica/Electronica"
-                  />
-                  <CustomInput
-                    type="checkbox"
-                    id="rubroOtros"
-                    label="Otros..."
-                  />
+                    id="membresiaRange"
+                    type="range"
+                    step="1"
+                    defaultValue="1"
+                    min="1"
+                    max="3"
+                    onChange={updateMembresia}
+                  ></CustomInput>
+                  <div className="row text-center membership">
+                    <div className="col-4">
+                      <div className="small membership-text">BASICA</div>
+                    </div>
+
+                    <div className="col-4">
+                      {" "}
+                      <div className="small membership-text">PREMIUM</div>
+                    </div>
+                    <div className="col-4">
+                      {" "}
+                      <div className="small membership-text">GOLD</div>
+                    </div>
+                  </div>
                 </FormGroup>
               ) : (
                 <></>
@@ -273,7 +307,7 @@ const FormRegistro = props => {
               {infomessage === "" ? (
                 <></>
               ) : (
-                <FormText className="mt-4 mb-1 alert alert-warning">
+                <FormText className="mt-4 mb-1 text-center alert alert-warning">
                   {infomessage}
                 </FormText>
               )}

@@ -3,20 +3,75 @@ import ElementContainer from "../Container/ElementContainer";
 import { useState, useContext } from "react";
 import Axios from "axios";
 import { useEffect } from "react";
-import { SessionContext } from "../Utils/SessionManage";
+import { SessionContext, ProfileContext } from "../Utils/SessionManage";
+import "../Usuarios/PerfilUsuario.css";
+import Usuario from "./Usuario";
+import { useHistory } from "react-router-dom";
 
 function PerfilUsuario(props) {
   const session = useContext(SessionContext);
-
+  let history = useHistory();
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const [auth, setAuth] = useState(true);
+  const [modify, activateModify] = useState(true);
+
+  const updateProfile = () => {
+    console.log(profile);
+    let requestHeaders = {
+      "Access-Control-Allow-Origin": "*"
+    };
+
+    let requestData = {
+      id: profile.id,
+      nombre: profile.nombre,
+      apellido: profile.apellido,
+      ciudad: profile.ciudad,
+      email: profile.email,
+      contrasena: profile.contrasena,
+      membresia: profile.membresia
+    };
+
+    setUpdating(true);
+
+    Axios.put(
+      `http://localhost:8080/YoTeReparo/users/${profile.id}`,
+      requestData,
+      requestHeaders
+    )
+      .then(response => {
+        if (response.status === 400) {
+          console.log(response.json);
+        } else {
+          setUpdating(false);
+          history.push({
+            pathname: `/perfil/${profile.id}`,
+            state: { user: profile }
+          });
+          console.log("INFO: Usuario actualizado correctamente");
+        }
+      })
+      .catch(error => {
+        throw new Error("ERROR: There is a problem with the update of an User");
+      });
+  };
+
+  const handleActivateModifications = () => {
+    activateModify(!modify);
+  };
 
   useEffect(() => {
     const fetchData = async urlToFetch => {
-      const result = await Axios(urlToFetch).catch(error => {
-        return error;
-      });
+      let result;
+
+      await Axios(urlToFetch)
+        .then(resp => {
+          result = resp;
+        })
+        .catch(error => {
+          return error;
+        });
 
       if (result.status === 404) {
         console.log("ERROR: No se encuentra el usuario");
@@ -90,71 +145,17 @@ function PerfilUsuario(props) {
           </div>
         </ElementContainer>
       ) : (
-        <ElementContainer>
-          <div className="d-flex align-items-center mx-auto">
-            <div className="row">
-              <div className="col-xs-12">
-                <div>
-                  <div>
-                    <div className="row">
-                      <div className="col-12">
-                        <div className="card mb-2">
-                          <div className="card card-element">
-                            <div className="row no-gutters">
-                              <div className="col-md-4 my-auto">
-                                <img
-                                  src="https://via.placeholder.com/150/92c952"
-                                  className="card-img rounded-circle"
-                                  alt="placeholder"
-                                ></img>
-                              </div>
-                              <div className="col-md-8 text-right">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-md-12">
-                                      <h5>
-                                        {profile.roles.map(rol => {
-                                          return (
-                                            <span
-                                              key={rol.id}
-                                              className="badge badge-pill badge-danger mt-1 mb-1 mr-1 ml-1"
-                                            >
-                                              {rol.descripcion.toUpperCase()}
-                                            </span>
-                                          );
-                                        })}
-                                      </h5>
-                                      <h3 className="card-title">
-                                        {profile.nombre + profile.apellido}
-                                      </h3>
-                                      <div className="card-text">
-                                        <div className="lead">
-                                          <strong>{profile.email}</strong>
-                                        </div>
-                                        <div className="lead">
-                                          {profile.nombre +
-                                            " " +
-                                            profile.apellido}
-                                        </div>
-                                        <div className="lead">
-                                          {profile.ciudad}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ElementContainer>
+        <ProfileContext.Provider value={profile}>
+          <Usuario
+            modify={modify}
+            updatingUser={updating}
+            activateEdit={() => handleActivateModifications()}
+            activateSave={() => {
+              updateProfile();
+              handleActivateModifications();
+            }}
+          ></Usuario>
+        </ProfileContext.Provider>
       )}
     </>
   );

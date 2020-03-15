@@ -1,0 +1,7 @@
+.on-profile-click:hover {
+  border-radius: 0 !important;
+  transition: border-radius 200ms ease-in;
+}
+.on-profile-click {
+  transition: border-radius 200ms ease-in;
+}

@@ -25,3 +25,4 @@ export const deleteSessionCookie = nameOfSession => {
 };
 
 export const SessionContext = React.createContext(getSessionCookie());
+export const ProfileContext = React.createContext({});
