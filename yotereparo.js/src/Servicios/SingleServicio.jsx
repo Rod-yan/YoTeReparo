@@ -1,13 +1,22 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-const UnicoServicio = props => {
+//Fetch from API if location.state is null
+
+const SingleServicio = props => {
   let history = useHistory();
 
   const handleClick = data => {
     history.push({
       pathname: "/servicio/" + data.id,
-      state: { title: data.titulo, body: data.descripcion }
+      state: {
+        title: data.titulo,
+        body: data.descripcion,
+        provider: data.usuarioPrestador,
+        avaliable: data.disponibilidad,
+        estimateTime: data.horasEstimadasEjecucion,
+        averagePrice: data.precioPromedio
+      }
     });
   };
 
@@ -51,4 +60,4 @@ const UnicoServicio = props => {
   );
 };
 
-export default UnicoServicio;
+export default SingleServicio;

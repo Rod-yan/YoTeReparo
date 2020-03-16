@@ -1,4 +1,4 @@
-import { setSessionCokie, deleteSessionCookie } from "../Utils/SessionManage";
+import { setSessionCokie, deleteSessionCookie } from "./SessionManage";
 import React, { useState, useEffect } from "react";
 import Container from "../Container/Container";
 import ElementContainer from "../Container/ElementContainer";
@@ -77,7 +77,7 @@ export const LoginHandler = ({ history }) => {
             <ElementContainer>
               <div className="container">
                 {errors ? (
-                  <div class="alert alert-danger text-center" role="alert">
+                  <div className="alert alert-danger text-center" role="alert">
                     Los datos de sesion no son correctos
                   </div>
                 ) : (

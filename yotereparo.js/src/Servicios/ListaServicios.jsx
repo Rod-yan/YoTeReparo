@@ -1,6 +1,6 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import UnicoServicio from "./UnicoServicio";
+import SingleServicio from "./SingleServicio";
 
 const ListaServicios = props => {
   if (props.data.loading) {
@@ -8,7 +8,9 @@ const ListaServicios = props => {
       <ElementContainer>
         <div>
           <div className="col d-flex justify-content-center">
-            <div className="cover-screen">Loading, please wait...</div>
+            <div className="cover-screen">
+              Cargando la lista de servicios, por favor espera...
+            </div>
           </div>
         </div>
       </ElementContainer>
@@ -18,13 +20,13 @@ const ListaServicios = props => {
     <>
       {props.data.users === undefined ? (
         <div className="col d-flex justify-content-center">
-          <div className="cover-screen">No results.</div>
+          <div className="cover-screen">No hay resultados.</div>
         </div>
       ) : (
         <div>
           {props.data.users.map((item, i) => (
             <div key={i}>
-              <UnicoServicio data={item}></UnicoServicio>
+              <SingleServicio data={item}></SingleServicio>
             </div>
           ))}
         </div>

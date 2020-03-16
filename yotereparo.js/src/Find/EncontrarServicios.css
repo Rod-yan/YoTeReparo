@@ -1,0 +1,21 @@
+.float-button {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  border-radius: 25px;
+  -webkit-transition: all 1s ease-out;
+  -moz-transition: all 1s ease-out;
+  -o-transition: all 1s ease-out;
+  -ms-transition: all 1s ease-out;
+  transition: all 500ms ease-out;
+  text-shadow: 3px 3px 16px #272634;
+  box-shadow: 2px 2px 3px #272634;
+}
+
+.float-button :hover {
+  border-radius: 0px !important;
+  transition: border-radius 500ms ease-in;
+  text-shadow: 3px 3px 32px white;
+
+  background-color: #53354a;
+}

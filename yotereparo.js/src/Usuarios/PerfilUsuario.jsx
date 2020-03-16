@@ -18,6 +18,7 @@ function PerfilUsuario(props) {
   const [modify, activateModify] = useState(true);
 
   const updateProfile = () => {
+    console.log(profile);
     let requestHeaders = {
       "Access-Control-Allow-Origin": "*"
     };
@@ -33,6 +34,7 @@ function PerfilUsuario(props) {
     };
 
     setUpdating(true);
+
     Axios.put(
       `http://localhost:8080/YoTeReparo/users/${profile.id}`,
       requestData,
@@ -53,6 +55,10 @@ function PerfilUsuario(props) {
       .catch(error => {
         throw new Error("ERROR: There is a problem with the update of an User");
       });
+  };
+
+  const handleActivateModifications = () => {
+    activateModify(!modify);
   };
 
   useEffect(() => {
@@ -142,12 +148,12 @@ function PerfilUsuario(props) {
         <ProfileContext.Provider value={profile}>
           <Usuario
             modify={modify}
-            activateEdit={() => activateModify(!modify)}
+            updatingUser={updating}
+            activateEdit={() => handleActivateModifications()}
             activateSave={() => {
               updateProfile();
-              activateModify(!modify);
+              handleActivateModifications();
             }}
-            updatingUser={updating}
           ></Usuario>
         </ProfileContext.Provider>
       )}
