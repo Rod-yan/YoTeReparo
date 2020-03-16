@@ -1,6 +1,8 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 
+//Fetch from API if location.state is null
+
 const SingleServicio = props => {
   let history = useHistory();
 
