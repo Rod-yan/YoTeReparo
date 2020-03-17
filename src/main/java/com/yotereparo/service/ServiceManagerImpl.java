@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -49,6 +51,10 @@ public class ServiceManagerImpl implements ServiceManager {
     private MessageSource messageSource;
 	@Autowired
     private UserService userService;
+	@Autowired
+	private DistrictService districtService;
+	@Autowired
+	private CityService cityService;
 	
 	@Override
 	public void createService(Service service) {
@@ -291,27 +297,32 @@ public class ServiceManagerImpl implements ServiceManager {
 	}
 	
 	@Override
-	public List<Service> getAllServices(Object filter) {
+	public List<Service> getAllServices(Map<String,String> filters) {
 		List<Service> services = null;
-		if (filter != null)
-			switch (filter.getClass().getSimpleName()) {
-				case "User":
-					User user = (User) filter;
-					logger.debug("Fetching all services by user: <"+user.getId()+">");
+		Entry <String, String> filter = filters.entrySet().iterator().next();
+		String filterKey = filter.getKey().toLowerCase();
+		String filterValue = filter.getValue().toLowerCase();
+		switch (filterKey) {
+			case "user":
+				User user = userService.getUserById(filterValue);
+				logger.debug("Fetching all services by user: <"+filterValue+">");
+				if (user != null)
 					services = dao.getAllServices(user);
-					break;
-				case "District":
-					District district = (District) filter;
-					logger.debug("Fetching all services by district: <"+district.getDescripcion()+">");
+				break;
+			case "district":
+				District district = districtService.getDistrictById(Integer.parseInt(filterValue));
+				logger.debug("Fetching all services by district: <"+filterValue+">");
+				if (district != null)
 					services = dao.getAllServices(district);
-					break;
-				case "City":
-					City city = (City) filter;
-					logger.debug("Fetching all services by city: <"+city.getId()+">");
-					services = dao.getAllServices((City) filter);
-					break;
-				// TODO: más filtros y filtro compuesto
-			}
+				break;
+			case "city":
+				City city = cityService.getCityById(filterValue);
+				logger.debug("Fetching all services by city: <"+filterValue+">");
+				if (city != null)
+					services = dao.getAllServices(city);
+				break;
+			// TODO: más filtros y filtro compuesto
+		}
 		return services;
 	}
 }

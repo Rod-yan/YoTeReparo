@@ -1,6 +1,7 @@
 package com.yotereparo.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.yotereparo.model.Service;
 
@@ -24,5 +25,5 @@ public interface ServiceManager {
     
     List<Service> getAllServices(); 
     
-    List<Service> getAllServices(Object filter);
+    List<Service> getAllServices(Map<String,String> filter);
 }

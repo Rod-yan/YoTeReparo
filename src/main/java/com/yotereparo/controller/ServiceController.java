@@ -7,7 +7,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -37,9 +36,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.converter.ServiceConverter;
+import com.yotereparo.controller.filter.ServiceFilter;
 import com.yotereparo.model.Service;
 import com.yotereparo.service.CityService;
-import com.yotereparo.service.DistrictService;
 import com.yotereparo.service.PaymentMethodService;
 import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
@@ -64,8 +63,6 @@ public class ServiceController {
 	@Autowired
     CityService cityService;
 	@Autowired
-    DistrictService districtService;
-	@Autowired
     PaymentMethodService paymentMethodService;
 	@Autowired
     MessageSource messageSource;
@@ -73,6 +70,8 @@ public class ServiceController {
 	ValidationUtils validationUtils;
 	@Autowired
 	ServiceConverter serviceConverter;
+	@Autowired
+	ServiceFilter supportedFilters;
 
 	/*
 	 * Devuelve todos los servicios registrados en formato JSON.
@@ -85,27 +84,9 @@ public class ServiceController {
 		logger.info("ListServices - GET - Processing request for a list with all existing services.");
 		try {
 			List<Service> services = null;
-			
-			if (filters.size() == 1) {
-				Entry<String, String> filterBy = filters.entrySet().iterator().next();
-				String filterValue = filterBy.getValue().toLowerCase();
-				switch (filterBy.getKey().toLowerCase()) {
-					case "user":
-						services = serviceManager.getAllServices(userService.getUserById(filterValue));
-						break;
-					case "district":
-						services = serviceManager.getAllServices(districtService.getDistrictById(Integer.parseInt(filterValue)));
-						break;
-					case "city":
-						services = serviceManager.getAllServices(cityService.getCityById(filterValue));
-						break;
-				}
-			}
-			else if (filters.size() == 0)
-				services = serviceManager.getAllServices();
+			services = supportedFilters.contains(filters) ? serviceManager.getAllServices(filters) : serviceManager.getAllServices();
 			
 			if (services != null && !services.isEmpty()) {
-				
 				List<ServiceDto> servicesDto = services.stream()
 		                .map(service -> serviceConverter.convertToDto(service))
 		                .collect(Collectors.toList());

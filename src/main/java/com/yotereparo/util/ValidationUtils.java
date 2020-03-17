@@ -11,7 +11,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -58,8 +57,6 @@ public class ValidationUtils {
 	RequirementService requirementService;
 	@Autowired
     MessageSource messageSource;
-	@Autowired
-	Environment environment;
 	
 	public BindingResult userInputValidation(UserDto userDto, BindingResult result) {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
