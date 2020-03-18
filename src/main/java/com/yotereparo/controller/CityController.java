@@ -57,7 +57,7 @@ public class CityController {
             }
         }
 		catch (Exception e) {
-			logger.error("ListCities - GET - Request failed - Error procesing request: <%s>", e);
+			logger.error("ListCities - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("City","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   

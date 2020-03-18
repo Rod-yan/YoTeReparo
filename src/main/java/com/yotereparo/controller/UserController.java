@@ -158,9 +158,9 @@ public class UserController {
 				return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 			}
 		}
-		catch (CustomResponseError error) {
-			logger.error(String.format("CreateUser - POST - Request failed - Error procesing request: <%s>", error.toString()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+		catch (CustomResponseError e) {
+			logger.error("CreateUser - POST - Request failed - Error procesing request: ", e);
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("CreateUser - POST - Request failed - Error procesing request: ", e);
@@ -206,9 +206,9 @@ public class UserController {
 	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
 		}
-		catch (CustomResponseError error) {
-			logger.error(String.format("UpdateUser - PUT - Request failed - Error procesing request: <%s>", error.toString()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+		catch (CustomResponseError e) {
+			logger.error("UpdateUser - PUT - Request failed - Error procesing request: ", e);
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("UpdateUser - PUT - Request failed - Error procesing request: ", e);
