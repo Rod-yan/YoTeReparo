@@ -310,10 +310,13 @@ public class ServiceManagerImpl implements ServiceManager {
 					services = dao.getAllServices(user);
 				break;
 			case "district":
-				District district = districtService.getDistrictById(Integer.parseInt(filterValue));
-				logger.debug("Fetching all services by district: <"+filterValue+">");
-				if (district != null)
-					services = dao.getAllServices(district);
+				try {
+					District district = districtService.getDistrictById(Integer.parseInt(filterValue));
+					logger.debug("Fetching all services by district: <"+filterValue+">");
+					if (district != null)
+						services = dao.getAllServices(district);
+				}
+				catch (NumberFormatException e) { }
 				break;
 			case "city":
 				City city = cityService.getCityById(filterValue);
