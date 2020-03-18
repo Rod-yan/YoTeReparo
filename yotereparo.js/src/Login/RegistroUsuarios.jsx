@@ -14,13 +14,16 @@ import ElementContainer from "../Container/ElementContainer";
 import { useHistory } from "react-router-dom";
 import Axios from "axios";
 import "../Login/RegistroUsuarios.css";
+import { fetchData } from "../Utils/SessionHandlers";
+import { validateEmail, validatePassword } from "../Utils/Security";
+import { deleteSessionCookie } from "../Utils/SessionManage";
 
 const FormRegistro = props => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
   // let isFormUsuario = props.type === "usuario" ? true : false;
 
   let history = useHistory();
-  let membresiaObject = isFormEmpleador ? "BASICA" : null;
+  let membresiaObject = isFormEmpleador ? "GRATUITA" : null;
 
   let [account, setAccount] = useState({
     email: "",
@@ -28,12 +31,16 @@ const FormRegistro = props => {
     nombre: "",
     apellido: "",
     ciudad: "",
+    barrios: "",
     validate: {
       emailState: "",
       passwordState: true
     }
   });
 
+  let [cities, setCities] = useState([]);
+  let [hoods, setHoods] = useState([]);
+  let [hoodsDisabled, toggleHoods] = useState(true);
   let [formErrors, setErrors] = useState({
     errors: []
   });
@@ -42,6 +49,7 @@ const FormRegistro = props => {
 
   let [infomessage, setMessage] = useState("");
 
+  //For the account
   useEffect(() => {
     if (account["validate"].emailState === "") {
       setMessage("Ingresa los datos necesarios...");
@@ -50,10 +58,27 @@ const FormRegistro = props => {
     }
   }, [account]);
 
+  //For the cities and the API
+  useEffect(() => {
+    fetchData(`http://localhost:8080/YoTeReparo/cities`, citiesData => {
+      citiesData.forEach(city => {
+        setCities(cities => [
+          ...cities,
+          { id: city.id, desc: city.descripcion }
+        ]);
+      });
+    });
+  }, []);
+
+  //Fetch hoods for only one city
   let handleSubmit = event => {
     event.preventDefault();
 
     setIsCreatingUser(true);
+
+    let barriosSelected = hoods.filter(value =>
+      account.barrios.some(value2 => value.id === value2)
+    );
 
     //TODO: SET membresia en funcion del formulario de entrada
 
@@ -62,6 +87,7 @@ const FormRegistro = props => {
       nombre: account.nombre,
       apellido: account.apellido,
       ciudad: account.ciudad,
+      barrios: barriosSelected,
       email: account.email,
       contrasena: account.password,
       membresia: membresiaObject
@@ -81,6 +107,7 @@ const FormRegistro = props => {
         if (response.status === 400) {
           console.log(response.json);
         } else {
+          deleteSessionCookie("userSession");
           history.push({
             pathname: "/tour",
             state: { user: account }
@@ -88,6 +115,7 @@ const FormRegistro = props => {
         }
       })
       .catch(error => {
+        console.log(error.response);
         processErrors(error.response);
         setIsCreatingUser(false);
       });
@@ -115,44 +143,64 @@ const FormRegistro = props => {
 
   let handleChange = async event => {
     account[event.target.name] = event.target.value;
+
     setAccount({ ...account, [event.target.name]: event.target.value });
-  };
 
-  let validateEmail = event => {
-    const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (emailRex.test(event.target.value)) {
-      account["validate"].emailState = "success";
-    } else {
-      account["validate"].emailState = "danger";
+    if (event.target.name === "ciudad") {
+      fetchData(
+        `http://localhost:8080/YoTeReparo/cities/${account.ciudad}`,
+        data => {
+          let barriosXciudad = [];
+
+          data.barrios.forEach(barrio => {
+            barriosXciudad.push({
+              id: barrio.id,
+              descripcion: barrio.descripcion,
+              codigoPostal: barrio.codigoPostal
+            });
+          });
+
+          barriosXciudad.length > 0 ? toggleHoods(false) : toggleHoods(true);
+
+          if (barriosXciudad.length > 0) {
+            account["barrios"] = barriosXciudad[0].id;
+          } else {
+          }
+
+          setHoods(barriosXciudad);
+        }
+      );
     }
-  };
 
-  let validatePassword = event => {
-    var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
-    if (strongRegex.test(event.target.value)) {
-      account["validate"].passwordState = "success";
-    } else {
-      account["validate"].passwordState = "danger";
+    if (event.target.name === "barrios") {
+      var options = event.target.options;
+      var value = [];
+      for (var i = 0, l = options.length; i < l; i++) {
+        if (options[i].selected) {
+          value.push(parseInt(options[i].value));
+        }
+      }
+      setAccount({ ...account, [event.target.name]: value });
     }
   };
 
   let updateMembresia = event => {
-    console.log(event.target.value);
     switch (event.target.value) {
       case "1":
-        membresiaObject = "BASICA";
+        membresiaObject = "GRATUITA";
         break;
       case "2":
-        membresiaObject = "PREMIUM";
+        membresiaObject = "PLATA";
         break;
       case "3":
-        membresiaObject = "GOLD";
+        membresiaObject = "ORO";
         break;
       default:
         break;
     }
-    console.log(membresiaObject);
   };
+
+  console.log(account);
 
   return (
     <div className="registercentered card-center-form">
@@ -227,8 +275,35 @@ const FormRegistro = props => {
                   <option value="" disabled hidden>
                     Selecciona una ciudad
                   </option>
-                  <option value="rosario">Rosario</option>
-                  <option value="cordoba">Cordoba</option>
+                  {cities.map(city => (
+                    <option key={city.id} value={city.id}>
+                      {city.desc}
+                    </option>
+                  ))}
+                </Input>
+              </FormGroup>
+              <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
+                  BARRIOS
+                </Label>
+                <Input
+                  multiple
+                  type="select"
+                  name="barrios"
+                  id="barriosLabel"
+                  onChange={e => {
+                    handleChange(e);
+                  }}
+                  disabled={hoodsDisabled}
+                >
+                  <option value="" disabled hidden>
+                    Selecciona un barrio
+                  </option>
+                  {hoods.map(hood => (
+                    <option key={hood.id} value={hood.id}>
+                      {hood.descripcion}
+                    </option>
+                  ))}
                 </Input>
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
@@ -244,7 +319,7 @@ const FormRegistro = props => {
                   placeholder="tuemail@email.com"
                   onChange={e => {
                     handleChange(e);
-                    validateEmail(e);
+                    validateEmail(e, account);
                   }}
                 />
                 <FormFeedback className="lead box-message-letter">
@@ -264,7 +339,7 @@ const FormRegistro = props => {
                   placeholder="********"
                   onChange={e => {
                     handleChange(e);
-                    validatePassword(e);
+                    validatePassword(e, account);
                   }}
                 />
                 <FormFeedback className="lead box-message-letter">
@@ -288,16 +363,16 @@ const FormRegistro = props => {
                   ></CustomInput>
                   <div className="row text-center membership">
                     <div className="col-4">
-                      <div className="small membership-text">BASICA</div>
+                      <div className="small membership-text">GRATUITA</div>
                     </div>
 
                     <div className="col-4">
                       {" "}
-                      <div className="small membership-text">PREMIUM</div>
+                      <div className="small membership-text">PLATA</div>
                     </div>
                     <div className="col-4">
                       {" "}
-                      <div className="small membership-text">GOLD</div>
+                      <div className="small membership-text">ORO</div>
                     </div>
                   </div>
                 </FormGroup>

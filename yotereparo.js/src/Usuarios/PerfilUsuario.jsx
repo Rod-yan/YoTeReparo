@@ -28,6 +28,7 @@ function PerfilUsuario(props) {
       nombre: profile.nombre,
       apellido: profile.apellido,
       ciudad: profile.ciudad,
+      barrios: profile.barrios,
       email: profile.email,
       contrasena: profile.contrasena,
       membresia: profile.membresia
@@ -109,6 +110,8 @@ function PerfilUsuario(props) {
     props.history.push("/ingresar");
   }
 
+  console.log(profile);
+
   if (loading) {
     return (
       <ElementContainer>
@@ -134,12 +137,13 @@ function PerfilUsuario(props) {
   }
   return (
     <>
-      {profile === undefined ? (
+      {profile === undefined || auth === false ? (
         <ElementContainer>
           <div>
             <div className="col d-flex justify-content-center">
               <div className="cover-screen">
-                No existe ese nombre de usuario.
+                No existe ese nombre de usuario y/o no estas autorizado a ver
+                esta pantalla.
               </div>
             </div>
           </div>

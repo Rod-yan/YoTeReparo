@@ -136,3 +136,15 @@ export const LogOutHandler = ({ history }) => {
 
   return <div>Has salido de la aplicación</div>;
 };
+
+export const fetchData = async (urlToFetch, callback) => {
+  const result = await Axios(urlToFetch)
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      return error;
+    });
+
+  callback(result.data);
+};
