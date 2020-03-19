@@ -17,6 +17,7 @@ import "../Login/RegistroUsuarios.css";
 import { fetchData } from "../Utils/SessionHandlers";
 import { validateEmail, validatePassword } from "../Utils/Security";
 import { deleteSessionCookie } from "../Utils/SessionManage";
+import { processErrors } from "../Utils/Errors";
 
 const FormRegistro = props => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
@@ -76,22 +77,36 @@ const FormRegistro = props => {
 
     setIsCreatingUser(true);
 
-    let barriosSelected = hoods.filter(value =>
-      account.barrios.some(value2 => value.id === value2)
-    );
+    let requestData = {};
+
+    if (isFormEmpleador) {
+      let barriosSelected = hoods.filter(value =>
+        account.barrios.some(value2 => value.id === value2)
+      );
+
+      requestData = {
+        id: account.nombre + account.apellido,
+        nombre: account.nombre,
+        apellido: account.apellido,
+        ciudad: account.ciudad,
+        barrios: barriosSelected,
+        email: account.email,
+        contrasena: account.password,
+        membresia: membresiaObject
+      };
+    } else {
+      requestData = {
+        id: account.nombre + account.apellido,
+        nombre: account.nombre,
+        apellido: account.apellido,
+        ciudad: account.ciudad,
+        email: account.email,
+        contrasena: account.password,
+        membresia: membresiaObject
+      };
+    }
 
     //TODO: SET membresia en funcion del formulario de entrada
-
-    let requestData = {
-      id: account.nombre + account.apellido,
-      nombre: account.nombre,
-      apellido: account.apellido,
-      ciudad: account.ciudad,
-      barrios: barriosSelected,
-      email: account.email,
-      contrasena: account.password,
-      membresia: membresiaObject
-    };
 
     let requestHeaders = {
       "Access-Control-Allow-Origin": "*"
@@ -116,29 +131,10 @@ const FormRegistro = props => {
       })
       .catch(error => {
         console.log(error.response);
-        processErrors(error.response);
+        let errors = processErrors(error.response);
+        setErrors({ ...formErrors, errors });
         setIsCreatingUser(false);
       });
-  };
-
-  let processErrors = incomingErrors => {
-    let errors = [];
-
-    if (incomingErrors.data.length >= 1) {
-      incomingErrors.data.forEach(error => {
-        errors.push({
-          type: error.field,
-          message: error.defaultMessage
-        });
-      });
-    } else {
-      errors.push({
-        type: incomingErrors.data.field,
-        message: incomingErrors.data.defaultMessage
-      });
-    }
-
-    setErrors({ ...formErrors, errors });
   };
 
   let handleChange = async event => {
@@ -146,7 +142,7 @@ const FormRegistro = props => {
 
     setAccount({ ...account, [event.target.name]: event.target.value });
 
-    if (event.target.name === "ciudad") {
+    if (event.target.name === "ciudad" && isFormEmpleador) {
       fetchData(
         `http://localhost:8080/YoTeReparo/cities/${account.ciudad}`,
         data => {
@@ -282,30 +278,35 @@ const FormRegistro = props => {
                   ))}
                 </Input>
               </FormGroup>
-              <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
-                  BARRIOS
-                </Label>
-                <Input
-                  multiple
-                  type="select"
-                  name="barrios"
-                  id="barriosLabel"
-                  onChange={e => {
-                    handleChange(e);
-                  }}
-                  disabled={hoodsDisabled}
-                >
-                  <option value="" disabled hidden>
-                    Selecciona un barrio
-                  </option>
-                  {hoods.map(hood => (
-                    <option key={hood.id} value={hood.id}>
-                      {hood.descripcion}
+              {isFormEmpleador ? (
+                <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                  <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
+                    BARRIOS
+                  </Label>
+                  <Input
+                    multiple={isFormEmpleador}
+                    type="select"
+                    name="barrios"
+                    id="barriosLabel"
+                    onChange={e => {
+                      handleChange(e);
+                    }}
+                    disabled={hoodsDisabled}
+                  >
+                    <option value="" disabled hidden>
+                      Selecciona un barrio
                     </option>
-                  ))}
-                </Input>
-              </FormGroup>
+                    {hoods.map(hood => (
+                      <option key={hood.id} value={hood.id}>
+                        {hood.descripcion}
+                      </option>
+                    ))}
+                  </Input>
+                </FormGroup>
+              ) : (
+                <></>
+              )}
+
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="emailLabel" className="mr-sm-2 font-weight-bold">
                   EMAIL

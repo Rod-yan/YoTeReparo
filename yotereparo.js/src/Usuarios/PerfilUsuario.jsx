@@ -110,8 +110,6 @@ function PerfilUsuario(props) {
     props.history.push("/ingresar");
   }
 
-  console.log(profile);
-
   if (loading) {
     return (
       <ElementContainer>
