@@ -100,7 +100,7 @@ public class ServiceController {
 	        }
 		}
 		catch (Exception e) {
-			logger.error("ListServices - GET - Request failed - Error procesing request: <%s>", e);
+			logger.error("ListServices - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -129,7 +129,7 @@ public class ServiceController {
             }
         }
         catch (Exception e) {
-			logger.error("GetService - GET - Request failed - Error procesing request: <%s>", e);
+			logger.error("GetService - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -170,9 +170,9 @@ public class ServiceController {
 				return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 			}
         }
-		catch (CustomResponseError error) {
-			logger.error(String.format("CreateService - POST - Request failed - Error procesing request: <%s>", error.toString()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+		catch (CustomResponseError e) {
+			logger.error("CreateService - POST - Request failed - Error procesing request: ", e);
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("CreateService - POST - Request failed - Error procesing request: ", e);
@@ -235,12 +235,12 @@ public class ServiceController {
 	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
 		}
-		catch (CustomResponseError error) {
-			logger.error(String.format("UpdateService - PUT - Request failed - Error procesing request: <%s>", error.toString()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+		catch (CustomResponseError e) {
+			logger.error("UpdateService - PUT - Request failed - Error procesing request: ", e);
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
-			logger.error("UpdateService - PUT - Request failed - Error procesing request: <%s>", e);
+			logger.error("UpdateService - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
