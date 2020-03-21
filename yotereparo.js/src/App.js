@@ -103,7 +103,11 @@ function App() {
 
             <Route
               path="/servicio/crear"
-              render={props => <CrearServicio {...props}></CrearServicio>}
+              render={props => (
+                <Container>
+                  <CrearServicio {...props}></CrearServicio>
+                </Container>
+              )}
             />
 
             <Route
