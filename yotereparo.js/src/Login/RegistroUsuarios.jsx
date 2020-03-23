@@ -18,7 +18,7 @@ import { fetchData } from "../Utils/SessionHandlers";
 import { validateEmail, validatePassword } from "../Utils/Security";
 import { deleteSessionCookie } from "../Utils/SessionManage";
 import { processErrors } from "../Utils/Errors";
-import { intersect } from "../Utils/Math";
+import { intersect } from "../Utils/ArrayUtils";
 
 const FormRegistro = props => {
   let isFormEmpleador = props.type === "empleador" ? true : false;

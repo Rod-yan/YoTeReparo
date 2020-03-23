@@ -5,7 +5,7 @@ import { useState } from "react";
 import InputRange from "react-input-range";
 import { useEffect } from "react";
 import { fetchData } from "../Utils/SessionHandlers";
-import { intersect } from "../Utils/Math";
+//import { intersect } from "../Utils/ArrayUtils";
 
 // -> GET: /YoTeReparo/requirements
 // -> GET: /YoTeReparo/requirements/{id}
