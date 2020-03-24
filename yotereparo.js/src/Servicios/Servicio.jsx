@@ -101,7 +101,7 @@ const Servicio = props => {
                       <div className="col-md-4 my-auto">
                         <img
                           src="https://via.placeholder.com/150/92c952"
-                          className="card-img rounded-circle"
+                          className="card-img rounded-circle on-profile-click"
                           alt="placeholder"
                         ></img>
                       </div>
