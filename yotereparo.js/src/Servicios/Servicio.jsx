@@ -29,6 +29,7 @@ const Servicio = props => {
         estimateTime: location.state.estimateTime,
         averagePrice: location.state.averagePrice
       });
+      setLoading(false);
     } else {
       const fetchData = async urlToFetch => {
         const result = await Axios(urlToFetch)
