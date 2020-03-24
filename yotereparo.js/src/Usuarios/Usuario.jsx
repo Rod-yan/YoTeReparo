@@ -6,15 +6,16 @@ import { ProfileContext } from "../Utils/SessionManage";
 import { useEffect } from "react";
 import { useRef } from "react";
 import Axios from "axios";
-import { useLocation } from "react-router-dom";
 import { useState } from "react";
 
 function Usuario(props) {
   const profile = useContext(ProfileContext);
   const fileUploader = useRef(null);
-  const location = useLocation();
-  const [userPicture, setUserPicture] = useState("");
-  const [userHasPicture, setUserHasPicture] = useState(false);
+  const profilePicture = useRef(null);
+  const [changePicture, updateProfilePicture] = useState(0);
+  const [userPicture, setUserPicture] = useState(
+    "https://api.adorable.io/avatars/216/yotereparo"
+  );
 
   var keyPress = false;
 
@@ -66,27 +67,19 @@ function Usuario(props) {
         .then(response => {
           if (response.status === 400) {
             console.log(response.json);
-            setUserHasPicture(false);
+            setUserPicture("https://api.adorable.io/avatars/216/yotereparo");
           } else {
-            setUserHasPicture(true);
+            setUserPicture(
+              `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`
+            );
           }
         })
         .catch(error => {
-          setUserHasPicture(false);
+          setUserPicture("https://api.adorable.io/avatars/216/yotereparo");
         });
     };
     fetchData();
-  }, [profile.id]);
-
-  useEffect(() => {
-    userHasPicture
-      ? setUserPicture(
-          `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`
-        )
-      : setUserPicture(
-          "https://api.adorable.io/avatars/216/abott@adorable.png"
-        );
-  }, [userHasPicture, profile.id]);
+  }, [profile.id, changePicture, updateProfilePicture]);
 
   const ButtonSave = () => {
     if (props.updatingUser) {
@@ -148,12 +141,16 @@ function Usuario(props) {
           if (response.status === 400) {
             console.log(response.json);
           } else {
-            console.log(response.data);
-            location.reload();
+            console.log("Imagen subida correctamente");
+            setUserPicture(
+              `http://localhost:8080/YoTeReparo/users/${
+                profile.id
+              }/photo?changed=${Date.now()}`
+            );
           }
         })
         .catch(error => {
-          console.log(error.response);
+          console.log(error);
         });
     };
     reader.onerror = () => {
@@ -176,6 +173,8 @@ function Usuario(props) {
                           src={userPicture}
                           className="card-img img-thumbnail rounded-circle on-profile-click"
                           alt="placeholder"
+                          key={Date.now()}
+                          ref={profilePicture}
                           onClick={() => fileUploader.current.click()}
                         ></img>
                         <input
