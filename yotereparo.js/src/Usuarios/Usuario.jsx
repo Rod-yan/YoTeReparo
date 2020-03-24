@@ -4,9 +4,17 @@ import { InputField } from "../Utils/InputField";
 import { useContext } from "react";
 import { ProfileContext } from "../Utils/SessionManage";
 import { useEffect } from "react";
+import { useRef } from "react";
+import Axios from "axios";
+import { useLocation } from "react-router-dom";
+import { useState } from "react";
 
 function Usuario(props) {
   const profile = useContext(ProfileContext);
+  const fileUploader = useRef(null);
+  const location = useLocation();
+  const [userPicture, setUserPicture] = useState("");
+  const [userHasPicture, setUserHasPicture] = useState(false);
 
   var keyPress = false;
 
@@ -52,6 +60,34 @@ function Usuario(props) {
     };
   });
 
+  useEffect(() => {
+    const fetchData = () => {
+      Axios.get(`http://localhost:8080/YoTeReparo/users/${profile.id}/photo`)
+        .then(response => {
+          if (response.status === 400) {
+            console.log(response.json);
+            setUserHasPicture(false);
+          } else {
+            setUserHasPicture(true);
+          }
+        })
+        .catch(error => {
+          setUserHasPicture(false);
+        });
+    };
+    fetchData();
+  }, [profile.id]);
+
+  useEffect(() => {
+    userHasPicture
+      ? setUserPicture(
+          `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`
+        )
+      : setUserPicture(
+          "https://api.adorable.io/avatars/216/abott@adorable.png"
+        );
+  }, [userHasPicture, profile.id]);
+
   const ButtonSave = () => {
     if (props.updatingUser) {
       return (
@@ -90,6 +126,41 @@ function Usuario(props) {
     }
   };
 
+  const updatePicture = event => {
+    var file = event.target.files[0];
+    var reader = new FileReader();
+    let base64picture = null;
+
+    reader.readAsBinaryString(file);
+
+    reader.onload = () => {
+      base64picture = btoa(reader.result);
+
+      let requestPhoto = {
+        foto: base64picture
+      };
+
+      Axios.put(
+        `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
+        requestPhoto
+      )
+        .then(response => {
+          if (response.status === 400) {
+            console.log(response.json);
+          } else {
+            console.log(response.data);
+            location.reload();
+          }
+        })
+        .catch(error => {
+          console.log(error.response);
+        });
+    };
+    reader.onerror = () => {
+      throw new Error("There is a problem with the image that you are sending");
+    };
+  };
+
   return (
     <ElementContainer>
       <div className="d-flex align-items-center mx-auto">
@@ -102,11 +173,19 @@ function Usuario(props) {
                     <div className="row no-gutters">
                       <div className="col-md-4 my-auto">
                         <img
-                          src="https://via.placeholder.com/150/92c952"
-                          className="card-img rounded-circle on-profile-click"
+                          src={userPicture}
+                          className="card-img img-thumbnail rounded-circle on-profile-click"
                           alt="placeholder"
-                          onClick={() => alert("Hello")}
+                          onClick={() => fileUploader.current.click()}
                         ></img>
+                        <input
+                          type="file"
+                          name="file"
+                          accept="image/*"
+                          ref={fileUploader}
+                          onChange={updatePicture}
+                          hidden
+                        ></input>
                       </div>
                       <div className="col-md-8 text-right">
                         <div className="card-body">

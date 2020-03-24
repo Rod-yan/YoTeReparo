@@ -23,7 +23,7 @@ function PerfilUsuario(props) {
       "Access-Control-Allow-Origin": "*"
     };
 
-    let requestData = {
+    let requestDataPrestador = {
       id: profile.id,
       nombre: profile.nombre,
       apellido: profile.apellido,
@@ -33,6 +33,19 @@ function PerfilUsuario(props) {
       contrasena: profile.contrasena,
       membresia: profile.membresia
     };
+
+    let requestDataUsuario = {
+      id: profile.id,
+      nombre: profile.nombre,
+      apellido: profile.apellido,
+      ciudad: profile.ciudad,
+      email: profile.email,
+      contrasena: profile.contrasena
+    };
+
+    let requestData = profile.membresia
+      ? requestDataPrestador
+      : requestDataUsuario;
 
     setUpdating(true);
 
