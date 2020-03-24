@@ -1,0 +1,17 @@
+{
+    "usuarioPrestador":"adrianottavis",
+"titulo":"aaa",
+"descripcion":"a",
+"disponibilidad":"a",
+"precioMaximo":9999,
+"precioMinimo":2390,
+"precioInsumos":"222",
+"precioAdicionales":"22",
+"horasEstimadasEjecucion":3.5,
+"cantidadTrabajadores":5,
+"facturaEmitida":false,
+"tipoServicio":[{"id":3,"descripcion":"Reparaci�n de PC"}],"
+mediosDePago":[{"id":1,"descripcion":"Efectivo"},
+{"id":2,"descripcion":"Tarjeta de cr�dito - VISA"},{
+	"id":3,"descripcion":"Tarjeta de cr�dito - MASTERCARD"},{
+		"id":4,"descripcion":"Mercadopago"}],"requerimientos":[{"id":2,"descripcion":"Balcon"},{"id":3,"descripcion":"Patio Interno"}]}

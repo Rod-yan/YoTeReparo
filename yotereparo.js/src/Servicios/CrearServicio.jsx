@@ -5,6 +5,12 @@ import { useState } from "react";
 import InputRange from "react-input-range";
 import { useEffect } from "react";
 import { fetchData } from "../Utils/SessionHandlers";
+import { SessionContext } from "../Utils/SessionManage";
+import { useContext } from "react";
+import { intersect } from "../Utils/ArrayUtils";
+import { processErrors } from "../Utils/Errors";
+import Axios from "axios";
+import { useHistory } from "react-router-dom";
 //import { intersect } from "../Utils/ArrayUtils";
 
 // -> GET: /YoTeReparo/requirements
@@ -20,13 +26,17 @@ const CrearServicio = props => {
     min: 0,
     max: 9999
   });
+  const [formErrors, setErrors] = useState({ errors: [] });
   const [horasEstimadasEjecucion, setHorasEstimadasEjecucion] = useState(0);
-  const [isCreationService, setCreationService] = useState(false);
+  const [isCreationService, setIsCreationService] = useState(false);
   const [cantidadTrabajadores, setCantidadTrabajadores] = useState(0);
   const [tiposServicio, setTiposServicio] = useState([]);
   const [mediosDePago, setMediosDePago] = useState([]);
   const [requerimientos, setRequerimientos] = useState([]);
   const [emitirFactura, setEmitirFactura] = useState(false);
+
+  const session = useContext(SessionContext);
+  let history = useHistory();
 
   //We use this object in the handleSubmit in order to cross over all the data
   let [service, setService] = useState({
@@ -36,12 +46,76 @@ const CrearServicio = props => {
     precioInsumos: 0,
     precioAdicionales: 0,
     tipoServicio: "",
-    mediosDePago: [1, 2],
+    mediosDePago: [],
     requerimientos: []
   });
 
   const handleSubmit = event => {
-    setCreationService(true);
+    event.preventDefault();
+
+    setIsCreationService(true);
+
+    let mediosDePagoSeleccionados = intersect(
+      mediosDePago,
+      service.mediosDePago
+    );
+
+    let requerimientosSeleccionados = intersect(
+      requerimientos,
+      service.requerimientos
+    );
+
+    let tipoServicioSeleccionado = intersect(tiposServicio, [
+      parseInt(service.tipoServicio)
+    ]);
+
+    let requestService = {
+      usuarioPrestador: session.username,
+      titulo: service.titulo,
+      descripcion: service.descripcion,
+      disponibilidad: service.disponibilidad,
+      precioMaximo: preciosRange.max,
+      precioMinimo: preciosRange.min,
+      precioInsumos: service.precioInsumos,
+      precioAdicionales: service.precioAdicionales,
+      horasEstimadasEjecucion: horasEstimadasEjecucion,
+      cantidadTrabajadores: cantidadTrabajadores,
+      facturaEmitida: emitirFactura,
+      tipoServicio:
+        tipoServicioSeleccionado[0] === undefined
+          ? "null"
+          : tipoServicioSeleccionado[0].descripcion,
+      mediosDePago: mediosDePagoSeleccionados,
+      requerimientos: requerimientosSeleccionados
+    };
+
+    let requestHeaders = {
+      "Access-Control-Allow-Origin": "*"
+    };
+
+    Axios.post(
+      "http://localhost:8080/YoTeReparo/services/",
+      requestService,
+      requestHeaders
+    )
+      .then(response => {
+        console.log(response.status);
+        if (response.status === 400) {
+          console.log(response.json);
+        } else {
+          console.log(response.data);
+          // history.push({
+          //   pathname: "/buscar",
+          //   state: { service: requestService }
+          // });
+        }
+      })
+      .catch(error => {
+        console.log(error.response);
+        let errors = processErrors(error.response);
+        setErrors({ ...formErrors, errors });
+        setIsCreationService(false);
+      });
   };
 
   const handleChange = event => {
@@ -69,6 +143,8 @@ const CrearServicio = props => {
     return value;
   };
 
+  console.log(formErrors);
+
   useEffect(() => {
     fetchData(
       "http://localhost:8080/YoTeReparo/servicetypes",
@@ -93,6 +169,20 @@ const CrearServicio = props => {
             <div className="text-center">
               <div className="lead mb-2">Crear Servicio</div>
             </div>
+            {formErrors.errors.length >= 1 ? (
+              <div className="errors-list">
+                {formErrors.errors.map((error, i) => (
+                  <p key={i} className="font-weight-light">
+                    <span className="fa-stack fa-1x">
+                      <i className={`fas fa-times fa-stack-1x`}></i>
+                    </span>{" "}
+                    {error.message}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <></>
+            )}
             <Form onSubmit={handleSubmit}>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="titulo" className="mr-sm-2 font-weight-bold">
@@ -160,10 +250,12 @@ const CrearServicio = props => {
                       for="precioInsumo"
                       className="mr-sm-2 font-weight-bold"
                     >
-                      PRECIO INSUMOS
+                      PRECIO INSUMOS ($)
                     </Label>
                     <Input
                       type="number"
+                      step="50"
+                      min="0"
                       name="precioInsumos"
                       id="precioInsumos"
                       placeholder="Insumos"
@@ -177,10 +269,12 @@ const CrearServicio = props => {
                       for="precioAdicionales"
                       className="mr-sm-2 font-weight-bold"
                     >
-                      PRECIO ADICIONALES
+                      PRECIO ADICIONALES ($)
                     </Label>
                     <Input
                       type="number"
+                      min="0"
+                      step="50"
                       name="precioAdicionales"
                       id="precioAdicionales"
                       placeholder="Adicionales"
@@ -254,7 +348,7 @@ const CrearServicio = props => {
                     handleChange(e);
                   }}
                 >
-                  <option value="" disabled hidden>
+                  <option value="" hidden>
                     Seleccione un servicio
                   </option>
                   {tiposServicio.map(type => (
