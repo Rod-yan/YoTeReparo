@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -93,6 +94,14 @@ public class Service {
         inverseJoinColumns = {@JoinColumn(name="id_requerimiento")}    
     )
 	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
+	
+	@OneToMany(
+	        mappedBy = "servicio",
+	        fetch = FetchType.EAGER,
+	        cascade = CascadeType.MERGE,
+	        orphanRemoval = true
+	    )
+	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 		
 	public Service() { }
 	
@@ -156,7 +165,7 @@ public class Service {
 		return precioPromedio;
 	}
 	public void setPrecioPromedio(Float precioPromedio) {
-		this.precioPromedio = (precioMaximo+precioMinimo)/2;
+		this.precioPromedio = (float) Math.ceil((precioMaximo+precioMinimo)/2);
 	}
 
 	public Float getPrecioInsumos() {
@@ -255,7 +264,20 @@ public class Service {
     	requerimientos.remove(requerimiento);
     }
     
-    public boolean similarTo(Service service) {
+    public Set<Quote> getPresupuestos() {
+		return presupuestos;
+	}
+	public void setPresupuestos(Set<Quote> presupuestos) {
+		this.presupuestos = presupuestos;
+	}
+	public void addPresupuesto(Quote presupuesto) {
+		presupuestos.add(presupuesto);
+    }
+    public void removePresupuesto(Quote presupuesto) {
+    	presupuestos.remove(presupuesto);
+    }
+
+	public boolean similarTo(Service service) {
 		if (service == null)
 			return false;
 		if (this.id == service.id)
@@ -352,6 +374,11 @@ public class Service {
 				return false;
 		} else if (!requerimientos.equals(other.requerimientos))
 			return false;
+		if (presupuestos == null) {
+			if (other.presupuestos != null)
+				return false;
+		} else if (!presupuestos.equals(other.presupuestos))
+			return false;
 		if (!Arrays.equals(thumbnail, other.thumbnail))
 			return false;
 		if (tipoServicio == null) {
@@ -381,6 +408,7 @@ public class Service {
 				+ horasEstimadasEjecucion + ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida="
 				+ facturaEmitida + ", imagen=" + Arrays.toString(imagen) + ", thumbnail=" + Arrays.toString(thumbnail)
 				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + "]";
+				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + ", presupuestos="
+				+ presupuestos + "]";
 	}
 }

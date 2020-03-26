@@ -12,8 +12,6 @@ import com.yotereparo.model.City;
 /**
  * Capa de acceso a datos para Ciudades. Su objetivo es abstraer la interacción con la API de hibernate.
  * 
- * No debe implementar lógica de negocio.
- * 
  * @author Rodrigo Yanis
  * 
  */

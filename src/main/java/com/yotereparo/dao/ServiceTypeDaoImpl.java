@@ -12,8 +12,6 @@ import com.yotereparo.model.ServiceType;
 /**
  * Capa de acceso a datos para Tipos de Servicio. Su objetivo es abstraer la interacción con la API de hibernate.
  * 
- * No debe implementar lógica de negocio.
- * 
  * @author Rodrigo Yanis
  * 
  */

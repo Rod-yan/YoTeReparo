@@ -58,7 +58,7 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public void createService(Service service) {
-		if (userService.isPrestador(service.getUsuarioPrestador()))
+		if (userService.isProvider(service.getUsuarioPrestador()))
 			if (service.getUsuarioPrestador().getDirecciones() != null && service.getUsuarioPrestador().getDirecciones().size() != 0) {
 				service.setFechaCreacion(new DateTime());
 				// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado

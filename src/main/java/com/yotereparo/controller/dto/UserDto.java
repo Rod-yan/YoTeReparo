@@ -82,6 +82,8 @@ public class UserDto {
 	
 	private Set<ServiceDto> servicios = new HashSet<ServiceDto>(0);
 	
+	private Set<QuoteDto> presupuestos = new HashSet<QuoteDto>(0);
+	
 	public String getId() {
 		return id;
 	}
@@ -214,6 +216,12 @@ public class UserDto {
 	public void removeServicio(ServiceDto servicioId) {
 		this.servicios.remove(servicioId);
 	}
+	public Set<QuoteDto> getPresupuestos() {
+		return presupuestos;
+	}
+	public void setPresupuestos(Set<QuoteDto> presupuestos) {
+		this.presupuestos = presupuestos;
+	}
 	
 	@Override
 	public int hashCode() {
@@ -237,6 +245,7 @@ public class UserDto {
 		result = prime * result + ((membresia == null) ? 0 : membresia.hashCode());
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
 		result = prime * result + ((servicios == null) ? 0 : servicios.hashCode());
+		result = prime * result + ((presupuestos == null) ? 0 : presupuestos.hashCode());
 		result = prime * result + ((telefonoAlternativo == null) ? 0 : telefonoAlternativo.hashCode());
 		result = prime * result + ((telefonoPrincipal == null) ? 0 : telefonoPrincipal.hashCode());
 		return result;
@@ -279,6 +288,11 @@ public class UserDto {
 			if (other.direcciones != null)
 				return false;
 		} else if (!direcciones.equals(other.direcciones))
+			return false;
+		if (presupuestos == null) {
+			if (other.presupuestos != null)
+				return false;
+		} else if (!presupuestos.equals(other.presupuestos))
 			return false;
 		if (email == null) {
 			if (other.email != null)
@@ -357,7 +371,7 @@ public class UserDto {
 				+ ", descripcion=" + descripcion + ", estado=" + estado + ", intentosIngreso=" + intentosIngreso
 				+ ", fechaUltimoCambioContrasena=" + fechaUltimoCambioContrasena + ", fechaUltimoIngreso="
 				+ fechaUltimoIngreso + ", fechaExpiracionContrasena=" + fechaExpiracionContrasena + ", fechaCreacion="
-				+ fechaCreacion + ", membresia=" + membresia + ", direcciones=" + direcciones + ", barrios=" + barrios
-				+ ", servicios=" + servicios + "]";
+				+ fechaCreacion + ", membresia=" + membresia + ", roles=" + roles + ", direcciones=" + direcciones
+				+ ", barrios=" + barrios + ", servicios=" + servicios + ", presupuestos=" + presupuestos + "]";
 	}
 }

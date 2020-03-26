@@ -1,7 +1,5 @@
 package com.yotereparo.model;
 
-
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,7 +46,6 @@ public class Contract {
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime fechaFinEjecucion;
 	
-	@Column(name = "descripcion", nullable = false)
 	private String descripcion;
 	
 	@Column(name = "precio_final", columnDefinition = "NUMERIC", precision = 11, scale = 2, nullable = false)
@@ -60,16 +57,12 @@ public class Contract {
 	@Column(name = "incluye_adicionales", nullable = false)
 	private Boolean incluyeAdicionales;
 	
-	@Column(name = "valoracion", nullable = false)
 	private Integer valoracion;
 	
 	@Column(name = "descripcion_valoracion", nullable = false)
 	private String descripcionValoracion;
 	
-	@Column(name = "estado", nullable = false)
 	private String estado;
-	
-	
 	
 	public Contract() { }
 
@@ -77,27 +70,31 @@ public class Contract {
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	public Service getServicio() {
 		return servicio;
 	}
+
 	public void setServicio(Service servicio) {
 		this.servicio = servicio;
 	}
-	
+
 	public User getUsuarioFinal() {
 		return usuarioFinal;
 	}
+
 	public void setUsuarioFinal(User usuarioFinal) {
 		this.usuarioFinal = usuarioFinal;
 	}
-	
+
 	public DateTime getFechaContratacion() {
 		return fechaContratacion;
 	}
+
 	public void setFechaContratacion(DateTime fechaContratacion) {
 		this.fechaContratacion = fechaContratacion;
 	}
@@ -105,59 +102,74 @@ public class Contract {
 	public DateTime getFechaInicioEjecucion() {
 		return fechaInicioEjecucion;
 	}
+
 	public void setFechaInicioEjecucion(DateTime fechaInicioEjecucion) {
 		this.fechaInicioEjecucion = fechaInicioEjecucion;
+	}
+
+	public DateTime getFechaFinEjecucion() {
+		return fechaFinEjecucion;
+	}
+
+	public void setFechaFinEjecucion(DateTime fechaFinEjecucion) {
+		this.fechaFinEjecucion = fechaFinEjecucion;
 	}
 
 	public String getDescripcion() {
 		return descripcion;
 	}
+
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	
+
 	public Float getPrecioFinal() {
 		return precioFinal;
 	}
+
 	public void setPrecioFinal(Float precioFinal) {
 		this.precioFinal = precioFinal;
 	}
-	
-	public boolean isIncluyeInsumos() {
+
+	public Boolean getIncluyeInsumos() {
 		return incluyeInsumos;
 	}
-	public void setIncluyeInsumos(boolean incluyeInsumos) {
+
+	public void setIncluyeInsumos(Boolean incluyeInsumos) {
 		this.incluyeInsumos = incluyeInsumos;
 	}
-	
-	public boolean isIncluyeAdicionales() {
-		return incluyeInsumos;
+
+	public Boolean getIncluyeAdicionales() {
+		return incluyeAdicionales;
 	}
-	public void setIncluyeAdicionales(boolean incluyeAdicionales) {
+
+	public void setIncluyeAdicionales(Boolean incluyeAdicionales) {
 		this.incluyeAdicionales = incluyeAdicionales;
 	}
 
 	public Integer getValoracion() {
 		return valoracion;
 	}
+
 	public void setValoracion(Integer valoracion) {
 		this.valoracion = valoracion;
 	}
-	
+
 	public String getDescripcionValoracion() {
 		return descripcionValoracion;
 	}
+
 	public void setDescripcionValoracion(String descripcionValoracion) {
 		this.descripcionValoracion = descripcionValoracion;
 	}
-	
+
 	public String getEstado() {
 		return estado;
 	}
+
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -224,11 +236,11 @@ public class Contract {
 
 	@Override
 	public String toString() {
-		return "Contract [id=" + id + ", servicio=" + servicio.getId() + ", descripcion=" + descripcion
-				+ ", usuarioFinal=" + usuarioFinal.getId() + ", fechaContratacion=" + fechaContratacion + ", fechaInicioEjecucion="
-				+ fechaInicioEjecucion + ", fechaFinEjecucion=" + fechaFinEjecucion + ", precioFinal=" + precioFinal
-				+ ", incluyeInsumos=" + incluyeInsumos + ", incluyeAdicionales=" + incluyeAdicionales
-				+ ", valoracion=" + valoracion + ", descripcionValoracion=" + descripcionValoracion 
-				+ ", estado=" + estado + "]";
+		return "Contract [id=" + id + ", servicio=" + servicio.getId() + ", usuarioFinal=" + usuarioFinal.getId()
+				+ ", fechaContratacion=" + fechaContratacion + ", fechaInicioEjecucion=" + fechaInicioEjecucion
+				+ ", fechaFinEjecucion=" + fechaFinEjecucion + ", descripcion=" + descripcion + ", precioFinal="
+				+ precioFinal + ", incluyeInsumos=" + incluyeInsumos + ", incluyeAdicionales=" + incluyeAdicionales
+				+ ", valoracion=" + valoracion + ", descripcionValoracion=" + descripcionValoracion + ", estado="
+				+ estado + "]";
 	}
 }

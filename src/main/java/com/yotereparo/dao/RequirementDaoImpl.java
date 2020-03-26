@@ -12,8 +12,6 @@ import com.yotereparo.model.Requirement;
 /**
  * Capa de acceso a datos para Requerimientos. Su objetivo es abstraer la interacción con la API de hibernate.
  * 
- * No debe implementar lógica de negocio.
- * 
  * @author Gabriel Capitanelli
  * 
  */

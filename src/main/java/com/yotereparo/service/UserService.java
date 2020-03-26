@@ -18,7 +18,7 @@ public interface UserService {
     
     void updateUserPhotoById(String id, byte[] b64photo);
     
-    boolean isPrestador(User user);
+    boolean isProvider(User user);
     
-    boolean isFinal(User user);
+    boolean isCustomer(User user);
 }

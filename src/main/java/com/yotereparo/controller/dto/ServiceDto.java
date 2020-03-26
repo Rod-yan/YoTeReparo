@@ -82,6 +82,8 @@ public class ServiceDto {
 	
 	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
 	
+	private Set<QuoteDto> presupuestos = new HashSet<QuoteDto>(0);
+	
 	public ServiceDto() { }
 
 	public Integer getId() {
@@ -228,6 +230,14 @@ public class ServiceDto {
 		this.requerimientos = requerimientos;
 	}
 
+	public Set<QuoteDto> getPresupuestos() {
+		return presupuestos;
+	}
+
+	public void setPresupuestos(Set<QuoteDto> presupuestos) {
+		this.presupuestos = presupuestos;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -241,6 +251,7 @@ public class ServiceDto {
 		result = prime * result + ((horasEstimadasEjecucion == null) ? 0 : horasEstimadasEjecucion.hashCode());
 		result = prime * result + ((mediosDePago == null) ? 0 : mediosDePago.hashCode());
 		result = prime * result + ((requerimientos == null) ? 0 : requerimientos.hashCode());
+		result = prime * result + ((presupuestos == null) ? 0 : presupuestos.hashCode());
 		result = prime * result + ((precioAdicionales == null) ? 0 : precioAdicionales.hashCode());
 		result = prime * result + ((precioInsumos == null) ? 0 : precioInsumos.hashCode());
 		result = prime * result + ((precioMaximo == null) ? 0 : precioMaximo.hashCode());
@@ -302,6 +313,11 @@ public class ServiceDto {
 				return false;
 		} else if (!requerimientos.equals(other.requerimientos))
 			return false;
+		if (presupuestos == null) {
+			if (other.presupuestos != null)
+				return false;
+		} else if (!presupuestos.equals(other.presupuestos))
+			return false;
 		if (precioAdicionales == null) {
 			if (other.precioAdicionales != null)
 				return false;
@@ -349,6 +365,6 @@ public class ServiceDto {
 				+ ", horasEstimadasEjecucion=" + horasEstimadasEjecucion + ", cantidadTrabajadores="
 				+ cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", tipoServicio=" + tipoServicio
 				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago
-				+ ", requerimientos=" + requerimientos + "]";
+				+ ", requerimientos=" + requerimientos + ", presupuestos=" + presupuestos + "]";
 	}
 }

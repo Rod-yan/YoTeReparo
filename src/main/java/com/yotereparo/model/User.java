@@ -108,6 +108,14 @@ public class User
 	
 	@OneToMany(mappedBy = "usuarioPrestador", cascade ={CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, orphanRemoval = true)
 	private Set<Service> servicios  = new HashSet<Service>(0);
+	
+	@OneToMany(
+	        mappedBy = "usuarioFinal",
+	        fetch = FetchType.EAGER,
+	        cascade = CascadeType.MERGE,
+	        orphanRemoval = true
+	    )
+	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 
 	public User() {	}
 	
@@ -308,6 +316,19 @@ public class User
     public void removeServicio(Service servicio) {
     	servicios.remove(servicio);
     }
+    
+    public Set<Quote> getPresupuestos() {
+		return presupuestos;
+	}
+	public void setPresupuestos(Set<Quote> presupuestos) {
+		this.presupuestos = presupuestos;
+	}
+	public void addPresupuesto(Quote presupuesto) {
+		presupuestos.add(presupuesto);
+    }
+    public void removePresupuesto(Quote presupuesto) {
+    	presupuestos.remove(presupuesto);
+    }
 
 	@Override
 	public boolean equals(Object obj) {
@@ -347,6 +368,11 @@ public class User
 			if (other.direcciones != null)
 				return false;
 		} else if (!direcciones.equals(other.direcciones))
+			return false;
+		if (presupuestos == null) {
+			if (other.presupuestos != null)
+				return false;
+		} else if (!presupuestos.equals(other.presupuestos))
 			return false;
 		if (email == null) {
 			if (other.email != null)
@@ -443,6 +469,6 @@ public class User
 				+ ", fechaUltimoIngreso=" + fechaUltimoIngreso + ", fechaExpiracionContrasena="
 				+ fechaExpiracionContrasena + ", fechaCreacion=" + fechaCreacion + ", membresia=" + membresia
 				+ ", direcciones=" + direcciones + ", roles=" + roles + ", barrios=" + barrios + ", servicios="
-				+ servicios + "]";
+				+ servicios + ", presupuestos=" + presupuestos + "]";
 	}
 }

@@ -159,7 +159,7 @@ public class UserController {
 			}
 		}
 		catch (CustomResponseError e) {
-			logger.error("CreateUser - POST - Request failed - Error procesing request: ", e);
+			logger.error("CreateUser - POST - Request failed - Error procesing request.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -207,7 +207,7 @@ public class UserController {
 			}
 		}
 		catch (CustomResponseError e) {
-			logger.error("UpdateUser - PUT - Request failed - Error procesing request: ", e);
+			logger.error("UpdateUser - PUT - Request failed - Error procesing request.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {

@@ -171,7 +171,7 @@ public class ServiceController {
 			}
         }
 		catch (CustomResponseError e) {
-			logger.error("CreateService - POST - Request failed - Error procesing request: ", e);
+			logger.error("CreateService - POST - Request failed - Error procesing request.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -236,7 +236,7 @@ public class ServiceController {
 			}
 		}
 		catch (CustomResponseError e) {
-			logger.error("UpdateService - PUT - Request failed - Error procesing request: ", e);
+			logger.error("UpdateService - PUT - Request failed - Error procesing request.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -254,22 +254,22 @@ public class ServiceController {
 			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.PUT)
     public ResponseEntity<?> enableService(@PathVariable("id") Integer id) {
-		logger.info(String.format("EnableService - POST - Processing request for service <%s>.", id));
+		logger.info(String.format("EnableService - PUT - Processing request for service <%s>.", id));
 		try {
 			if (serviceManager.getServiceById(id) != null) {
 				serviceManager.enableServiceById(id);
 	        	
-	        	logger.info("EnableService - POST - Exiting method, providing response resource to client.");
+	        	logger.info("EnableService - PUT - Exiting method, providing response resource to client.");
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("EnableService - POST - Request failed - Unable to enable service. Service <%s> doesn't exist.", id));
+	        	logger.info(String.format("EnableService - PUT - Request failed - Unable to enable service. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
 		}
 		catch (Exception e) {
-			logger.error("EnableService - POST - Request failed - Error procesing request: ", e);
+			logger.error("EnableService - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
@@ -283,22 +283,22 @@ public class ServiceController {
 			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.PUT)
     public ResponseEntity<?> disableService(@PathVariable("id") Integer id) {
-		logger.info(String.format("DisableService - POST - Processing request for service <%s>.", id));
+		logger.info(String.format("DisableService - PUT - Processing request for service <%s>.", id));
 		try {
 			if (serviceManager.getServiceById(id) != null) {
 				serviceManager.disableServiceById(id);
 	        	
-	        	logger.info("DisableService - POST - Exiting method, providing response resource to client.");
+	        	logger.info("DisableService - PUT - Exiting method, providing response resource to client.");
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("DisableService - POST - Request failed - Unable to disable service. Service <%s> doesn't exist.", id));
+	        	logger.info(String.format("DisableService - PUT - Request failed - Unable to disable service. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
 		}
 		catch (Exception e) {
-			logger.error("DisableService - POST - Request failed - Error procesing request: ", e);
+			logger.error("DisableService - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Service","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  

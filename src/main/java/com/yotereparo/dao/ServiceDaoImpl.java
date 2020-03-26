@@ -23,8 +23,6 @@ import com.yotereparo.model.User_;
 /**
  * Capa de acceso a datos para Servicios. Su objetivo es abstraer la interacción con la API de hibernate.
  * 
- * No debe implementar lógica de negocio.
- * 
  * @author Rodrigo Yanis
  * 
  */

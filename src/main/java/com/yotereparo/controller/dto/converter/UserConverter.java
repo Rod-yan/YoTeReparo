@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import com.yotereparo.controller.dto.ServiceDto;
@@ -20,8 +19,6 @@ public class UserConverter implements Converter<User, UserDto> {
 	
 	@Autowired
     ModelMapper modelMapper;
-	@Autowired
-    MessageSource messageSource;
 	@Autowired
     CityService cityService;
 	@Autowired

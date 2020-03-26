@@ -14,8 +14,10 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
  
@@ -64,6 +66,16 @@ public class AppConfig {
 		modelMapper.createTypeMap(Service.class, ServiceDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getTipoServicio().getDescripcion(), ServiceDto::setTipoServicio);
 			mapper.map(src -> src.getUsuarioPrestador().getId(), ServiceDto::setUsuarioPrestador);
+		});
+		// QuoteDto -> Quote
+		modelMapper.createTypeMap(QuoteDto.class, Quote.class).addMappings(mapper -> {
+			mapper.skip(Quote::setUsuarioFinal);
+			mapper.skip(Quote::setServicio);
+		});
+		// Quote -> QuoteDto
+		modelMapper.createTypeMap(Quote.class, QuoteDto.class).addMappings(mapper -> {
+			mapper.map(src -> src.getUsuarioFinal().getId(), QuoteDto::setUsuarioFinal);
+			mapper.map(src -> src.getServicio().getId(), QuoteDto::setServicio);
 		});
 	    return modelMapper;
 	}
