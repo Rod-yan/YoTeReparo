@@ -18,6 +18,7 @@ import { fetchData } from "../Utils/SessionHandlers";
 import { validateEmail, validatePassword } from "../Utils/Security";
 import { deleteSessionCookie } from "../Utils/SessionManage";
 import { processErrors } from "../Utils/Errors";
+import { intersect } from "../Utils/ArrayUtils";
 
 const FormRegistro = props => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
@@ -80,9 +81,7 @@ const FormRegistro = props => {
     let requestData = {};
 
     if (isFormEmpleador) {
-      let barriosSelected = hoods.filter(value =>
-        account.barrios.some(value2 => value.id === value2)
-      );
+      let barriosSelected = intersect(hoods, account.barrios);
 
       requestData = {
         id: account.nombre + account.apellido,
