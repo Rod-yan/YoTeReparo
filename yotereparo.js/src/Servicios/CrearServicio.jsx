@@ -10,7 +10,6 @@ import { useContext } from "react";
 import { intersect } from "../Utils/ArrayUtils";
 import { processErrors } from "../Utils/Errors";
 import Axios from "axios";
-import { useHistory } from "react-router-dom";
 //import { intersect } from "../Utils/ArrayUtils";
 
 // -> GET: /YoTeReparo/requirements
@@ -36,7 +35,6 @@ const CrearServicio = props => {
   const [emitirFactura, setEmitirFactura] = useState(false);
 
   const session = useContext(SessionContext);
-  let history = useHistory();
 
   //We use this object in the handleSubmit in order to cross over all the data
   let [service, setService] = useState({
@@ -80,7 +78,7 @@ const CrearServicio = props => {
       precioAdicionales: service.precioAdicionales,
       horasEstimadasEjecucion: horasEstimadasEjecucion,
       cantidadTrabajadores: cantidadTrabajadores,
-      facturaEmitida: emitirFactura,
+      facturaEmitida: !emitirFactura,
       tipoServicio:
         tipoServicioSeleccionado[0] === undefined
           ? "null"

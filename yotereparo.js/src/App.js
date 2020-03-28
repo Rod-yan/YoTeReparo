@@ -8,7 +8,8 @@ import Container from "./Container/Container";
 import SelectorDeCategorias from "./Login/SelectorDeCategorias";
 import FormRegistro from "./Login/RegistroUsuarios";
 import EncontrarServicios from "./Find/EncontrarServicios";
-import Tour from "./Tour/Tour";
+import TourUser from "./Tour/TourUser";
+import TourService from "./Tour/TourService";
 import PerfilUsuario from "./Usuarios/PerfilUsuario";
 import { createBrowserHistory } from "history";
 import Servicio from "./Servicios/Servicio";
@@ -139,7 +140,13 @@ function App() {
 
             <Route path="/tour">
               <Container>
-                <Tour />
+                <TourUser />
+              </Container>
+            </Route>
+
+            <Route path="/tourService">
+              <Container>
+                <TourService />
               </Container>
             </Route>
 

@@ -17,6 +17,8 @@ function Usuario(props) {
     "https://api.adorable.io/avatars/216/yotereparo"
   );
 
+  //const isPrestador = profile.membresia != null ? true : false;
+
   var keyPress = false;
 
   const handleChange = event => {
@@ -209,7 +211,6 @@ function Usuario(props) {
                                 fieldChange={handleChange}
                                 fieldId={"id"}
                               ></InputField>
-
                               <div className="card-text">
                                 <InputField
                                   fieldTitle="Email"

@@ -39,7 +39,13 @@ const FormRegistro = props => {
       passwordState: true
     }
   });
-
+  let [direccion, setDireccion] = useState({
+    calle: "",
+    altura: 0,
+    piso: "",
+    departamento: "",
+    descripcion: ""
+  });
   let [cities, setCities] = useState([]);
   let [hoods, setHoods] = useState([]);
   let [hoodsDisabled, toggleHoods] = useState(true);
@@ -89,6 +95,7 @@ const FormRegistro = props => {
         apellido: account.apellido,
         ciudad: account.ciudad,
         barrios: barriosSelected,
+        direcciones: [direccion],
         email: account.email,
         contrasena: account.password,
         membresia: membresiaObject
@@ -195,8 +202,6 @@ const FormRegistro = props => {
     }
   };
 
-  console.log(account);
-
   return (
     <div className="registercentered card-center-form">
       <div className="row">
@@ -278,30 +283,139 @@ const FormRegistro = props => {
                 </Input>
               </FormGroup>
               {isFormEmpleador ? (
-                <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                  <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
-                    BARRIOS
-                  </Label>
-                  <Input
-                    multiple={isFormEmpleador}
-                    type="select"
-                    name="barrios"
-                    id="barriosLabel"
-                    onChange={e => {
-                      handleChange(e);
-                    }}
-                    disabled={hoodsDisabled}
-                  >
-                    <option value="" disabled hidden>
-                      Selecciona un barrio
-                    </option>
-                    {hoods.map(hood => (
-                      <option key={hood.id} value={hood.id}>
-                        {hood.descripcion}
+                <>
+                  <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                    <Label
+                      for="ciudadLabel"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      BARRIOS
+                    </Label>
+                    <Input
+                      multiple={isFormEmpleador}
+                      type="select"
+                      name="barrios"
+                      id="barriosLabel"
+                      onChange={e => {
+                        handleChange(e);
+                      }}
+                      disabled={hoodsDisabled}
+                    >
+                      <option value="" disabled hidden>
+                        Selecciona un barrio
                       </option>
-                    ))}
-                  </Input>
-                </FormGroup>
+                      {hoods.map(hood => (
+                        <option key={hood.id} value={hood.id}>
+                          {hood.descripcion}
+                        </option>
+                      ))}
+                    </Input>
+                  </FormGroup>
+                  <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                    <div className="row">
+                      <div className="col-md-6">
+                        <Label
+                          for="direccionLabelCalle"
+                          className="mr-sm-2 font-weight-bold"
+                        >
+                          CALLE
+                        </Label>
+                        <Input
+                          type="text"
+                          name="calle"
+                          id="calle"
+                          onChange={e => {
+                            setDireccion({
+                              ...direccion,
+                              [e.target.name]: e.target.value
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <Label
+                          for="direccionLabelPiso"
+                          className="mr-sm-2 font-weight-bold"
+                        >
+                          PISO
+                        </Label>
+                        <Input
+                          type="text"
+                          name="piso"
+                          id="piso"
+                          onChange={e => {
+                            setDireccion({
+                              ...direccion,
+                              [e.target.name]: e.target.value
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        {" "}
+                        <Label
+                          for="direccionLabelaltura"
+                          className="mr-sm-2 font-weight-bold"
+                        >
+                          ALTURA
+                        </Label>
+                        <Input
+                          type="number"
+                          name="altura"
+                          id="altura"
+                          onChange={e => {
+                            setDireccion({
+                              ...direccion,
+                              [e.target.name]: e.target.value
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        {" "}
+                        <Label
+                          for="direccionLabeldepartamento"
+                          className="mr-sm-2 font-weight-bold"
+                        >
+                          DEPARTAMENTO
+                        </Label>
+                        <Input
+                          type="text"
+                          name="departamento"
+                          id="departamento"
+                          onChange={e => {
+                            setDireccion({
+                              ...direccion,
+                              [e.target.name]: e.target.value
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-12 mt-2">
+                        {" "}
+                        <Label
+                          for="direccionLabeldescripcion"
+                          className="mr-sm-2 font-weight-bold"
+                        >
+                          DESCRIPCION
+                        </Label>
+                        <Input
+                          type="text"
+                          name="descripcion"
+                          id="descripcion"
+                          onChange={e => {
+                            setDireccion({
+                              ...direccion,
+                              [e.target.name]: e.target.value
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </FormGroup>
+                </>
               ) : (
                 <></>
               )}

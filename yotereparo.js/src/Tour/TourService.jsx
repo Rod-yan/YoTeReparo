@@ -1,9 +1,17 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 
-function Tour(props) {
+function TourService(props) {
   let location = useLocation();
+  let history = useHistory();
+
+  if (location.state === undefined) {
+    history.push({
+      pathname: "/404"
+    });
+    history.goBack();
+  }
 
   let userId = location.state.user.nombre + location.state.user.apellido;
 
@@ -23,23 +31,17 @@ function Tour(props) {
                     ></i>
                   </span>
                   <div className="lead">
-                    <h3>USUARIO CREADO CON EXITO</h3>
+                    <h3>SERVICIO CREADO CON EXITO</h3>
                   </div>
                 </h1>
-                <div className="lead text-center">
-                  Ingresa con sus datos para empezar a buscar sus soluciones mas
-                  cercanas...
-                </div>
                 <hr className="my-4" />
                 <div className="lead">
                   <a
                     className="btn btn-success btn-lg btn-block"
-                    href={"/perfil/" + userId}
+                    href={"/buscar"}
                     role="button"
                   >
-                    <h2>
-                      <i className="far fa-address-card mt-2"></i>
-                    </h2>
+                    <h2>BUSCAR SERVICIOS</h2>
                   </a>
                 </div>
               </div>
@@ -51,4 +53,4 @@ function Tour(props) {
   );
 }
 
-export default Tour;
+export default TourService;
