@@ -52,7 +52,7 @@ public class PaymentMethodController {
                 return new ResponseEntity<List<PaymentMethod>>(paymentMethods, HttpStatus.OK);
             }
             else {
-            	logger.info("ListPaymentMethods - GET - Request failed - No payment methods were found.");
+            	logger.warn("ListPaymentMethods - GET - Request failed - No payment methods were found.");
             	return new ResponseEntity<List<PaymentMethod>>(HttpStatus.NO_CONTENT);
             }
         }
@@ -80,7 +80,7 @@ public class PaymentMethodController {
                 return new ResponseEntity<PaymentMethod>(paymentMethod, HttpStatus.OK);
             }
             else {
-            	logger.info(String.format("GetPaymentMethod - GET - Request failed - Payment Method with id <%s> not found.", id));
+            	logger.warn(String.format("GetPaymentMethod - GET - Request failed - Payment Method with id <%s> not found.", id));
                 FieldError error = new FieldError("PaymentMethod","error",messageSource.getMessage("paymentMethod.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
             } 

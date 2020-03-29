@@ -52,7 +52,7 @@ public class CityController {
                 return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
             }
             else {
-            	logger.info("ListCities - GET - Request failed - No cities were found.");
+            	logger.warn("ListCities - GET - Request failed - No cities were found.");
             	return new ResponseEntity<List<City>>(HttpStatus.NO_CONTENT);
             }
         }
@@ -81,7 +81,7 @@ public class CityController {
                 return new ResponseEntity<City>(city, HttpStatus.OK);
             }
             else {
-            	logger.info(String.format("GetCity - GET - Request failed - City with id <%s> not found.", id));
+            	logger.warn(String.format("GetCity - GET - Request failed - City with id <%s> not found.", id));
                 FieldError error = new FieldError("City","error",messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
             } 

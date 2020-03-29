@@ -52,7 +52,7 @@ public class RequirementController {
                 return new ResponseEntity<List<Requirement>>(requirements, HttpStatus.OK);
             }
             else {
-            	logger.info("ListRequirements - GET - Request failed - No requirements were found.");
+            	logger.warn("ListRequirements - GET - Request failed - No requirements were found.");
             	return new ResponseEntity<List<Requirement>>(HttpStatus.NO_CONTENT);
             }
         }
@@ -80,7 +80,7 @@ public class RequirementController {
                 return new ResponseEntity<Requirement>(requirement, HttpStatus.OK);
             }
             else {
-            	logger.info(String.format("GetRequirement - GET - Request failed - Requirement with id <%s> not found.", id));
+            	logger.warn(String.format("GetRequirement - GET - Request failed - Requirement with id <%s> not found.", id));
                 FieldError error = new FieldError("Requirement","error",messageSource.getMessage("requirement.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
             } 

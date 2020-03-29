@@ -95,7 +95,7 @@ public class ServiceController {
 	            return new ResponseEntity<List<ServiceDto>>(servicesDto, HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info("ListServices - GET - Request failed - No services were found.");
+	        	logger.warn("ListServices - GET - Request failed - No services were found.");
 	        	return new ResponseEntity<List<ServiceDto>>(HttpStatus.NO_CONTENT);
 	        }
 		}
@@ -123,7 +123,7 @@ public class ServiceController {
                 return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(service), HttpStatus.OK);
             }
             else {
-            	logger.info(String.format("GetService - GET - Request failed - Service with id <%s> not found.", id));
+            	logger.warn(String.format("GetService - GET - Request failed - Service with id <%s> not found.", id));
                 FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
             }
@@ -160,18 +160,18 @@ public class ServiceController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 				}
 				else {
-					logger.info(String.format("CreateService - POST - Request failed - Unable to create service. Service <%s> is too similar to another service", service.getTitulo()));
+					logger.warn(String.format("CreateService - POST - Request failed - Unable to create service. Service <%s> is too similar to another service", service.getTitulo()));
 		            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
 		            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
 				}
 			}
 			else {
-				logger.info("CreateService - POST - Request failed - Input validation error(s) detected.");
+				logger.warn("CreateService - POST - Request failed - Input validation error(s) detected.");
 				return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 			}
         }
 		catch (CustomResponseError e) {
-			logger.error("CreateService - POST - Request failed - Error procesing request.");
+			logger.warn("CreateService - POST - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -214,29 +214,29 @@ public class ServiceController {
 							return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
 						}
 						else {
-							logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> is too similar to another service", service.getTitulo()));
+							logger.warn(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> is too similar to another service", service.getTitulo()));
 				            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
 				            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
 						}
 					else {
-						logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> doesn't belong to user <%s>.", id, service.getUsuarioPrestador().getId()));
+						logger.warn(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> doesn't belong to user <%s>.", id, service.getUsuarioPrestador().getId()));
 						FieldError error = new FieldError("Service","servicios",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
 						return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 					}
 				}
 				else {
-					logger.info("UpdateService - PUT - Request failed - Input validation error(s) detected.");
+					logger.warn("UpdateService - PUT - Request failed - Input validation error(s) detected.");
 					return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 				}
 	        }
 			else {
-				logger.info(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> doesn't exist.", id));
+				logger.warn(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> doesn't exist.", id));
 	            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (CustomResponseError e) {
-			logger.error("UpdateService - PUT - Request failed - Error procesing request.");
+			logger.warn("UpdateService - PUT - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -263,7 +263,7 @@ public class ServiceController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("EnableService - PUT - Request failed - Unable to enable service. Service <%s> doesn't exist.", id));
+	        	logger.warn(String.format("EnableService - PUT - Request failed - Unable to enable service. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
@@ -292,7 +292,7 @@ public class ServiceController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("DisableService - PUT - Request failed - Unable to disable service. Service <%s> doesn't exist.", id));
+	        	logger.warn(String.format("DisableService - PUT - Request failed - Unable to disable service. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
@@ -321,7 +321,7 @@ public class ServiceController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("DeleteService - DELETE - Request failed - Unable to delete service. Service <%s> doesn't exist.", id));
+	        	logger.warn(String.format("DeleteService - DELETE - Request failed - Unable to delete service. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
@@ -374,13 +374,13 @@ public class ServiceController {
 					return new ResponseEntity<byte[]>(serviceImage, headers, HttpStatus.OK);
 				}
 				else {
-					logger.info(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. No image was found for service <%s>.", id));
+					logger.warn(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. No image was found for service <%s>.", id));
 		        	FieldError error = new FieldError("Service","imagen",messageSource.getMessage("service.doesnt.have.image", new Integer[]{id}, Locale.getDefault()));
 		        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 				}
 	        }
 			else {
-				logger.info(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. Service <%s> doesn't exist.", id));
+				logger.warn(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
@@ -414,7 +414,7 @@ public class ServiceController {
 				return new ResponseEntity<String>(HttpStatus.OK);
 	        }
 			else {
-				logger.info(String.format("UpdateServiceImage - PUT - Request failed - Unable to update service's image. Service <%s> doesn't exist.", id));
+				logger.warn(String.format("UpdateServiceImage - PUT - Request failed - Unable to update service's image. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
@@ -453,7 +453,7 @@ public class ServiceController {
 				return new ResponseEntity<String>(HttpStatus.OK);
 	        }
 			else {
-				logger.info(String.format("DeleteServiceImage - DELETE - Request failed - Unable to delete service's image. Service <%s> doesn't exist.", id));
+				logger.warn(String.format("DeleteServiceImage - DELETE - Request failed - Unable to delete service's image. Service <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}

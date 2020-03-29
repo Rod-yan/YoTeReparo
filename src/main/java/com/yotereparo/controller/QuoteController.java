@@ -69,7 +69,7 @@ public class QuoteController {
 	            return new ResponseEntity<List<QuoteDto>>(quotesDto, HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info("ListQuotes - GET - Request failed - No quotes were found.");
+	        	logger.warn("ListQuotes - GET - Request failed - No quotes were found.");
 	        	return new ResponseEntity<List<QuoteDto>>(HttpStatus.NO_CONTENT);
 	        }
 		}
@@ -97,7 +97,7 @@ public class QuoteController {
                 return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quote), HttpStatus.OK);
             }
             else {
-            	logger.info(String.format("GetQuote - GET - Request failed - Quote with id <%s> not found.", id));
+            	logger.warn(String.format("GetQuote - GET - Request failed - Quote with id <%s> not found.", id));
                 FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
             }
@@ -134,7 +134,7 @@ public class QuoteController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 				}
 				else {
-					logger.info(String.format("CreateQuote - POST - Request failed - Unable to create quote. An active quote already exist between "
+					logger.warn(String.format("CreateQuote - POST - Request failed - Unable to create quote. An active quote already exist between "
 							+ "service <%s> and"
 							+ "user <%s>.", quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()));
 		            FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.active.already.exist", new String[]{quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()}, Locale.getDefault()));
@@ -142,12 +142,12 @@ public class QuoteController {
 				}
 			}
 			else {
-				logger.info("CreateQuote - POST - Request failed - Input validation error(s) detected.");
+				logger.warn("CreateQuote - POST - Request failed - Input validation error(s) detected.");
 				return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 			}
         }
 		catch (CustomResponseError e) {
-			logger.error("CreateQuote - POST - Request failed - Error procesing request.");
+			logger.warn("CreateQuote - POST - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -195,24 +195,24 @@ public class QuoteController {
 						return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quoteService.getQuoteById(id)), HttpStatus.OK);
 					}
 					else {
-						logger.info(String.format("UpdateQuote - PUT - Request failed - Unable to update quote. Quote <%s> doesn't belong to user <%s> and service <%s>.", id, quote.getUsuarioFinal().getId(), quote.getServicio().getDescripcion()));
+						logger.warn(String.format("UpdateQuote - PUT - Request failed - Unable to update quote. Quote <%s> doesn't belong to user <%s> and service <%s>.", id, quote.getUsuarioFinal().getId(), quote.getServicio().getDescripcion()));
 						FieldError error = new FieldError("Quote","presupuestos",messageSource.getMessage("quote.doesnt.belong.to.user.and.service", new String[]{quote.getUsuarioFinal().getId(), quote.getServicio().getDescripcion()}, Locale.getDefault()));
 						return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 					}
 				}
 				else {
-					logger.info("UpdateQuote - PUT - Request failed - Input validation error(s) detected.");
+					logger.warn("UpdateQuote - PUT - Request failed - Input validation error(s) detected.");
 					return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
 				}
 	        }
 			else {
-				logger.info(String.format("UpdateQuote - PUT - Request failed - Unable to update quote. Quote <%s> doesn't exist.", id));
+				logger.warn(String.format("UpdateQuote - PUT - Request failed - Unable to update quote. Quote <%s> doesn't exist.", id));
 	            FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (CustomResponseError e) {
-			logger.error("UpdateQuote - PUT - Request failed - Error procesing request.");
+			logger.warn("UpdateQuote - PUT - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -239,13 +239,13 @@ public class QuoteController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("AcceptQuote - PUT - Request failed - Unable to accept quote. Quote <%s> doesn't exist.", id));
+	        	logger.warn(String.format("AcceptQuote - PUT - Request failed - Unable to accept quote. Quote <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
 		}
 		catch (CustomResponseError e) {
-			logger.error("AcceptQuote - PUT - Request failed - Error procesing request.");
+			logger.warn("AcceptQuote - PUT - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -282,19 +282,19 @@ public class QuoteController {
 		            return new ResponseEntity<>(HttpStatus.OK);
 		        }
 		        else {
-		        	logger.info(String.format("RejectQuote - PUT - Request failed - Unable to reject quote. Quote <%s> doesn't exist.", id));
+		        	logger.warn(String.format("RejectQuote - PUT - Request failed - Unable to reject quote. Quote <%s> doesn't exist.", id));
 		        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 		        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 		        }
 			}
 			else {
-				logger.info(String.format("RejectQuote - PUT - Request failed - Incorrect URI path argument <%s> (must be customer | provider).", userType));
+				logger.warn(String.format("RejectQuote - PUT - Request failed - Incorrect URI path argument <%s> (must be customer | provider).", userType));
 	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.incorrect.rejection.uri.argument", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
 			}
 		}
 		catch (CustomResponseError e) {
-			logger.error("RejectQuote - PUT - Request failed - Error procesing request.");
+			logger.warn("RejectQuote - PUT - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -321,13 +321,13 @@ public class QuoteController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("ArchiveQuote - POST - Request failed - Unable to archive quote. Quote <%s> doesn't exist.", id));
+	        	logger.warn(String.format("ArchiveQuote - POST - Request failed - Unable to archive quote. Quote <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
 		}
 		catch (CustomResponseError e) {
-			logger.error("ArchiveQuote - PUT - Request failed - Error procesing request.");
+			logger.warn("ArchiveQuote - PUT - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
@@ -354,13 +354,13 @@ public class QuoteController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.info(String.format("DeleteQuote - DELETE - Request failed - Unable to delete quote. Quote <%s> doesn't exist.", id));
+	        	logger.warn(String.format("DeleteQuote - DELETE - Request failed - Unable to delete quote. Quote <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
 	        }
 		}
 		catch (CustomResponseError e) {
-			logger.error("DeleteQuote - DELETE - Request failed - Error procesing request.");
+			logger.warn("DeleteQuote - DELETE - Request failed - Validation error(s) detected.");
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {

@@ -52,7 +52,7 @@ public class ServiceTypeController {
                 return new ResponseEntity<List<ServiceType>>(serviceTypes, HttpStatus.OK);
             }
             else {
-            	logger.info("ListServiceTypes - GET - Request failed - No service types were found.");
+            	logger.warn("ListServiceTypes - GET - Request failed - No service types were found.");
             	return new ResponseEntity<List<ServiceType>>(HttpStatus.NO_CONTENT);
             }
         }
@@ -80,7 +80,7 @@ public class ServiceTypeController {
                 return new ResponseEntity<ServiceType>(serviceType, HttpStatus.OK);
             }
             else {
-            	logger.info(String.format("GetServiceType - GET - Request failed - Service Type with id <%s> not found.", id));
+            	logger.warn(String.format("GetServiceType - GET - Request failed - Service Type with id <%s> not found.", id));
                 FieldError error = new FieldError("ServiceType","error",messageSource.getMessage("serviceType.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
             } 
