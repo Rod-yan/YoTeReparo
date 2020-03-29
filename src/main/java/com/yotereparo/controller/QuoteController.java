@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +37,7 @@ import com.yotereparo.util.error.CustomResponseError;
 @RestController
 public class QuoteController {
 	
-	private static final Logger logger = LogManager.getLogger(QuoteController.class);
+	private static final Logger logger = LoggerFactory.getLogger(QuoteController.class);
 	
 	@Autowired
     QuoteService quoteService;

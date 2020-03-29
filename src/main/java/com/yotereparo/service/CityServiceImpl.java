@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ import com.yotereparo.model.District;
 @Transactional 
 public class CityServiceImpl implements CityService {
 	
-	private static final Logger logger = LogManager.getLogger(CityServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(CityServiceImpl.class);
 	
 	@Autowired
 	private CityDaoImpl dao;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Service;
@@ -29,12 +29,12 @@ import com.yotereparo.util.SpringEnvironmentUtils;
 @Transactional 
 public class RoleServiceImpl implements RoleService {
 	
-	private static final Logger logger = LogManager.getLogger(RoleServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 	
 	@Autowired
 	private RoleDaoImpl dao;
 	@Autowired
-	private ConfigurableEnvironment  environment;
+	private ConfigurableEnvironment environment;
 
 	public List<Role> getAllRoles() {
 		logger.debug("Fetching all roles");

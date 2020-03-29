@@ -7,8 +7,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ import com.yotereparo.service.UserService;
 @Component
 public class ValidationUtils {
 	
-	private static final Logger logger = LogManager.getLogger(ValidationUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
 
 	@Autowired
 	UserService userService;
@@ -273,10 +273,11 @@ public class ValidationUtils {
 			logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","Service"));
 		}
 		
-		if (user.getId().equals(service.getUsuarioPrestador().getId())) {
-			result.addError(new FieldError("Quote","usuarioFinal",messageSource.getMessage("quote.user.owns.service", new String[]{user.getId()}, Locale.getDefault())));
-			logger.info(String.format("Validation error in entity <%s>, user owns the service for the processed quote.","Quote"));
-		}
+		if (service != null && user != null)
+			if (user.getId().equals(service.getUsuarioPrestador().getId())) {
+				result.addError(new FieldError("Quote","usuarioFinal",messageSource.getMessage("quote.user.owns.service", new String[]{user.getId()}, Locale.getDefault())));
+				logger.info(String.format("Validation error in entity <%s>, user owns the service for the processed quote.","Quote"));
+			}
 		
 		return result;
 	}

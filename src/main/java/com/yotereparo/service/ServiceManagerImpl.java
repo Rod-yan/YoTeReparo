@@ -12,12 +12,12 @@ import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +43,7 @@ import com.yotereparo.util.error.CustomResponseError;
 @Transactional 
 public class ServiceManagerImpl implements ServiceManager {
 	
-	private static final Logger logger = LogManager.getLogger(ServiceManagerImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceManagerImpl.class);
 	
 	@Autowired
 	private ServiceDaoImpl dao;

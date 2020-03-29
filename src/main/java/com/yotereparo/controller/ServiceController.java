@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.CacheControl;
@@ -54,7 +54,7 @@ import com.yotereparo.util.error.CustomResponseError;
 @RestController
 public class ServiceController {
 	
-	private static final Logger logger = LogManager.getLogger(ServiceController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
 	
 	@Autowired
     ServiceManager serviceManager;

@@ -2,8 +2,8 @@ package com.yotereparo.service;
 
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ import com.yotereparo.model.District;
 @Transactional 
 public class DistrictServiceImpl implements DistrictService {
 	
-	private static final Logger logger = LogManager.getLogger(DistrictServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(DistrictServiceImpl.class);
 	
 	@Autowired
 	private DistrictDaoImpl dao;

@@ -3,8 +3,8 @@ package com.yotereparo.controller;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ import com.yotereparo.util.MiscUtils;
 @RestController
 public class PaymentMethodController {
 	
-	private static final Logger logger = LogManager.getLogger(PaymentMethodController.class);
+	private static final Logger logger = LoggerFactory.getLogger(PaymentMethodController.class);
 	
 	@Autowired
     PaymentMethodService paymentMethodService;

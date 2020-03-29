@@ -34,9 +34,9 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
     public void init() throws Exception {
     	String title = getClass().getPackage().getImplementationTitle();
     	String version = getClass().getPackage().getImplementationVersion();
-		System.out.println("===========================================================");
+		System.out.println("\u001B[34m===========================================================\u001B[31m");
 		artGen.printTextArt(title, 10, ASCIIArtFont.ART_FONT_DIALOG, "x");
-		System.out.println("============================================= Version "+version);
+		System.out.println("\u001B[34m============================================= \u001B[0mVersion \u001B[32m"+version+"\u001B[0m");
 	}
  
 }
