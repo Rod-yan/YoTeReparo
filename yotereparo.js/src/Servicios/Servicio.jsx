@@ -180,7 +180,7 @@ const Servicio = props => {
             </ModalBody>
             <ModalFooter>
               <Button color="danger" onClick={toggle}>
-                CONTRATAR
+                PEDIR PRESUPUESTO
               </Button>{" "}
               <Button color="info" onClick={toggle}>
                 Cancel
