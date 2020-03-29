@@ -27,8 +27,8 @@
             <fileNamePattern>
             	${LOGS}/archived/YoTeReparo-%d{yyyy-MM-dd}.log
             </fileNamePattern>
-            <maxHistory>10</maxHistory>
-    		<totalSizeCap>100MB</totalSizeCap>
+            <maxHistory>3</maxHistory>
+    		<totalSizeCap>10MB</totalSizeCap>
         </rollingPolicy>
     </appender>
      
