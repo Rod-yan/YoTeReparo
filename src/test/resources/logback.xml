@@ -6,11 +6,11 @@
  
     <appender name="Console"
         class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>
+        <encoder>
+            <pattern>
                 %d{ISO8601} - %boldGreen(TEST) - %highlight(%-5level) %yellow(%C{1.}): %msg%n%throwable
-            </Pattern>
-        </layout>
+           	</pattern>
+        </encoder>
     </appender>
     
     <appender name="RollingFile"
@@ -24,12 +24,11 @@
         <rollingPolicy
             class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily and when the file reaches 10 MegaBytes -->
-            <fileNamePattern>${LOGS}/archived/YoTeReparo-%d{yyyy-MM-dd}.%i.log
+            <fileNamePattern>
+            	${LOGS}/archived/YoTeReparo-%d{yyyy-MM-dd}.log
             </fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>5MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>10</maxHistory>
+    		<totalSizeCap>100MB</totalSizeCap>
         </rollingPolicy>
     </appender>
      
