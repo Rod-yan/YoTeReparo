@@ -115,6 +115,7 @@ public class User
 	        cascade = CascadeType.MERGE,
 	        orphanRemoval = true
 	    )
+	@Where(clause = "estado <> 'ARCHIVADO'")
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 
 	public User() {	}

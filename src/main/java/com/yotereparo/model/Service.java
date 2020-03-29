@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -101,6 +102,7 @@ public class Service {
 	        cascade = CascadeType.MERGE,
 	        orphanRemoval = true
 	    )
+	@Where(clause = "estado <> 'ARCHIVADO'")
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 		
 	public Service() { }
