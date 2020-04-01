@@ -18,6 +18,7 @@ import org.springframework.validation.FieldError;
 import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.controller.dto.UserPasswordChangeDto;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
 import com.yotereparo.model.PaymentMethod;
@@ -158,6 +159,21 @@ public class ValidationUtils {
 							logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","District"));
 						}
 				}
+		
+		return result;
+	}
+	
+	public BindingResult userPasswordChangeInputValidation(UserPasswordChangeDto userPasswordChangeDto, BindingResult result) {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		
+		for (ConstraintViolation<UserPasswordChangeDto> violation : validator.validate(userPasswordChangeDto)) {
+			String propertyPath = violation.getPropertyPath().toString();
+	        String message = violation.getMessage();
+	        result.addError(new FieldError("User", propertyPath, message));
+	        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
+	        				"User", propertyPath, message));
+	    }
 		
 		return result;
 	}

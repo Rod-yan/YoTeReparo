@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.yotereparo.security.WebSecurityConfig;
 import com.yotereparo.util.ASCIIArtGenerator;
 import com.yotereparo.util.ASCIIArtGenerator.ASCIIArtFont;
 
@@ -17,7 +18,7 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { AppConfig.class };
+        return new Class[] { AppConfig.class, WebSecurityConfig.class };
     }
   
     @Override

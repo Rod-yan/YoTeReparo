@@ -33,7 +33,7 @@ public class Quote {
 			ACCEPTED_BY_CUSTOMER + "|" +
 			REJECTED_BY_CUSTOMER + "|" +
 			REJECTED_BY_PROVIDER + "|" +
-			ARCHIVED + "|";
+			ARCHIVED;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

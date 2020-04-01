@@ -9,7 +9,13 @@ public interface UserService {
     void createUser(User user);
      
     void updateUser(User user);
-     
+    
+    void changeUserPasswordById(String id, String currentPassword, String newPassword);
+    
+    void registerSuccessfulLoginAttempt(User user);
+
+    void registerFailedLoginAttempt(User user);
+    	
     void deleteUserById(String id);
  
     List<User> getAllUsers(); 

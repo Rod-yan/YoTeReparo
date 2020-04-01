@@ -308,7 +308,6 @@ public class UserControllerTest {
         testUser1.setNombre("Test");
         testUser1.setApellido("User7");
         testUser1.setEmail("testuser7@yotereparo.com");
-        testUser1.setContrasena("test2001");
         testUser1.setCiudad("venado_tuerto");
         testUser1.setMembresia(null);
         testUser1.setEstado("TST");
@@ -320,7 +319,6 @@ public class UserControllerTest {
         testUser2.setNombre("Test");
         testUser2.setApellido("User8");
         testUser2.setEmail("testuser2@yotereparo.com");
-        testUser2.setContrasena("test2002");
         testUser2.setCiudad("venado_tuerto");
         testUser2.setMembresia(null);
         testUser2.setEstado("TST");

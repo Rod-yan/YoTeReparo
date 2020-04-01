@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceFilter {
 	
-	public static final String[] filters = {"user", "district", "city"};
+	public static final String[] FILTERS = {"user", "district", "city"};
 	
 	public Boolean contains(String key) {
 		if (key == null || key.isEmpty())
 			return false;
-		for (String filter : filters)
+		for (String filter : FILTERS)
 			if (filter.equalsIgnoreCase(key))
 				return true;
 		return false;

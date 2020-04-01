@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 		user.setFoto(null);
 		user.setThumbnail(null);
 		// Unstable:
-		user.setEstado("ACTIVO");
+		user.setEstado(User.ACTIVE);
 		user.setIntentosIngreso(0);
 		
 		/*
@@ -170,17 +170,6 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		
-		String newPassword = SecurityUtils.encryptPassword(user.getContrasena().concat(entity.getSalt()));
-		if (!entity.getContrasena().equals(newPassword)) {
-			// TODO: Mover a método dedicado
-			logger.debug(String.format("Updating attribute 'Contrasena' (and derivates) from user <%s>", user.getId()));
-			entity.setContrasena(newPassword);
-			entity.setFechaUltimoCambioContrasena(new DateTime());
-			entity.setFechaExpiracionContrasena(
-					new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days")))
-					);
-		}
-		
 		// Agregamos y quitamos roles al usuario de acuerdo con su definicion de membresia actual. Todo usuario es usuario final.
 		if (!Objects.equals(user.getMembresia(), entity.getMembresia())) {
 			if (entity.getMembresia() != null) {
@@ -264,14 +253,71 @@ public class UserServiceImpl implements UserService {
 			entity.setCiudad(user.getCiudad());
 		}
 		
-		/* El estado lo calculamos con reglas un poco más complejas que aun no definimos.
-		entity.setEstado(user.getEstado()); */
-		/* Gestionado por componentes de sesión
-		entity.setIntentosIngreso(user.getIntentosIngreso());
-		entity.setFechaUltimoIngreso(user.getFechaUltimoIngreso()); */
 		logger.info(String.format("Commiting update for user <%s>", user.getId()));
 	}
-
+	
+	public void changeUserPasswordById(String id, String currentPassword, String newPassword) {
+		User user = getUserById(id);
+		
+		currentPassword = SecurityUtils.encryptPassword(currentPassword.concat(user.getSalt()));
+		newPassword = SecurityUtils.encryptPassword(newPassword.concat(user.getSalt()));
+		String trueCurrentPassword = user.getContrasena();
+		if (currentPassword.equals(trueCurrentPassword)) {
+			if (!newPassword.equals(trueCurrentPassword)) {
+				logger.debug(String.format("Updating attribute 'Contrasena' (and derivates) from user <%s>", user.getId()));
+				user.setContrasena(newPassword);
+				user.setFechaUltimoCambioContrasena(new DateTime());
+				user.setFechaExpiracionContrasena(
+						new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days")))
+						);
+				
+				if (user.getIntentosIngreso() != 0) {
+					logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
+					user.setIntentosIngreso(0);
+				}
+				if (user.getEstado().equals(User.BLOCKED)) {
+					logger.info(String.format("Enabling previously blocked user <%s>", user.getId()));
+					user.setEstado(User.ACTIVE);
+				}
+			}
+			else
+				throw new CustomResponseError("User","contrasena",messageSource.getMessage("user.contrasena.must.be.different.from.current", null, Locale.getDefault()));
+		}
+		else
+			throw new CustomResponseError("User","contrasena",messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
+	}
+	
+	public void registerSuccessfulLoginAttempt(User user) {
+		User entity = getUserById(user.getId());
+		
+		logger.debug(String.format("Updating attribute 'FechaUltimoIngreso' from user <%s>", user.getId()));
+		entity.setFechaUltimoIngreso(new DateTime());
+		if (user.getIntentosIngreso() != 0) {
+			logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
+			entity.setIntentosIngreso(0);
+		}
+		if (entity.getEstado().equals(User.BLOCKED)) {
+			logger.info(String.format("Enabling previously blocked user <%s>", user.getId()));
+			entity.setEstado(User.ACTIVE);
+		}
+		
+		logger.info(String.format("Successful login attempt registered for user <%s>", user.getId()));
+	}
+	
+	public void registerFailedLoginAttempt(User user) {
+		User entity = getUserById(user.getId());
+		
+		logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
+		entity.setIntentosIngreso(user.getIntentosIngreso()+1);
+		if (entity.getIntentosIngreso() >= Integer.parseInt(environment.getProperty("login.attempts.limit")))
+			if (!entity.getEstado().equals(User.BLOCKED)) {
+				logger.info(String.format("Disabling user <%s>: Too many failed login attempts", user.getId()));
+				entity.setEstado(User.BLOCKED);
+			}
+		
+		logger.info(String.format("Failed login attempt registered for user <%s>", user.getId()));
+	}
+	
 	public void deleteUserById(String id) {
 		logger.info(String.format("Commiting deletion of user <%s>", id));
 		dao.deleteUserById(id);

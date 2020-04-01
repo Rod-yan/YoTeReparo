@@ -25,6 +25,19 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="usuario") 
 public class User
 {
+	
+	// Constantes de estado
+	public static final String ACTIVE = "ACTIVO";
+	public static final String INACTIVE = "INACTIVO";
+	public static final String BLOCKED = "BLOQUEADO";
+	public static final String ARCHIVED = "ARCHIVADO";
+	
+	public static final String STATUS_LIST_REGEXP =
+			ACTIVE + "|" +
+			INACTIVE + "|" +
+			BLOCKED + "|" +
+			ARCHIVED;
+	
 	@Id
 	@Column(name = "id_usuario", nullable = false)
 	private String id;

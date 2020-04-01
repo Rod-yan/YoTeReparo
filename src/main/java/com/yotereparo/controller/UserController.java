@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.controller.dto.UserPasswordChangeDto;
 import com.yotereparo.controller.dto.converter.UserConverter;
 import com.yotereparo.model.User;
 import com.yotereparo.service.UserService;
@@ -46,6 +48,7 @@ import com.yotereparo.util.error.CustomResponseError;
  * @author Rodrigo Yanis
  * 
  */
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class UserController {
 	
@@ -212,6 +215,49 @@ public class UserController {
 		}
 		catch (Exception e) {
 			logger.error("UpdateUser - PUT - Request failed - Error procesing request: ", e);
+			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}   
+    }
+	
+	/*
+	 * Actualiza la contraseña del usuario.
+	 */
+	@RequestMapping(
+			value = { "/users/{id}/changepassword" },
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			method = RequestMethod.PUT)
+    public ResponseEntity<?> changeUserPassword(@PathVariable("id") String id, @RequestBody UserPasswordChangeDto clientInput, BindingResult result) {
+		id = id.toLowerCase();
+		logger.info(String.format("ChangeUserPassword - PUT - Processing request for user <%s>.", id));
+		try {
+			clientInput.setId(id);
+			if (userService.getUserById(id) != null) {
+				if (!validationUtils.userPasswordChangeInputValidation(clientInput, result).hasErrors()) {
+					
+					userService.changeUserPasswordById(id, clientInput.getContrasenaActual(), clientInput.getContrasenaNueva());
+					
+					logger.info("ChangeUserPassword - PUT - Exiting method, providing response resource to client.");
+					return new ResponseEntity<UserPasswordChangeDto>(HttpStatus.OK);
+				}
+				else {
+					logger.warn("ChangeUserPassword - PUT - Request failed - Input validation error(s) detected.");
+					return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+				}
+	        }
+			else {
+				logger.warn(String.format("ChangeUserPassword - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
+	            FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+			}
+		}
+		catch (CustomResponseError e) {
+			logger.warn("ChangeUserPassword - PUT - Request failed - Validation error(s) detected.");
+			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			logger.error("ChangeUserPassword - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
