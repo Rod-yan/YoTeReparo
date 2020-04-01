@@ -4,7 +4,7 @@
 			<b>YoTeReparo</b>
 		</h1>
 		<h3>Proyecto Final de Ingeniería en Sistemas en Información</h3>
-		<table width=100%>
+		<table align="center" width=100%>
 			<tr>
 				<th>
 					<font size=2>
