@@ -1,0 +1,17 @@
+/YoTeReparo/auth/signin
+/YoTeReparo/auth/signup
+/YoTeReparo/users/{id}/changepassword
+
+create token for a user
+{
+    username : "",   
+    password : ""
+}
+
+update password
+{
+    "contrasenaNueva" : "",   
+    "contrasenaActual" : ""
+}
+
+to make an update right now, you have to send the user/password

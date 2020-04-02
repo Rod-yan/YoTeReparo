@@ -114,14 +114,16 @@ const FormRegistro = props => {
 
     //TODO: SET membresia en funcion del formulario de entrada
 
-    let requestHeaders = {
-      "Access-Control-Allow-Origin": "*"
+    let requestConfig = {
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
     };
 
     Axios.post(
-      "http://localhost:8080/YoTeReparo/users/",
+      "http://localhost:8080/YoTeReparo/auth/signup",
       requestData,
-      requestHeaders
+      requestConfig
     )
       .then(response => {
         console.log(response.status);

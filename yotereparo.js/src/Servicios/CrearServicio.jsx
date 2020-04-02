@@ -87,14 +87,17 @@ const CrearServicio = props => {
       requerimientos: requerimientosSeleccionados
     };
 
-    let requestHeaders = {
-      "Access-Control-Allow-Origin": "*"
+    let requestConfig = {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + session.token
+      }
     };
 
     Axios.post(
       "http://localhost:8080/YoTeReparo/services/",
       requestService,
-      requestHeaders
+      requestConfig
     )
       .then(response => {
         console.log(response.status);

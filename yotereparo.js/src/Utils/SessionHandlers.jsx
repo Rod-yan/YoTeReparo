@@ -32,15 +32,29 @@ export const NoMatch = () => {
 
 export const LoginHandler = ({ history }) => {
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loadingUser, setLoadingUser] = useState(false);
   const [errors, setErrors] = useState(false);
+
+  let requestConfig = {
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    }
+  };
 
   const handleSubmit = async event => {
     event.preventDefault();
     let result;
     try {
       setLoadingUser(true);
-      await Axios(`http://localhost:8080/YoTeReparo/users/${username}`)
+      await Axios.post(
+        `http://localhost:8080/YoTeReparo/auth/signin`,
+        {
+          username: username,
+          password: password
+        },
+        requestConfig
+      )
         .then(response => {
           console.log(response);
           result = response;
@@ -59,7 +73,7 @@ export const LoginHandler = ({ history }) => {
       setErrors(true);
     } else {
       if (username && result.status !== 404) {
-        setSessionCokie({ username });
+        setSessionCokie({ username: username, security: result.data });
         history.push("/");
         window.location.reload();
       } else {
@@ -105,6 +119,15 @@ export const LoginHandler = ({ history }) => {
                       value={username}
                       className="form-control btn-block"
                       onChange={event => setUsername(event.target.value)}
+                      required
+                    />
+                    <input
+                      type="string"
+                      placeholder="Ingresa tu contraseña"
+                      value={password}
+                      type="password"
+                      className="form-control btn-block"
+                      onChange={event => setPassword(event.target.value)}
                       required
                     />
                     <Button color="danger" size="lg" block className="mt-4">

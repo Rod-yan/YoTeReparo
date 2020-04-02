@@ -32,7 +32,14 @@ const Servicio = props => {
       setLoading(false);
     } else {
       const fetchData = async urlToFetch => {
-        const result = await Axios(urlToFetch)
+        let requestConfig = {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            Authorization: "Bearer " + session.token
+          }
+        };
+
+        const result = await Axios(urlToFetch, requestConfig)
           .then(resp => {
             return resp;
           })
@@ -60,7 +67,7 @@ const Servicio = props => {
         }
       });
     }
-  }, [location, props.match.params.id]);
+  }, [location, props.match.params.id, session]); //if a loop is here check this session variable
 
   if (session.username === undefined) {
     history.push("/ingresar");

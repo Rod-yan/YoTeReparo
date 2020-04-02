@@ -19,8 +19,11 @@ function PerfilUsuario(props) {
 
   const updateProfile = () => {
     console.log(profile);
-    let requestHeaders = {
-      "Access-Control-Allow-Origin": "*"
+    let requestConfig = {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + session.token
+      }
     };
 
     let requestDataPrestador = {
@@ -52,7 +55,7 @@ function PerfilUsuario(props) {
     Axios.put(
       `http://localhost:8080/YoTeReparo/users/${profile.id}`,
       requestData,
-      requestHeaders
+      requestConfig
     )
       .then(response => {
         if (response.status === 400) {
