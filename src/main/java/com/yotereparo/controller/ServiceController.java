@@ -80,7 +80,7 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services" }, 
-			produces = "application/json; charset=UTF-8", 
+			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listServices(@RequestParam(required = false) Map<String,String> filters) {
 		logger.info("ListServices - GET - Processing request for a list with all existing services.");
@@ -113,7 +113,7 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}" }, 
-			produces = "application/json; charset=UTF-8", 
+			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getService(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetService - GET - Processing request for service <%s>.", id));
@@ -142,8 +142,8 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services" }, 
-			consumes = "application/json; charset=UTF-8",
-			produces = "application/json; charset=UTF-8",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
     public ResponseEntity<?> createService(@RequestBody ServiceDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {	
 		logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getTitulo()));
@@ -191,8 +191,8 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}" }, 
-			consumes = "application/json; charset=UTF-8",
-			produces = "application/json; charset=UTF-8",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateService(@PathVariable("id") Integer id, @RequestBody ServiceDto clientInput, BindingResult result) {	
 		logger.info(String.format("UpdateService - PUT - Processing request for service <%s>.", id));
@@ -253,7 +253,7 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}/enable" }, 
-			produces = "application/json; charset=UTF-8",			
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.PUT)
     public ResponseEntity<?> enableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("EnableService - PUT - Processing request for service <%s>.", id));
@@ -282,7 +282,7 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}/disable" }, 
-			produces = "application/json; charset=UTF-8",			
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.PUT)
     public ResponseEntity<?> disableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("DisableService - PUT - Processing request for service <%s>.", id));
@@ -311,7 +311,7 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}" }, 
-			produces = "application/json; charset=UTF-8",			
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteService(@PathVariable("id") Integer id) {
 		logger.info(String.format("DeleteService - DELETE - Processing request for service <%s>.", id));
@@ -341,7 +341,7 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}/photo", "/services/{id}/photo/thumbnail" }, 
-			produces = "application/json; charset=UTF-8",
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.GET)
     public ResponseEntity<?> getServiceImage(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetServiceImage - GET - Processing request for service's <%s> image.", id));
@@ -400,8 +400,8 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}/photo" }, 
-			consumes = "application/json; charset=UTF-8",
-			produces = "application/json; charset=UTF-8",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateServiceImage(@PathVariable("id") Integer id, @RequestBody String photoPayload) {
 		logger.info(String.format("UpdateServiceImage - PUT - Processing request for service's <%s> image.", id));
@@ -443,7 +443,7 @@ public class ServiceController {
 	 */
 	@RequestMapping(
 			value = { "/services/{id}/photo" },
-			produces = "application/json; charset=UTF-8",
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteServiceImage(@PathVariable("id") Integer id) {
 		logger.info(String.format("DeleteServiceImage - DELETE - Processing request for service's <%s> image.", id));

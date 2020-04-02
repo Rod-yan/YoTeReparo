@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -54,7 +55,7 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes" }, 
-			produces = "application/json; charset=UTF-8", 
+			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listQuotes() {
 		logger.info("ListQuotes - GET - Processing request for a list with all existing quotes.");
@@ -86,7 +87,7 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes/{id}" }, 
-			produces = "application/json; charset=UTF-8", 
+			produces = MediaType.APPLICATION_JSON_VALUE, 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getQuote(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetQuote - GET - Processing request for quote <%s>.", id));
@@ -115,8 +116,8 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes" }, 
-			consumes = "application/json; charset=UTF-8",
-			produces = "application/json; charset=UTF-8",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
     public ResponseEntity<?> createQuote(@RequestBody QuoteDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {	
 		logger.info("CreateQuote - POST - Processing request for new quote.");
@@ -165,8 +166,8 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes/{id}" }, 
-			consumes = "application/json; charset=UTF-8",
-			produces = "application/json; charset=UTF-8",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateQuote(@PathVariable("id") Integer id, @RequestBody QuoteDto clientInput, BindingResult result) {	
 		logger.info(String.format("UpdateQuote - PUT - Processing request for quote <%s>.", id));
@@ -228,7 +229,7 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes/{id}/accept" }, 
-			produces = "application/json; charset=UTF-8",			
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.PUT)
     public ResponseEntity<?> acceptQuote(@PathVariable("id") Integer id) {
 		logger.info(String.format("AcceptQuote - PUT - Processing request for quote <%s>.", id));
@@ -262,7 +263,7 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes/{id}/reject/{userType}" }, 
-			produces = "application/json; charset=UTF-8",			
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.PUT)
     public ResponseEntity<?> rejectQuote(@PathVariable("id") Integer id, @PathVariable("userType") String userType) {
 		logger.info(String.format("RejectQuote - PUT - Processing request for quote <%s> and entity <%s>.", id, userType));
@@ -310,7 +311,7 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes/{id}/archive" }, 
-			produces = "application/json; charset=UTF-8",			
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.PUT)
     public ResponseEntity<?> archiveQuote(@PathVariable("id") Integer id) {
 		logger.info(String.format("ArchiveQuote - PUT - Processing request for quote <%s>.", id));
@@ -343,7 +344,7 @@ public class QuoteController {
 	 */
 	@RequestMapping(
 			value = { "/quotes/{id}" }, 
-			produces = "application/json; charset=UTF-8",			
+			produces = MediaType.APPLICATION_JSON_VALUE,			
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteQuote(@PathVariable("id") Integer id) {
 		logger.info(String.format("DeleteQuote - DELETE - Processing request for quote <%s>.", id));

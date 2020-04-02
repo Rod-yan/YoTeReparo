@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
@@ -24,7 +26,12 @@ import com.yotereparo.model.User;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.yotereparo")
-public class AppConfig {
+public class AppConfig implements WebMvcConfigurer {
+	
+	@Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("/static/");
+    }
 	
 	@Bean
     public MessageSource messageSource() {
