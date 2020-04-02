@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
 		// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
 		user.setFoto(null);
 		user.setThumbnail(null);
-		// Unstable:
 		user.setEstado(User.ACTIVE);
 		user.setIntentosIngreso(0);
 		
@@ -102,6 +101,10 @@ public class UserServiceImpl implements UserService {
 
 	public void updateUser(User user) {
 		User entity = getUserById(user.getId());
+		
+		if (!SecurityUtils.encryptPassword(user.getContrasena().concat(entity.getSalt())).equals(entity.getContrasena()))
+			// Si la contraseña ingresada es incorrecta, no procedemos con el update.
+			throw new CustomResponseError("User","contrasena",messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
 		
 		if (!user.getNombre().equals(entity.getNombre())) {
 			logger.debug(String.format("Updating attribute 'Nombre' from user <%s>", user.getId()));
@@ -262,7 +265,9 @@ public class UserServiceImpl implements UserService {
 		currentPassword = SecurityUtils.encryptPassword(currentPassword.concat(user.getSalt()));
 		newPassword = SecurityUtils.encryptPassword(newPassword.concat(user.getSalt()));
 		String trueCurrentPassword = user.getContrasena();
+		// La verdadera contraseña actual debe ser igual a la contraseña actual ingresada por el usuario
 		if (currentPassword.equals(trueCurrentPassword)) {
+			// La nueva contraseña no puede ser igual a la anterior
 			if (!newPassword.equals(trueCurrentPassword)) {
 				logger.debug(String.format("Updating attribute 'Contrasena' (and derivates) from user <%s>", user.getId()));
 				user.setContrasena(newPassword);
@@ -270,7 +275,7 @@ public class UserServiceImpl implements UserService {
 				user.setFechaExpiracionContrasena(
 						new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days")))
 						);
-				
+				// Limpiamos estado de sesión del usuario, desbloqueamos si se encuentra bloqueado
 				if (user.getIntentosIngreso() != 0) {
 					logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
 					user.setIntentosIngreso(0);
@@ -296,10 +301,6 @@ public class UserServiceImpl implements UserService {
 			logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
 			entity.setIntentosIngreso(0);
 		}
-		if (entity.getEstado().equals(User.BLOCKED)) {
-			logger.info(String.format("Enabling previously blocked user <%s>", user.getId()));
-			entity.setEstado(User.ACTIVE);
-		}
 		
 		logger.info(String.format("Successful login attempt registered for user <%s>", user.getId()));
 	}
@@ -309,6 +310,7 @@ public class UserServiceImpl implements UserService {
 		
 		logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
 		entity.setIntentosIngreso(user.getIntentosIngreso()+1);
+		// Si el usuario alcanza o excede el límite de intentos de ingreso, se bloquea
 		if (entity.getIntentosIngreso() >= Integer.parseInt(environment.getProperty("login.attempts.limit")))
 			if (!entity.getEstado().equals(User.BLOCKED)) {
 				logger.info(String.format("Disabling user <%s>: Too many failed login attempts", user.getId()));

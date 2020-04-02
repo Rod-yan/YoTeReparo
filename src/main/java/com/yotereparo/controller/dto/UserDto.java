@@ -53,6 +53,9 @@ public class UserDto {
 	@NotEmpty(message = "{user.ciudad.not.empty}")
 	private String ciudad;
 	
+	@NotEmpty(message = "{user.contrasena.not.empty}")
+	private String contrasena;
+	
 	private String descripcion;
 	
 	private String estado;
@@ -128,6 +131,12 @@ public class UserDto {
 	}
 	public void setCiudad(String ciudad) {
 		this.ciudad = ciudad;
+	}
+	public String getContrasena() {
+		return contrasena;
+	}
+	public void setContrasena(String contrasena) {
+		this.contrasena = contrasena;
 	}
 	public String getDescripcion() {
 		return descripcion;
@@ -221,6 +230,7 @@ public class UserDto {
 		result = prime * result + ((apellido == null) ? 0 : apellido.hashCode());
 		result = prime * result + ((barrios == null) ? 0 : barrios.hashCode());
 		result = prime * result + ((ciudad == null) ? 0 : ciudad.hashCode());
+		result = prime * result + ((contrasena == null) ? 0 : contrasena.hashCode());
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
 		result = prime * result + ((direcciones == null) ? 0 : direcciones.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
@@ -234,8 +244,9 @@ public class UserDto {
 		result = prime * result + intentosIngreso;
 		result = prime * result + ((membresia == null) ? 0 : membresia.hashCode());
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-		result = prime * result + ((servicios == null) ? 0 : servicios.hashCode());
 		result = prime * result + ((presupuestos == null) ? 0 : presupuestos.hashCode());
+		result = prime * result + ((roles == null) ? 0 : roles.hashCode());
+		result = prime * result + ((servicios == null) ? 0 : servicios.hashCode());
 		result = prime * result + ((telefonoAlternativo == null) ? 0 : telefonoAlternativo.hashCode());
 		result = prime * result + ((telefonoPrincipal == null) ? 0 : telefonoPrincipal.hashCode());
 		return result;
@@ -264,6 +275,11 @@ public class UserDto {
 				return false;
 		} else if (!ciudad.equals(other.ciudad))
 			return false;
+		if (contrasena == null) {
+			if (other.contrasena != null)
+				return false;
+		} else if (!contrasena.equals(other.contrasena))
+			return false;
 		if (descripcion == null) {
 			if (other.descripcion != null)
 				return false;
@@ -273,11 +289,6 @@ public class UserDto {
 			if (other.direcciones != null)
 				return false;
 		} else if (!direcciones.equals(other.direcciones))
-			return false;
-		if (presupuestos == null) {
-			if (other.presupuestos != null)
-				return false;
-		} else if (!presupuestos.equals(other.presupuestos))
 			return false;
 		if (email == null) {
 			if (other.email != null)
@@ -331,6 +342,16 @@ public class UserDto {
 				return false;
 		} else if (!nombre.equals(other.nombre))
 			return false;
+		if (presupuestos == null) {
+			if (other.presupuestos != null)
+				return false;
+		} else if (!presupuestos.equals(other.presupuestos))
+			return false;
+		if (roles == null) {
+			if (other.roles != null)
+				return false;
+		} else if (!roles.equals(other.roles))
+			return false;
 		if (servicios == null) {
 			if (other.servicios != null)
 				return false;
@@ -352,11 +373,11 @@ public class UserDto {
 	public String toString() {
 		return "UserDto [id=" + id + ", nombre=" + nombre + ", apellido=" + apellido + ", email=" + email
 				+ ", fechaNacimiento=" + fechaNacimiento + ", telefonoPrincipal=" + telefonoPrincipal
-				+ ", telefonoAlternativo=" + telefonoAlternativo + ", ciudad=" + ciudad + ", descripcion=" + descripcion
-				+ ", estado=" + estado + ", intentosIngreso=" + intentosIngreso + ", fechaUltimoCambioContrasena="
-				+ fechaUltimoCambioContrasena + ", fechaUltimoIngreso=" + fechaUltimoIngreso
-				+ ", fechaExpiracionContrasena=" + fechaExpiracionContrasena + ", fechaCreacion=" + fechaCreacion
-				+ ", membresia=" + membresia + ", roles=" + roles + ", direcciones=" + direcciones + ", barrios="
-				+ barrios + ", servicios=" + servicios + ", presupuestos=" + presupuestos + "]";
+				+ ", telefonoAlternativo=" + telefonoAlternativo + ", ciudad=" + ciudad + ", contrasena=" + contrasena
+				+ ", descripcion=" + descripcion + ", estado=" + estado + ", intentosIngreso=" + intentosIngreso
+				+ ", fechaUltimoCambioContrasena=" + fechaUltimoCambioContrasena + ", fechaUltimoIngreso="
+				+ fechaUltimoIngreso + ", fechaExpiracionContrasena=" + fechaExpiracionContrasena + ", fechaCreacion="
+				+ fechaCreacion + ", membresia=" + membresia + ", roles=" + roles + ", direcciones=" + direcciones
+				+ ", barrios=" + barrios + ", servicios=" + servicios + ", presupuestos=" + presupuestos + "]";
 	}
 }

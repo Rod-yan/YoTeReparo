@@ -16,13 +16,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.model.User;
 import com.yotereparo.security.jwt.JwtResponse;
 import com.yotereparo.security.jwt.JwtUtils;
@@ -45,6 +48,8 @@ public class AuthController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
+	@Autowired
+	UserController userController;
 	@Autowired
 	AuthenticationManager authenticationManager;
 	@Autowired
@@ -119,5 +124,14 @@ public class AuthController {
 			FieldError error = new FieldError("Auth","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	@RequestMapping(
+			value = { "/signup" },
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			method = RequestMethod.POST)
+	public ResponseEntity<?> registerUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
+		return userController.createUser(clientInput, ucBuilder, result);
 	}
 }
