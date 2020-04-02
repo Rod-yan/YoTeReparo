@@ -68,7 +68,7 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listUsers() {
 		logger.info("ListUsers - GET - Processing request for a list with all existing users.");
@@ -101,7 +101,7 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getUser(@PathVariable("id") String id) {
 		logger.info(String.format("GetUser - GET - Processing request for user <%s>.", id));
@@ -130,8 +130,8 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users" }, 
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = "application/json; charset=UTF-8",
+			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
 		logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId().toLowerCase()));
@@ -180,8 +180,8 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}" },
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = "application/json; charset=UTF-8",
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody UserDto clientInput, BindingResult result) {
 		id = id.toLowerCase();
@@ -225,8 +225,8 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}/changepassword" },
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = "application/json; charset=UTF-8",
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.PUT)
     public ResponseEntity<?> changeUserPassword(@PathVariable("id") String id, @RequestBody UserPasswordChangeDto clientInput, BindingResult result) {
 		id = id.toLowerCase();
@@ -268,7 +268,7 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE,			
+			produces = "application/json; charset=UTF-8",			
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
 		id = id.toLowerCase();
@@ -300,7 +300,7 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}/photo", "/users/{id}/photo/thumbnail" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE,
+			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.GET)
     public ResponseEntity<?> getUserPhoto(@PathVariable("id") String id) {
 		id = id.toLowerCase();
@@ -360,8 +360,8 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}/photo" }, 
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = "application/json; charset=UTF-8",
+			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody String photoPayload) {
 		id = id.toLowerCase();
@@ -405,7 +405,7 @@ public class UserController {
 	 */
 	@RequestMapping(
 			value = { "/users/{id}/photo" },
-			produces = MediaType.APPLICATION_JSON_VALUE,
+			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUserPhoto(@PathVariable("id") String id) {
 		id = id.toLowerCase();

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,7 +41,7 @@ public class ServiceTypeController {
 	 */
 	@RequestMapping(
 			value = { "/servicetypes" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listServiceTypes() {
 		logger.info("ListServiceTypes - GET - Processing request for a list with all existing service types.");
@@ -70,7 +69,7 @@ public class ServiceTypeController {
 	 */
 	@RequestMapping(
 			value = { "/servicetypes/{id}" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getServiceType(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetServiceType - GET - Processing request for service type <%s>.", id));

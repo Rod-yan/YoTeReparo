@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -61,8 +60,8 @@ public class AuthController {
 
 	@RequestMapping(
 			value = { "/signin" },
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = "application/json; charset=UTF-8",
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.POST)
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 		logger.info(String.format("AuthenticateUser - POST - Processing request for user <%s>.", loginRequest.getUsername()));
@@ -128,8 +127,8 @@ public class AuthController {
 	
 	@RequestMapping(
 			value = { "/signup" },
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = "application/json; charset=UTF-8",
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
 		return userController.createUser(clientInput, ucBuilder, result);

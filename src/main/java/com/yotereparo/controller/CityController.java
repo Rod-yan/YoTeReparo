@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,7 +41,7 @@ public class CityController {
 	 */
 	@RequestMapping(
 			value = { "/cities" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listCities() {
 		logger.info("ListCities - GET - Processing request for a list with all existing cities.");
@@ -70,7 +69,7 @@ public class CityController {
 	 */
 	@RequestMapping(
 			value = { "/cities/{id}" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getCity(@PathVariable("id") String id) {
 		id = id.toLowerCase();
