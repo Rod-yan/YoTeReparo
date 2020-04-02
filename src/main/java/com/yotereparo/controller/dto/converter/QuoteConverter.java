@@ -9,6 +9,12 @@ import com.yotereparo.model.Quote;
 import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
 
+/**
+ * Conversor Entidad -> DTO (y viceversa) para Presupuestos.
+ * 
+ * @author Rodrigo Yanis
+ * 
+ */
 @Component
 public class QuoteConverter implements Converter<Quote, QuoteDto> {
 	

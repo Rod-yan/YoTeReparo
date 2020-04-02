@@ -51,21 +51,25 @@ public class AppConfig {
 		modelMapper.createTypeMap(UserDto.class, User.class).addMappings(mapper -> {
 			mapper.skip(User::setCiudad);
 			mapper.skip(User::setServicios);
+			mapper.skip(User::setPresupuestos);
 		});
 		// User -> UserDto
 		modelMapper.createTypeMap(User.class, UserDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getCiudad().getId(), UserDto::setCiudad);
 			mapper.skip(UserDto::setServicios);
+			mapper.skip(UserDto::setPresupuestos);
 		});
 		// ServiceDto -> Service
 		modelMapper.createTypeMap(ServiceDto.class, Service.class).addMappings(mapper -> {
 			mapper.skip(Service::setTipoServicio);
 			mapper.skip(Service::setUsuarioPrestador);
+			mapper.skip(Service::setPresupuestos);
 		});
 		// Service -> ServiceDto
 		modelMapper.createTypeMap(Service.class, ServiceDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getTipoServicio().getDescripcion(), ServiceDto::setTipoServicio);
 			mapper.map(src -> src.getUsuarioPrestador().getId(), ServiceDto::setUsuarioPrestador);
+			mapper.skip(ServiceDto::setPresupuestos);
 		});
 		// QuoteDto -> Quote
 		modelMapper.createTypeMap(QuoteDto.class, Quote.class).addMappings(mapper -> {

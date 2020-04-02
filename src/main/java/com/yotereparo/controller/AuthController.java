@@ -57,7 +57,10 @@ public class AuthController {
     MessageSource messageSource;
 	@Autowired
 	JwtUtils jwtUtils;
-
+	
+	/*
+	 * Autentica las credenciales recibidas en el request y solicita la gestión del JWT correspondiente
+	 */
 	@RequestMapping(
 			value = { "/signin" },
 			consumes = "application/json; charset=UTF-8",
@@ -125,6 +128,9 @@ public class AuthController {
 		}
 	}
 	
+	/*
+	 * Proxy público para la creación de nuevos usuarios
+	 */
 	@RequestMapping(
 			value = { "/signup" },
 			consumes = "application/json; charset=UTF-8",

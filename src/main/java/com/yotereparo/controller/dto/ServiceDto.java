@@ -237,6 +237,14 @@ public class ServiceDto {
 	public void setPresupuestos(Set<QuoteDto> presupuestos) {
 		this.presupuestos = presupuestos;
 	}
+	
+	public void addPresupuesto(QuoteDto presupuesto) {
+		this.presupuestos.add(presupuesto);
+	}
+	
+	public void removePresupuesto(QuoteDto presupuesto) {
+		this.presupuestos.remove(presupuesto);
+	}
 
 	@Override
 	public int hashCode() {

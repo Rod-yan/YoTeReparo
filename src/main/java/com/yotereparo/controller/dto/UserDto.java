@@ -210,17 +210,23 @@ public class UserDto {
 	public void setServicios(Set<ServiceDto> servicios) {
 		this.servicios = servicios;
 	}
-	public void addServicio(ServiceDto servicioId) {
-		this.servicios.add(servicioId);
+	public void addServicio(ServiceDto servicio) {
+		this.servicios.add(servicio);
 	}
-	public void removeServicio(ServiceDto servicioId) {
-		this.servicios.remove(servicioId);
+	public void removeServicio(ServiceDto servicio) {
+		this.servicios.remove(servicio);
 	}
 	public Set<QuoteDto> getPresupuestos() {
 		return presupuestos;
 	}
 	public void setPresupuestos(Set<QuoteDto> presupuestos) {
 		this.presupuestos = presupuestos;
+	}
+    public void addPresupuesto(QuoteDto presupuesto) {
+		this.presupuestos.add(presupuesto);
+	}
+	public void removePresupuesto(QuoteDto presupuesto) {
+		this.presupuestos.remove(presupuesto);
 	}
 	
 	@Override
