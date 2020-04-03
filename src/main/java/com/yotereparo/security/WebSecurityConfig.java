@@ -60,6 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 				.authorizeRequests()
+					// Recursos públicos
 					.antMatchers(
 							"/auth/**",
 							"/users/*/changepassword",
@@ -68,6 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 							"/paymentmethods/**",
 							"/requirements/**",
 							"/servicetypes/**").permitAll()
+					// Por omisión, el requester debe estar autenticado
 					.anyRequest().authenticated()
 			.and()
 				.formLogin().loginPage("/").permitAll();
