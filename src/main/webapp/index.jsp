@@ -18,7 +18,7 @@
 	                <div class="col-lg-12">
 	                    <h1>YoTeReparo</h1>
 	                    <p><i>A System for providing and contracting different services for your home.</i></p>
-						<img alt="YoTeReparo Logo" idth="256" height="256" src="static/img/ytr_logo_512x512.png">
+						<img alt="YoTeReparo Logo" width="256" height="256" src="static/img/ytr_logo_512x512.png">
 						<h2>Backend Service</h2>
 						<p>&nbsp;</p>
 	                </div>
