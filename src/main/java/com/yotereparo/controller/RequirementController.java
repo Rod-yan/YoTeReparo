@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,7 +41,7 @@ public class RequirementController {
 	 */
 	@RequestMapping(
 			value = { "/requirements" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listRequirements() {
 		logger.info("ListRequirements - GET - Processing request for a list with all existing requirements.");
@@ -70,7 +69,7 @@ public class RequirementController {
 	 */
 	@RequestMapping(
 			value = { "/requirements/{id}" }, 
-			produces = MediaType.APPLICATION_JSON_VALUE, 
+			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getRequirement(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetRequirement - GET - Processing request for requirement <%s>.", id));
