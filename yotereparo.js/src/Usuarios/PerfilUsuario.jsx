@@ -29,10 +29,14 @@ function PerfilUsuario(props) {
     setErrors(false);
   };
 
+  const securityToken = !session.security
+    ? props.history.push("/ingresar")
+    : false;
+
   let requestConfig = {
     headers: {
       "Access-Control-Allow-Origin": "*",
-      Authorization: "Bearer " + session.security.accessToken,
+      Authorization: "Bearer " + session.security?.accessToken,
     },
   };
 
@@ -154,7 +158,7 @@ function PerfilUsuario(props) {
         result?.name !== "Error" ||
         result?.security.accessToken != null
       ) {
-        if (session.username === result?.data.id) {
+        if (session.username === result?.data.id && session.security) {
           setAuth(true);
           setProfile(result.data);
           console.log("OK: Ingresaste correctamente");

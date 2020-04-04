@@ -1,5 +1,5 @@
-/YoTeReparo/auth/signin
-/YoTeReparo/auth/signup
+/YoTeReparo/auth/signin POST json type
+/YoTeReparo/auth/signup CREATION of an user
 /YoTeReparo/users/{id}/changepassword
 
 create token for a user

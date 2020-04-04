@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import Axios from "axios";
 import { useState } from "react";
+import { toDataURL } from "../Utils/Images";
 
 function Usuario(props) {
   const session = useContext(SessionContext);
@@ -20,7 +21,6 @@ function Usuario(props) {
 
   let requestConfig = {
     headers: {
-      "Access-Control-Allow-Origin": "*",
       Authorization: "Bearer " + session.security.accessToken,
       "Content-Type": "application/json; charset=UTF-8",
     },
@@ -80,20 +80,23 @@ function Usuario(props) {
       )
         .then((response) => {
           if (response.status === 400) {
-            console.log(response.json);
             setUserPicture("https://api.adorable.io/avatars/216/yotereparo");
           } else {
-            setUserPicture(
-              `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`
-            );
+            toDataURL(
+              `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
+              requestConfig
+            ).then((dataUrl) => {
+              setUserPicture(dataUrl);
+            });
           }
         })
         .catch((error) => {
+          console.error(error);
           setUserPicture("https://api.adorable.io/avatars/216/yotereparo");
         });
     };
     fetchData();
-  }, [profile.id, changePicture, updateProfilePicture, requestConfig]);
+  }, [profile.id, changePicture, updateProfilePicture]);
 
   const ButtonSave = () => {
     if (props.updatingUser) {
@@ -157,11 +160,12 @@ function Usuario(props) {
             console.log(response.json);
           } else {
             console.log("Imagen subida correctamente");
-            setUserPicture(
-              `http://localhost:8080/YoTeReparo/users/${
-                profile.id
-              }/photo?changed=${Date.now()}`
-            );
+            toDataURL(
+              `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
+              requestConfig
+            ).then((dataUrl) => {
+              setUserPicture(dataUrl);
+            });
           }
         })
         .catch((error) => {
@@ -206,7 +210,7 @@ function Usuario(props) {
                           <div className="row">
                             <div className="col-md-12">
                               <h5>
-                                {profile.roles.map((rol) => {
+                                {profile.roles?.map((rol) => {
                                   return (
                                     <span
                                       key={rol.id}
