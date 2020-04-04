@@ -124,8 +124,6 @@ public class QuoteController {
 		logger.info("CreateQuote - POST - Processing request for new quote.");
 		try {
 			if (!validationUtils.quoteInputValidation(clientInput, result).hasErrors()) {
-				// Seteamos id en null ya que el mismo es autogenerado en tiempo de creación
-				clientInput.setId(null);
 				Quote quote = quoteConverter.convertToEntity(clientInput);
 				if (!quoteService.activeQuoteExistBetween(quote.getUsuarioFinal(), quote.getServicio())) {
 					quoteService.createQuote(quote);
@@ -146,7 +144,7 @@ public class QuoteController {
 			}
 			else {
 				logger.warn("CreateQuote - POST - Request failed - Input validation error(s) detected.");
-				return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 			}
         }
 		catch (CustomResponseError e) {
@@ -174,7 +172,6 @@ public class QuoteController {
 		logger.info(String.format("UpdateQuote - PUT - Processing request for quote <%s>.", id));
 		try {
 			clientInput.setId(id);
-			
 			if (quoteService.getQuoteById(id) != null) {
 				if (!validationUtils.quoteInputValidation(clientInput, result).hasErrors()) {
 					Quote quote = quoteConverter.convertToEntity(clientInput);
@@ -205,7 +202,7 @@ public class QuoteController {
 				}
 				else {
 					logger.warn("UpdateQuote - PUT - Request failed - Input validation error(s) detected.");
-					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 				}
 	        }
 			else {

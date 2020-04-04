@@ -140,9 +140,6 @@ public class UserController {
 		try {
 			if (!validationUtils.userInputValidation(clientInput, result).hasErrors()) {
 				clientInput.setId(clientInput.getId().toLowerCase());
-				if (clientInput.getRoles() != null || clientInput.getRoles().size() != 0)
-					clientInput.getRoles().clear();
-				
 				if (userService.getUserById(clientInput.getId()) == null) {
 					userService.createUser(userConverter.convertToEntity(clientInput));
 					
@@ -192,9 +189,6 @@ public class UserController {
 			clientInput.setId(id);
 			if (userService.getUserById(id) != null) {
 				if (!validationUtils.userInputValidation(clientInput, result).hasErrors()) {
-					if (clientInput.getRoles() != null || clientInput.getRoles().size() != 0)
-						clientInput.getRoles().clear();
-					
 					userService.updateUser(userConverter.convertToEntity(clientInput));
 					
 					logger.info("UpdateUser - PUT - Exiting method, providing response resource to client.");
@@ -237,7 +231,6 @@ public class UserController {
 			clientInput.setId(id);
 			if (userService.getUserById(id) != null) {
 				if (!validationUtils.userPasswordChangeInputValidation(clientInput, result).hasErrors()) {
-					
 					userService.changeUserPasswordById(id, clientInput.getContrasenaActual(), clientInput.getContrasenaNueva());
 					
 					logger.info("ChangeUserPassword - PUT - Exiting method, providing response resource to client.");

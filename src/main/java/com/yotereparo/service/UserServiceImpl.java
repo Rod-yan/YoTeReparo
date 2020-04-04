@@ -281,7 +281,7 @@ public class UserServiceImpl implements UserService {
 					user.setIntentosIngreso(0);
 				}
 				if (user.getEstado().equals(User.BLOCKED)) {
-					logger.info(String.format("Enabling previously blocked user <%s>", user.getId()));
+					logger.warn(String.format("Enabling previously blocked user <%s>", user.getId()));
 					user.setEstado(User.ACTIVE);
 				}
 			}
@@ -313,7 +313,7 @@ public class UserServiceImpl implements UserService {
 		// Si el usuario alcanza o excede el límite de intentos de ingreso, se bloquea
 		if (entity.getIntentosIngreso() >= Integer.parseInt(environment.getProperty("login.attempts.limit")))
 			if (!entity.getEstado().equals(User.BLOCKED)) {
-				logger.info(String.format("Disabling user <%s>: Too many failed login attempts", user.getId()));
+				logger.warn(String.format("Disabling user <%s>: Too many failed login attempts", user.getId()));
 				entity.setEstado(User.BLOCKED);
 			}
 		

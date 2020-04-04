@@ -96,12 +96,7 @@ public class Service {
     )
 	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
 	
-	@OneToMany(
-	        mappedBy = "servicio",
-	        fetch = FetchType.EAGER,
-	        cascade = CascadeType.MERGE,
-	        orphanRemoval = true
-	    )
+	@OneToMany(mappedBy = "servicio", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
 	@Where(clause = "estado <> 'ARCHIVADO'")
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 		

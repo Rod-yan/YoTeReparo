@@ -70,11 +70,11 @@ public class ServiceManagerImpl implements ServiceManager {
 				dao.persist(service);
 			}
 			else {
-				logger.info(String.format("Service <%s> can't be created. User <%s> has no registered address", service.getTitulo(), service.getUsuarioPrestador().getId()));
+				logger.debug(String.format("Service <%s> can't be created. User <%s> has no registered address", service.getTitulo(), service.getUsuarioPrestador().getId()));
 				throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.addresses.is.empty", new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
 			}
 		else {
-			logger.info(String.format("Service <%s> can't be created. User <%s> is not of type Prestador", service.getTitulo(), service.getUsuarioPrestador().getId()));
+			logger.debug(String.format("Service <%s> can't be created. User <%s> is not of type Prestador", service.getTitulo(), service.getUsuarioPrestador().getId()));
 			throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.unauthorized", new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
 		}
 			

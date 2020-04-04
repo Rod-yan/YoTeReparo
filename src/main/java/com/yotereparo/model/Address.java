@@ -23,8 +23,8 @@ public class Address {
 	@NotEmpty(message = "{address.calle.not.empty}")
 	private String calle;
 	
-	@Min(value=1, message = "{address.altura.min.value}")
-	@Digits(integer=6, fraction=0, message = "{address.altura.digits.above.limit}")
+	@Min(value=1, message = "{address.altura.less.than.min}")
+	@Digits(integer=6, fraction=0, message = "{address.altura.out.of.boundaries}")
 	private Integer altura;
 	
 	@Size(min=0, max=15, message = "{address.piso.size}")

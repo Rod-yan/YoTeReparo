@@ -151,8 +151,6 @@ public class ServiceController {
 		logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getTitulo()));
 		try {
 			if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
-				// Seteamos id en null ya que el mismo es autogenerado en tiempo de creación
-				clientInput.setId(null);
 				Service service = serviceConverter.convertToEntity(clientInput);
 				if (!serviceManager.similarExist(service)) {
 					serviceManager.createService(service);
@@ -171,7 +169,7 @@ public class ServiceController {
 			}
 			else {
 				logger.warn("CreateService - POST - Request failed - Input validation error(s) detected.");
-				return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 			}
         }
 		catch (CustomResponseError e) {
@@ -200,7 +198,6 @@ public class ServiceController {
 		logger.info(String.format("UpdateService - PUT - Processing request for service <%s>.", id));
 		try {
 			clientInput.setId(id);
-			
 			if (serviceManager.getServiceById(id) != null) {
 				if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
 					Service service = serviceConverter.convertToEntity(clientInput);
@@ -230,7 +227,7 @@ public class ServiceController {
 				}
 				else {
 					logger.warn("UpdateService - PUT - Request failed - Input validation error(s) detected.");
-					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 				}
 	        }
 			else {

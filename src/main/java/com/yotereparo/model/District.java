@@ -19,8 +19,8 @@ public class District {
 	
 	private String descripcion;
 	
-	@Min(value=1000, message = "{district.codigopostal.min.value}")
-	@Max(value=9999, message = "{district.codigopostal.max.value}")
+	@Min(value=1000, message = "{district.codigopostal.less.than.min}")
+	@Max(value=9999, message = "{district.codigopostal.greater.than.max}")
 	@Column(name = "codigo_postal", nullable = false)
 	private Integer codigoPostal;
 	

@@ -62,30 +62,39 @@ public class UserDto {
 	
 	private String descripcion;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private String estado;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private int intentosIngreso;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaUltimoCambioContrasena;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaUltimoIngreso;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaExpiracionContrasena;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaCreacion;
 	
 	@Size(max=10, message = "{user.membresia.size}")
 	@Pattern(regexp = "GRATUITA|PLATA|ORO", flags = Pattern.Flag.CASE_INSENSITIVE, message = "{user.membresia.unsupported.value}")
 	private String membresia;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private Set<Role> roles = new HashSet<Role>(0);
 	
 	private Set<Address> direcciones = new HashSet<Address>(0);
 	
 	private Set<District> barrios;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private Set<ServiceDto> servicios = new HashSet<ServiceDto>(0);
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private Set<QuoteDto> presupuestos = new HashSet<QuoteDto>(0);
 	
 	public String getId() {
@@ -149,36 +158,42 @@ public class UserDto {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+	@JsonIgnore
 	public String getEstado() {
 		return estado;
 	}
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+	@JsonIgnore
 	public int getIntentosIngreso() {
 		return intentosIngreso;
 	}
 	public void setIntentosIngreso(int intentosIngreso) {
 		this.intentosIngreso = intentosIngreso;
 	}
+	@JsonIgnore
 	public DateTime getFechaUltimoCambioContrasena() {
 		return fechaUltimoCambioContrasena;
 	}
 	public void setFechaUltimoCambioContrasena(DateTime fechaUltimoCambioContrasena) {
 		this.fechaUltimoCambioContrasena = fechaUltimoCambioContrasena;
 	}
+	@JsonIgnore
 	public DateTime getFechaUltimoIngreso() {
 		return fechaUltimoIngreso;
 	}
 	public void setFechaUltimoIngreso(DateTime fechaUltimoIngreso) {
 		this.fechaUltimoIngreso = fechaUltimoIngreso;
 	}
+	@JsonIgnore
 	public DateTime getFechaExpiracionContrasena() {
 		return fechaExpiracionContrasena;
 	}
 	public void setFechaExpiracionContrasena(DateTime fechaExpiracionContrasena) {
 		this.fechaExpiracionContrasena = fechaExpiracionContrasena;
 	}
+	@JsonIgnore
 	public DateTime getFechaCreacion() {
 		return fechaCreacion;
 	}
@@ -191,6 +206,7 @@ public class UserDto {
 	public void setMembresia(String membresia) {
 		this.membresia = membresia;
 	}
+	@JsonIgnore
 	public Set<Role> getRoles() {
 		return roles;
 	}
@@ -209,6 +225,7 @@ public class UserDto {
 	public void setBarrios(Set<District> barrios) {
 		this.barrios = barrios;
 	}
+	@JsonIgnore
 	public Set<ServiceDto> getServicios() {
 		return servicios;
 	}
@@ -221,6 +238,7 @@ public class UserDto {
 	public void removeServicio(ServiceDto servicio) {
 		this.servicios.remove(servicio);
 	}
+	@JsonIgnore
 	public Set<QuoteDto> getPresupuestos() {
 		return presupuestos;
 	}

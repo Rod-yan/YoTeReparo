@@ -102,7 +102,7 @@ public class AuthController {
 							
 							logger.warn("AuthenticateUser - POST - Request failed - Bad credentials.");
 							FieldError error = new FieldError("Auth","error",messageSource.getMessage("bad.credentials", null, Locale.getDefault()));
-							return new ResponseEntity<>(miscUtils.getFormatedResponseError(error).toString(), HttpStatus.UNAUTHORIZED);
+							return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 						}
 					}
 					else {

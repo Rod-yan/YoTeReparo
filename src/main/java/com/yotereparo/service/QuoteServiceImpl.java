@@ -48,7 +48,7 @@ public class QuoteServiceImpl implements QuoteService {
 		quote.setFechaSolicitud(new DateTime());
 		quote.setEstado(Quote.AWAITING_PROVIDER);
 		
-		logger.info("Commiting creation of quote");
+		logger.info("Commiting creation of quote.");
 		dao.persist(quote);
 	}
 	

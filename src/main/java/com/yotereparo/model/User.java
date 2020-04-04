@@ -104,7 +104,7 @@ public class User
 	@JoinColumn(name = "id_usuario", nullable = false, updatable = false, insertable = true)
 	private Set<Address> direcciones = new HashSet<Address>(0);
 	
-	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE},fetch=FetchType.EAGER)
+	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
     @JoinTable(name="usuario_rol",
         joinColumns = {@JoinColumn(name="id_usuario")},
         inverseJoinColumns = {@JoinColumn(name="id_rol")}    
@@ -119,15 +119,10 @@ public class User
     )
 	private Set<District> barrios = new HashSet<District>(0);
 	
-	@OneToMany(mappedBy = "usuarioPrestador", cascade ={CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "usuarioPrestador", fetch = FetchType.EAGER, cascade=CascadeType.MERGE, orphanRemoval = true)
 	private Set<Service> servicios  = new HashSet<Service>(0);
 	
-	@OneToMany(
-	        mappedBy = "usuarioFinal",
-	        fetch = FetchType.EAGER,
-	        cascade = CascadeType.MERGE,
-	        orphanRemoval = true
-	    )
+	@OneToMany(mappedBy = "usuarioFinal", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
 	@Where(clause = "estado <> 'ARCHIVADO'")
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 

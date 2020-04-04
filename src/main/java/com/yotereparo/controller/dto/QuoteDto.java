@@ -10,10 +10,14 @@ import javax.validation.constraints.Size;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.yotereparo.model.Quote;
 
 public class QuoteDto {
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private Integer id;
 	
 	@NotNull(message = "{quote.servicio.not.null}")
@@ -32,6 +36,7 @@ public class QuoteDto {
 	@Min(value = 0, message="{quote.precioPresupuestado.less.than.min}")
 	private Float precioPresupuestado;
 
+	@JsonProperty(access = Access.READ_ONLY)
 	private Float precioTotal;
 	
 	@Future(message = "{quote.fechaInicioEjecucionPropuesta.future}")
@@ -43,8 +48,10 @@ public class QuoteDto {
 	@NotNull(message = "{quote.incluyeAdicionales.not.null}")
 	private boolean incluyeAdicionales;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaSolicitud;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaRespuesta;
 
 	@NotEmpty(message = "{quote.estado.not.empty}")
@@ -53,6 +60,7 @@ public class QuoteDto {
 	
 	public QuoteDto() { }
 
+	@JsonIgnore
 	public Integer getId() {
 		return id;
 	}
@@ -101,6 +109,7 @@ public class QuoteDto {
 		this.precioPresupuestado = precioPresupuestado;
 	}
 	
+	@JsonIgnore
 	public Float getPrecioTotal() {
 		return precioTotal;
 	}
@@ -143,6 +152,7 @@ public class QuoteDto {
 		this.incluyeAdicionales = incluyeAdicionales;
 	}
 
+	@JsonIgnore
 	public DateTime getFechaSolicitud() {
 		return fechaSolicitud;
 	}
@@ -151,6 +161,7 @@ public class QuoteDto {
 		this.fechaSolicitud = fechaSolicitud;
 	}
 
+	@JsonIgnore
 	public DateTime getFechaRespuesta() {
 		return fechaRespuesta;
 	}
