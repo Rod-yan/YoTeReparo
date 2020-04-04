@@ -38,11 +38,11 @@ export const LoginHandler = ({ history }) => {
 
   let requestConfig = {
     headers: {
-      "Access-Control-Allow-Origin": "*"
-    }
+      "Access-Control-Allow-Origin": "*",
+    },
   };
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     let result;
     try {
@@ -51,35 +51,40 @@ export const LoginHandler = ({ history }) => {
         `http://localhost:8080/YoTeReparo/auth/signin`,
         {
           username: username,
-          password: password
+          password: password,
         },
         requestConfig
       )
-        .then(response => {
+        .then((response) => {
           console.log(response);
           result = response;
-          setLoadingUser(false);
-          setErrors(false);
         })
-        .catch(error => {
+        .catch((error) => {
           result = error.response;
         });
     } catch (error) {
       console.log(error.response);
     }
 
+    if (result.status >= 400 && result.status <= 500) {
+      setLoadingUser(false);
+      setErrors(true);
+    }
+
     if (typeof result == "undefined") {
       setLoadingUser(false);
       setErrors(true);
+    }
+
+    if (result.data && result.status === 200) {
+      setLoadingUser(false);
+      setErrors(false);
+      setSessionCokie({ username: username, security: result.data });
+      history.push("/");
+      window.location.reload();
     } else {
-      if (username && result.status !== 404) {
-        setSessionCokie({ username: username, security: result.data });
-        history.push("/");
-        window.location.reload();
-      } else {
-        setLoadingUser(false);
-        setErrors(true);
-      }
+      setLoadingUser(false);
+      setErrors(true);
     }
   };
 
@@ -118,16 +123,15 @@ export const LoginHandler = ({ history }) => {
                       placeholder="Ingresa tu nombre de usuario"
                       value={username}
                       className="form-control btn-block"
-                      onChange={event => setUsername(event.target.value)}
+                      onChange={(event) => setUsername(event.target.value)}
                       required
                     />
                     <input
-                      type="string"
                       placeholder="Ingresa tu contraseña"
                       value={password}
                       type="password"
                       className="form-control btn-block"
-                      onChange={event => setPassword(event.target.value)}
+                      onChange={(event) => setPassword(event.target.value)}
                       required
                     />
                     <Button color="danger" size="lg" block className="mt-4">
@@ -162,10 +166,11 @@ export const LogOutHandler = ({ history }) => {
 
 export const fetchData = async (urlToFetch, callback) => {
   const result = await Axios(urlToFetch)
-    .then(resp => {
+    .then((resp) => {
       return resp;
     })
-    .catch(error => {
+    .catch((error) => {
+      console.log(error);
       return error;
     });
 

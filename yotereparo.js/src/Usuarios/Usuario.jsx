@@ -2,13 +2,14 @@ import * as React from "react";
 import ElementContainer from "../Container/ElementContainer";
 import { InputField } from "../Utils/InputField";
 import { useContext } from "react";
-import { ProfileContext } from "../Utils/SessionManage";
+import { ProfileContext, SessionContext } from "../Utils/SessionManage";
 import { useEffect } from "react";
 import { useRef } from "react";
 import Axios from "axios";
 import { useState } from "react";
 
 function Usuario(props) {
+  const session = useContext(SessionContext);
   const profile = useContext(ProfileContext);
   const fileUploader = useRef(null);
   const profilePicture = useRef(null);
@@ -17,15 +18,23 @@ function Usuario(props) {
     "https://api.adorable.io/avatars/216/yotereparo"
   );
 
+  let requestConfig = {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      Authorization: "Bearer " + session.security.accessToken,
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+  };
+
   //const isPrestador = profile.membresia != null ? true : false;
 
   var keyPress = false;
 
-  const handleChange = event => {
+  const handleChange = (event) => {
     profile[event.target.id] = event.target.value;
   };
 
-  const handleKeyPress = event => {
+  const handleKeyPress = (event) => {
     if (keyPress) {
     } else {
       let code = event.charCode || event.keyCode;
@@ -65,8 +74,11 @@ function Usuario(props) {
 
   useEffect(() => {
     const fetchData = () => {
-      Axios.get(`http://localhost:8080/YoTeReparo/users/${profile.id}/photo`)
-        .then(response => {
+      Axios.get(
+        `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
+        requestConfig
+      )
+        .then((response) => {
           if (response.status === 400) {
             console.log(response.json);
             setUserPicture("https://api.adorable.io/avatars/216/yotereparo");
@@ -76,12 +88,12 @@ function Usuario(props) {
             );
           }
         })
-        .catch(error => {
+        .catch((error) => {
           setUserPicture("https://api.adorable.io/avatars/216/yotereparo");
         });
     };
     fetchData();
-  }, [profile.id, changePicture, updateProfilePicture]);
+  }, [profile.id, changePicture, updateProfilePicture, requestConfig]);
 
   const ButtonSave = () => {
     if (props.updatingUser) {
@@ -121,7 +133,7 @@ function Usuario(props) {
     }
   };
 
-  const updatePicture = event => {
+  const updatePicture = (event) => {
     var file = event.target.files[0];
     var reader = new FileReader();
     let base64picture = null;
@@ -132,14 +144,15 @@ function Usuario(props) {
       base64picture = btoa(reader.result);
 
       let requestPhoto = {
-        foto: base64picture
+        foto: base64picture,
       };
 
       Axios.put(
         `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
-        requestPhoto
+        requestPhoto,
+        requestConfig
       )
-        .then(response => {
+        .then((response) => {
           if (response.status === 400) {
             console.log(response.json);
           } else {
@@ -151,7 +164,7 @@ function Usuario(props) {
             );
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     };
@@ -193,7 +206,7 @@ function Usuario(props) {
                           <div className="row">
                             <div className="col-md-12">
                               <h5>
-                                {profile.roles.map(rol => {
+                                {profile.roles.map((rol) => {
                                   return (
                                     <span
                                       key={rol.id}

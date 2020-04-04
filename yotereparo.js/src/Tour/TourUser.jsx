@@ -8,7 +8,7 @@ function TourUser(props) {
 
   if (location.state === undefined) {
     history.push({
-      pathname: "/404"
+      pathname: "/404",
     });
     history.goBack();
   }
@@ -42,7 +42,7 @@ function TourUser(props) {
                 <div className="lead">
                   <a
                     className="btn btn-success btn-lg btn-block"
-                    href={"/perfil/" + userId}
+                    href={"/ingresar"}
                     role="button"
                   >
                     <h2>

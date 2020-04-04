@@ -8,7 +8,7 @@ import {
   FormFeedback,
   Label,
   Input,
-  FormText
+  FormText,
 } from "reactstrap";
 import ElementContainer from "../Container/ElementContainer";
 import { useHistory } from "react-router-dom";
@@ -20,7 +20,7 @@ import { deleteSessionCookie } from "../Utils/SessionManage";
 import { processErrors } from "../Utils/Errors";
 import { intersect } from "../Utils/ArrayUtils";
 
-const FormRegistro = props => {
+const FormRegistro = (props) => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
   // let isFormUsuario = props.type === "usuario" ? true : false;
 
@@ -36,21 +36,21 @@ const FormRegistro = props => {
     barrios: "",
     validate: {
       emailState: "",
-      passwordState: true
-    }
+      passwordState: true,
+    },
   });
   let [direccion, setDireccion] = useState({
     calle: "",
     altura: 0,
     piso: "",
     departamento: "",
-    descripcion: ""
+    descripcion: "",
   });
   let [cities, setCities] = useState([]);
   let [hoods, setHoods] = useState([]);
   let [hoodsDisabled, toggleHoods] = useState(true);
   let [formErrors, setErrors] = useState({
-    errors: []
+    errors: [],
   });
 
   let [isCreatingUser, setIsCreatingUser] = useState(false);
@@ -68,18 +68,18 @@ const FormRegistro = props => {
 
   //For the cities and the API
   useEffect(() => {
-    fetchData(`http://localhost:8080/YoTeReparo/cities`, citiesData => {
-      citiesData.forEach(city => {
-        setCities(cities => [
+    fetchData(`http://localhost:8080/YoTeReparo/cities`, (citiesData) => {
+      citiesData.forEach((city) => {
+        setCities((cities) => [
           ...cities,
-          { id: city.id, desc: city.descripcion }
+          { id: city.id, desc: city.descripcion },
         ]);
       });
     });
   }, []);
 
   //Fetch hoods for only one city
-  let handleSubmit = event => {
+  let handleSubmit = (event) => {
     event.preventDefault();
 
     setIsCreatingUser(true);
@@ -98,7 +98,7 @@ const FormRegistro = props => {
         direcciones: [direccion],
         email: account.email,
         contrasena: account.password,
-        membresia: membresiaObject
+        membresia: membresiaObject,
       };
     } else {
       requestData = {
@@ -108,7 +108,7 @@ const FormRegistro = props => {
         ciudad: account.ciudad,
         email: account.email,
         contrasena: account.password,
-        membresia: membresiaObject
+        membresia: membresiaObject,
       };
     }
 
@@ -116,8 +116,8 @@ const FormRegistro = props => {
 
     let requestConfig = {
       headers: {
-        "Access-Control-Allow-Origin": "*"
-      }
+        "Access-Control-Allow-Origin": "*",
+      },
     };
 
     Axios.post(
@@ -125,7 +125,7 @@ const FormRegistro = props => {
       requestData,
       requestConfig
     )
-      .then(response => {
+      .then((response) => {
         console.log(response.status);
         if (response.status === 400) {
           console.log(response.json);
@@ -133,19 +133,18 @@ const FormRegistro = props => {
           deleteSessionCookie("userSession");
           history.push({
             pathname: "/tour",
-            state: { user: account }
+            state: { user: account },
           });
         }
       })
-      .catch(error => {
-        console.log(error.response);
-        let errors = processErrors(error.response);
+      .catch((error) => {
+        let errors = processErrors(error.response.data);
         setErrors({ ...formErrors, errors });
         setIsCreatingUser(false);
       });
   };
 
-  let handleChange = async event => {
+  let handleChange = async (event) => {
     account[event.target.name] = event.target.value;
 
     setAccount({ ...account, [event.target.name]: event.target.value });
@@ -153,14 +152,14 @@ const FormRegistro = props => {
     if (event.target.name === "ciudad" && isFormEmpleador) {
       fetchData(
         `http://localhost:8080/YoTeReparo/cities/${account.ciudad}`,
-        data => {
+        (data) => {
           let barriosXciudad = [];
 
-          data.barrios.forEach(barrio => {
+          data.barrios.forEach((barrio) => {
             barriosXciudad.push({
               id: barrio.id,
               descripcion: barrio.descripcion,
-              codigoPostal: barrio.codigoPostal
+              codigoPostal: barrio.codigoPostal,
             });
           });
 
@@ -188,7 +187,7 @@ const FormRegistro = props => {
     }
   };
 
-  let updateMembresia = event => {
+  let updateMembresia = (event) => {
     switch (event.target.value) {
       case "1":
         membresiaObject = "GRATUITA";
@@ -242,7 +241,7 @@ const FormRegistro = props => {
                   name="nombre"
                   id="nombreLabel"
                   placeholder="Tu nombre..."
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 />
@@ -256,7 +255,7 @@ const FormRegistro = props => {
                   name="apellido"
                   id="apellidoLabel"
                   placeholder="Tu apellido..."
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 />
@@ -270,14 +269,14 @@ const FormRegistro = props => {
                   name="ciudad"
                   id="ciudadLabel"
                   defaultValue=""
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 >
                   <option value="" disabled hidden>
                     Selecciona una ciudad
                   </option>
-                  {cities.map(city => (
+                  {cities.map((city) => (
                     <option key={city.id} value={city.id}>
                       {city.desc}
                     </option>
@@ -298,7 +297,7 @@ const FormRegistro = props => {
                       type="select"
                       name="barrios"
                       id="barriosLabel"
-                      onChange={e => {
+                      onChange={(e) => {
                         handleChange(e);
                       }}
                       disabled={hoodsDisabled}
@@ -306,7 +305,7 @@ const FormRegistro = props => {
                       <option value="" disabled hidden>
                         Selecciona un barrio
                       </option>
-                      {hoods.map(hood => (
+                      {hoods.map((hood) => (
                         <option key={hood.id} value={hood.id}>
                           {hood.descripcion}
                         </option>
@@ -326,10 +325,10 @@ const FormRegistro = props => {
                           type="text"
                           name="calle"
                           id="calle"
-                          onChange={e => {
+                          onChange={(e) => {
                             setDireccion({
                               ...direccion,
-                              [e.target.name]: e.target.value
+                              [e.target.name]: e.target.value,
                             });
                           }}
                         />
@@ -345,10 +344,10 @@ const FormRegistro = props => {
                           type="text"
                           name="piso"
                           id="piso"
-                          onChange={e => {
+                          onChange={(e) => {
                             setDireccion({
                               ...direccion,
-                              [e.target.name]: e.target.value
+                              [e.target.name]: e.target.value,
                             });
                           }}
                         />
@@ -365,10 +364,10 @@ const FormRegistro = props => {
                           type="number"
                           name="altura"
                           id="altura"
-                          onChange={e => {
+                          onChange={(e) => {
                             setDireccion({
                               ...direccion,
-                              [e.target.name]: e.target.value
+                              [e.target.name]: e.target.value,
                             });
                           }}
                         />
@@ -385,10 +384,10 @@ const FormRegistro = props => {
                           type="text"
                           name="departamento"
                           id="departamento"
-                          onChange={e => {
+                          onChange={(e) => {
                             setDireccion({
                               ...direccion,
-                              [e.target.name]: e.target.value
+                              [e.target.name]: e.target.value,
                             });
                           }}
                         />
@@ -407,10 +406,10 @@ const FormRegistro = props => {
                           type="text"
                           name="descripcion"
                           id="descripcion"
-                          onChange={e => {
+                          onChange={(e) => {
                             setDireccion({
                               ...direccion,
-                              [e.target.name]: e.target.value
+                              [e.target.name]: e.target.value,
                             });
                           }}
                         />
@@ -433,7 +432,7 @@ const FormRegistro = props => {
                   name="email"
                   id="emailLabel"
                   placeholder="tuemail@email.com"
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                     validateEmail(e, account);
                   }}
@@ -453,7 +452,7 @@ const FormRegistro = props => {
                   name="password"
                   id="passwordLabel"
                   placeholder="********"
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                     validatePassword(e, account);
                   }}

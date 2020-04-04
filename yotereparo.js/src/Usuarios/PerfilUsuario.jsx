@@ -1,5 +1,6 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState, useContext } from "react";
 import Axios from "axios";
 import { useEffect } from "react";
@@ -8,24 +9,78 @@ import "../Usuarios/PerfilUsuario.css";
 import Usuario from "./Usuario";
 import { useHistory } from "react-router-dom";
 
+//TODO: Ask for the password to the user
+
 function PerfilUsuario(props) {
   const session = useContext(SessionContext);
   let history = useHistory();
   const [profile, setProfile] = useState({});
+  const [password, setPassword] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [auth, setAuth] = useState(true);
   const [modify, activateModify] = useState(true);
+  const [modal, setModal] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(false);
+  const [errors, setErrors] = useState(false);
+
+  const toggle = () => {
+    setModal(!modal);
+    setErrors(false);
+  };
+
+  let requestConfig = {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      Authorization: "Bearer " + session.security.accessToken,
+    },
+  };
+
+  const validatePassword = async () => {
+    //TODO: Validate password for the user
+    let result;
+    try {
+      setLoadingUser(true);
+      await Axios.post(
+        `http://localhost:8080/YoTeReparo/auth/signin`,
+        {
+          username: profile.id,
+          password: password,
+        },
+        requestConfig
+      )
+        .then((response) => {
+          console.log(response);
+          result = response;
+        })
+        .catch((error) => {
+          result = error.response;
+        });
+    } catch (error) {
+      console.log(error.response);
+    }
+
+    if (result.status >= 400 && result.status <= 500) {
+      // setLoadingUser(false);
+      setErrors(true);
+    }
+
+    if (typeof result == "undefined") {
+      // setLoadingUser(false);
+      setErrors(true);
+    }
+
+    if (result.data && result.status === 200) {
+      updateProfile();
+      handleActivateModifications();
+      toggle();
+    } else {
+      // setLoadingUser(false);
+      setErrors(true);
+    }
+  };
 
   const updateProfile = () => {
-    console.log(profile);
-    let requestConfig = {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        Authorization: "Bearer " + session.token
-      }
-    };
-
     let requestDataPrestador = {
       id: profile.id,
       nombre: profile.nombre,
@@ -33,8 +88,8 @@ function PerfilUsuario(props) {
       ciudad: profile.ciudad,
       barrios: profile.barrios,
       email: profile.email,
-      contrasena: profile.contrasena,
-      membresia: profile.membresia
+      contrasena: password,
+      membresia: profile.membresia,
     };
 
     let requestDataUsuario = {
@@ -43,7 +98,7 @@ function PerfilUsuario(props) {
       apellido: profile.apellido,
       ciudad: profile.ciudad,
       email: profile.email,
-      contrasena: profile.contrasena
+      contrasena: password,
     };
 
     let requestData = profile.membresia
@@ -57,20 +112,22 @@ function PerfilUsuario(props) {
       requestData,
       requestConfig
     )
-      .then(response => {
+      .then((response) => {
         if (response.status === 400) {
           console.log(response.json);
         } else {
           setUpdating(false);
           history.push({
             pathname: `/perfil/${profile.id}`,
-            state: { user: profile }
+            state: { user: profile },
           });
           console.log("INFO: Usuario actualizado correctamente");
         }
       })
-      .catch(error => {
-        throw new Error("ERROR: There is a problem with the update of an User");
+      .catch((error) => {
+        throw new Error(
+          "ERROR: There is a problem with the update of an User" + error
+        );
       });
   };
 
@@ -79,22 +136,25 @@ function PerfilUsuario(props) {
   };
 
   useEffect(() => {
-    const fetchData = async urlToFetch => {
+    const fetchData = async (urlToFetch) => {
       let result;
 
-      await Axios(urlToFetch)
-        .then(resp => {
+      await Axios(urlToFetch, requestConfig)
+        .then((resp) => {
           result = resp;
         })
-        .catch(error => {
+        .catch((error) => {
           return error;
         });
 
-      if (result.status === 404) {
+      if (result?.status === 404) {
         console.log("ERROR: No se encuentra el usuario");
         setAuth(false);
-      } else if (result.name !== "Error") {
-        if (session.username === result.data.id) {
+      } else if (
+        result?.name !== "Error" ||
+        result?.security.accessToken != null
+      ) {
+        if (session.username === result?.data.id) {
           setAuth(true);
           setProfile(result.data);
           console.log("OK: Ingresaste correctamente");
@@ -151,6 +211,44 @@ function PerfilUsuario(props) {
   }
   return (
     <>
+      <div>
+        <Modal isOpen={modal} toggle={toggle}>
+          <ModalHeader toggle={toggle}>
+            {" "}
+            ¿Estas seguro que deseas confirmar tus cambios?
+          </ModalHeader>
+          <ModalBody>
+            {errors ? (
+              <ElementContainer>
+                <div>
+                  <div className="col d-flex justify-content-center">
+                    <div className="cover-screen">
+                      La contraseña que estas intentando ingresar caduco o no es
+                      valida
+                    </div>
+                  </div>
+                </div>
+              </ElementContainer>
+            ) : (
+              <input
+                type="password"
+                placeholder="Ingresa tu contraseña de usuario"
+                className="form-control btn-block"
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={validatePassword}>
+              Confirmar
+            </Button>{" "}
+            <Button color="secondary" onClick={toggle}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </div>
       {profile === undefined || auth === false ? (
         <ElementContainer>
           <div>
@@ -169,8 +267,7 @@ function PerfilUsuario(props) {
             updatingUser={updating}
             activateEdit={() => handleActivateModifications()}
             activateSave={() => {
-              updateProfile();
-              handleActivateModifications();
+              toggle();
             }}
           ></Usuario>
         </ProfileContext.Provider>
