@@ -22,14 +22,14 @@ public class GreaterThanValidator implements ConstraintValidator<GreaterThan, Ob
         		  .getPropertyValue(greaterThanValueOf);
         
         // Lógica de validación.
-        if ((Float) lowerValue < (Float) upperValue) {
-        	context.disableDefaultConstraintViolation();
-    		context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
-    			.addPropertyNode(valueOf)
-    			.addConstraintViolation();
-    		return false;
-        }
-        else
-        	return true;
+        if (lowerValue != null && upperValue != null)
+	        if ((Float) lowerValue < (Float) upperValue) {
+	        	context.disableDefaultConstraintViolation();
+	    		context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+	    			.addPropertyNode(valueOf)
+	    			.addConstraintViolation();
+	    		return false;
+	        }
+        return true;
     }
 }
