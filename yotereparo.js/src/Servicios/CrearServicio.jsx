@@ -10,7 +10,7 @@ import { useContext } from "react";
 import { intersect } from "../Utils/ArrayUtils";
 import { processErrors } from "../Utils/Errors";
 import Axios from "axios";
-//import { intersect } from "../Utils/ArrayUtils";
+import { useRef } from "react";
 
 // -> GET: /YoTeReparo/requirements
 // -> GET: /YoTeReparo/requirements/{id}
@@ -18,12 +18,11 @@ import Axios from "axios";
 // -> GET: /YoTeReparo/paymentmethods/{id}
 // -> GET: /YoTeReparo/servicetypes
 // -> GET: /YoTeReparo/servicetypes/{id}
-//TODO: Generate Service object and POST to the databbase
 
-const CrearServicio = props => {
+const CrearServicio = (props) => {
   const [preciosRange, setPreciosRange] = useState({
     min: 0,
-    max: 9999
+    max: 4500,
   });
   const [formErrors, setErrors] = useState({ errors: [] });
   const [horasEstimadasEjecucion, setHorasEstimadasEjecucion] = useState(0);
@@ -33,6 +32,8 @@ const CrearServicio = props => {
   const [mediosDePago, setMediosDePago] = useState([]);
   const [requerimientos, setRequerimientos] = useState([]);
   const [emitirFactura, setEmitirFactura] = useState(false);
+  const refRequerimientos = useRef([React.createRef()]);
+  const refMediosDePago = useRef([React.createRef()]);
 
   const session = useContext(SessionContext);
 
@@ -45,10 +46,10 @@ const CrearServicio = props => {
     precioAdicionales: 0,
     tipoServicio: "",
     mediosDePago: [],
-    requerimientos: []
+    requerimientos: [],
   });
 
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     setIsCreationService(true);
@@ -64,7 +65,7 @@ const CrearServicio = props => {
     );
 
     let tipoServicioSeleccionado = intersect(tiposServicio, [
-      parseInt(service.tipoServicio)
+      parseInt(service.tipoServicio),
     ]);
 
     let requestService = {
@@ -84,14 +85,14 @@ const CrearServicio = props => {
           ? "null"
           : tipoServicioSeleccionado[0].descripcion,
       mediosDePago: mediosDePagoSeleccionados,
-      requerimientos: requerimientosSeleccionados
+      requerimientos: requerimientosSeleccionados,
     };
 
     let requestConfig = {
       headers: {
         "Access-Control-Allow-Origin": "*",
-        Authorization: "Bearer " + session.token
-      }
+        Authorization: "Bearer " + session.security.accessToken,
+      },
     };
 
     Axios.post(
@@ -99,27 +100,27 @@ const CrearServicio = props => {
       requestService,
       requestConfig
     )
-      .then(response => {
+      .then((response) => {
         console.log(response.status);
         if (response.status === 400) {
           console.log(response.json);
         } else {
           console.log(response.data);
-          // history.push({
-          //   pathname: "/buscar",
-          //   state: { service: requestService }
-          // });
+          window.history.push({
+            pathname: "/buscar",
+            state: { service: requestService },
+          });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error.response);
-        let errors = processErrors(error.response);
+        let errors = processErrors(error.response.data);
         setErrors({ ...formErrors, errors });
         setIsCreationService(false);
       });
   };
 
-  const handleChange = event => {
+  const handleChange = (event) => {
     service[event.target.name] = event.target.value;
     setService({ ...service, [event.target.name]: event.target.value });
 
@@ -129,12 +130,56 @@ const CrearServicio = props => {
     ) {
       setService({
         ...service,
-        [event.target.name]: get(event.target.options)
+        [event.target.name]: get(event.target.options),
       });
     }
   };
 
-  const get = options => {
+  console.log(service);
+
+  const clearAll = () => {
+    var elements = document.getElementsByTagName("input");
+
+    for (var ii = 0; ii < elements.length; ii++) {
+      if (elements[ii].type == "text") {
+        elements[ii].value = "";
+      } else if (elements[ii].type == "number") {
+        elements[ii].value = 0;
+      }
+    }
+
+    setCantidadTrabajadores(0);
+    setHorasEstimadasEjecucion(0);
+    setPreciosRange(0);
+  };
+
+  const clearRequerimientos = () => {
+    var elements = refRequerimientos.current.options;
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].selected = false;
+    }
+
+    setService({
+      ...service,
+      requerimientos: [],
+    });
+  };
+
+  const clearMediosDePago = () => {
+    var elements = refMediosDePago.current.options;
+
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].selected = false;
+    }
+
+    setService({
+      ...service,
+      mediosDePago: [],
+    });
+  };
+
+  const get = (options) => {
     var value = [];
     for (var i = 0, l = options.length; i < l; i++) {
       if (options[i].selected) {
@@ -168,7 +213,12 @@ const CrearServicio = props => {
         <div className="col-md-12">
           <ElementContainer>
             <div className="text-center">
-              <div className="lead mb-2">Crear Servicio</div>
+              <div className="lead mb-2">
+                Crear Servicio{" "}
+                <Button size="sm" color="info" onClick={clearAll}>
+                  Limpiar Seleccion
+                </Button>
+              </div>
             </div>
             {formErrors.errors.length >= 1 ? (
               <div className="errors-list">
@@ -194,7 +244,7 @@ const CrearServicio = props => {
                   name="titulo"
                   id="titulo"
                   placeholder="Especifique un titulo para el servicio a prestar..."
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 />
@@ -208,7 +258,7 @@ const CrearServicio = props => {
                   name="descripcion"
                   id="descripcion"
                   placeholder="Especifique una descripcion para el servicio a prestar..."
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 />
@@ -225,7 +275,7 @@ const CrearServicio = props => {
                   name="disponibilidad"
                   id="disponibilidad"
                   placeholder="Cuanto estas disponible?"
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 />
@@ -236,11 +286,11 @@ const CrearServicio = props => {
                 </Label>
                 <div className="mx-4 my-4">
                   <InputRange
-                    formatLabel={value => `${value} $`}
+                    formatLabel={(value) => `${value} $`}
                     maxValue={9999}
                     minValue={0}
                     value={preciosRange}
-                    onChange={value => setPreciosRange(value)}
+                    onChange={(value) => setPreciosRange(value)}
                   />
                 </div>
               </FormGroup>
@@ -260,7 +310,7 @@ const CrearServicio = props => {
                       name="precioInsumos"
                       id="precioInsumos"
                       placeholder="Insumos"
-                      onChange={e => {
+                      onChange={(e) => {
                         handleChange(e);
                       }}
                     />
@@ -279,7 +329,7 @@ const CrearServicio = props => {
                       name="precioAdicionales"
                       id="precioAdicionales"
                       placeholder="Adicionales"
-                      onChange={e => {
+                      onChange={(e) => {
                         handleChange(e);
                       }}
                     />
@@ -288,16 +338,16 @@ const CrearServicio = props => {
               </FormGroup>
               <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-2">
                 <Label for="horasRange" className="mr-sm-2 font-weight-bold">
-                  HORAS ESTIMADAS
+                  HORAS ESTIMADAS APROXIMADAS
                 </Label>
                 <div className="mx-4 my-4">
                   <InputRange
-                    formatLabel={value => `${value} hs`}
+                    formatLabel={(value) => `${value} hs`}
                     maxValue={10}
                     minValue={0}
                     step={0.5}
                     value={horasEstimadasEjecucion}
-                    onChange={value => setHorasEstimadasEjecucion(value)}
+                    onChange={(value) => setHorasEstimadasEjecucion(value)}
                   />
                 </div>
               </FormGroup>
@@ -310,11 +360,11 @@ const CrearServicio = props => {
                 </Label>
                 <div className="mx-4 my-4">
                   <InputRange
-                    formatLabel={value => `${value}`}
+                    formatLabel={(value) => `${value}`}
                     maxValue={10}
                     minValue={0}
                     value={cantidadTrabajadores}
-                    onChange={value => setCantidadTrabajadores(value)}
+                    onChange={(value) => setCantidadTrabajadores(value)}
                   />
                 </div>
               </FormGroup>
@@ -332,7 +382,7 @@ const CrearServicio = props => {
                   id="emitirFactura"
                   defaultChecked={emitirFactura}
                   placeholder="Emitir Factura"
-                  onChange={e => {
+                  onChange={(e) => {
                     setEmitirFactura(!e.target.checked);
                   }}
                 />
@@ -345,14 +395,14 @@ const CrearServicio = props => {
                   type="select"
                   name="tipoServicio"
                   id="tipoServicio"
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 >
                   <option value="" hidden>
                     Seleccione un servicio
                   </option>
-                  {tiposServicio.map(type => (
+                  {tiposServicio.map((type) => (
                     <option key={type.id} value={type.id}>
                       {type.descripcion}
                     </option>
@@ -366,19 +416,23 @@ const CrearServicio = props => {
                 >
                   MEDIOS DE PAGO
                 </Label>
+                <Button size="sm" color="link" onClick={clearMediosDePago}>
+                  Limpiar Seleccion
+                </Button>
                 <Input
                   type="select"
                   multiple
+                  innerRef={refMediosDePago}
                   name="mediosDePago"
                   id="mediosDePago"
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 >
                   <option value="" disabled hidden>
                     Seleccione uno o mas metodos de pago
                   </option>
-                  {mediosDePago.map(type => (
+                  {mediosDePago.map((type) => (
                     <option key={type.id} value={type.id}>
                       {type.descripcion}
                     </option>
@@ -389,19 +443,23 @@ const CrearServicio = props => {
                 <Label for="titulo" className="mr-sm-2 font-weight-bold">
                   REQUERIMIENTOS ADICIONALES DEL SERVICIO
                 </Label>
+                <Button size="sm" color="link" onClick={clearRequerimientos}>
+                  Limpiar Seleccion
+                </Button>
                 <Input
                   type="select"
                   multiple
                   name="requerimientos"
+                  innerRef={refRequerimientos}
                   id="requerimientos"
-                  onChange={e => {
+                  onChange={(e) => {
                     handleChange(e);
                   }}
                 >
                   <option value="" disabled hidden>
                     Seleccione uno o mas requerimientos del servicio
                   </option>
-                  {requerimientos.map(type => (
+                  {requerimientos.map((type, i) => (
                     <option key={type.id} value={type.id}>
                       {type.descripcion}
                     </option>

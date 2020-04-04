@@ -3,8 +3,6 @@ export const processErrors = (incomingErrors) => {
 
   console.log(incomingErrors);
 
-  incomingErrors = JSON.parse(incomingErrors);
-
   if (incomingErrors.length >= 1) {
     incomingErrors.forEach((error) => {
       errors.push({

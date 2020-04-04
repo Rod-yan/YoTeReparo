@@ -9,7 +9,7 @@ import "../Usuarios/PerfilUsuario.css";
 import Usuario from "./Usuario";
 import { useHistory } from "react-router-dom";
 
-//TODO: Ask for the password to the user
+//TODO: Add CRUD for address and neighbours if the user is prestador
 
 function PerfilUsuario(props) {
   const session = useContext(SessionContext);
