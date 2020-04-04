@@ -2,7 +2,7 @@
 <!DOCTYPE xml>
 <configuration>
  	<include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <property name="LOGS" value="${catalina.home}/logs/YoTeReparo" />
+    <property name="LOGS" value="./logs/YoTeReparo/test" />
  
     <appender name="Console"
         class="ch.qos.logback.core.ConsoleAppender">
