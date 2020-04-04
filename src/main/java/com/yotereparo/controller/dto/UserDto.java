@@ -11,6 +11,9 @@ import javax.validation.constraints.Size;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
 import com.yotereparo.model.Role;
@@ -53,6 +56,7 @@ public class UserDto {
 	@NotEmpty(message = "{user.ciudad.not.empty}")
 	private String ciudad;
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@NotEmpty(message = "{user.contrasena.not.empty}")
 	private String contrasena;
 	
@@ -132,6 +136,7 @@ public class UserDto {
 	public void setCiudad(String ciudad) {
 		this.ciudad = ciudad;
 	}
+	@JsonIgnore
 	public String getContrasena() {
 		return contrasena;
 	}

@@ -37,6 +37,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.City;
@@ -253,25 +255,33 @@ public class UserControllerTest {
     
     @Test
     public void updateUserPhoto_WithValidationError_MalformedJson() {
-        Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), new String("not_json_parseable")).getStatusCode(), HttpStatus.BAD_REQUEST);
+    	ObjectMapper om = new ObjectMapper();
+    	ObjectNode on = om.createObjectNode();
+        Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), on).getStatusCode(), HttpStatus.BAD_REQUEST);
     }
     
     @Test
     public void updateUserPhoto_WithValidationError_UserDoesntExist() {
+    	ObjectMapper om = new ObjectMapper();
+    	ObjectNode on = om.createObjectNode();
+    	on.put("foto", "b64code");
     	when(userService.getUserById(anyString())).thenReturn(null);
-        Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), new String("{\"foto\":\"b64code\"}")).getStatusCode(), HttpStatus.NOT_FOUND);
+        Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), on).getStatusCode(), HttpStatus.NOT_FOUND);
     }
     
     @Test
     public void updateUserPhoto_Success() throws IOException {
     	byte[] buffer = ((DataBufferByte)ImageIO.read(getClass().getClassLoader().getResource("tstimage.png")).getRaster().getDataBuffer()).getData();
     	String encodedPhoto = new String(Base64.getEncoder().encode(buffer), "UTF-8");
+    	ObjectMapper om = new ObjectMapper();
+    	ObjectNode on = om.createObjectNode();
+    	on.put("foto", encodedPhoto);
     	
     	when(userService.getUserById(anyString())).thenReturn(any(User.class));
     	doNothing().when(userService).updateUserPhotoById(anyString(), any(byte[].class));
-        Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), new String("{\"foto\":\""+encodedPhoto+"\"}")).getStatusCode(), HttpStatus.OK);
+        Assert.assertEquals(userController.updateUserPhoto(users.get(0).getId(), on).getStatusCode(), HttpStatus.OK);
     }
- 
+
     public List<User> getUsersList(){
     	User testUser1 = new User();
         testUser1.setId("testUser7");

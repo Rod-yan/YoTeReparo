@@ -35,6 +35,8 @@ public class PaymentMethodController {
     PaymentMethodService paymentMethodService;
 	@Autowired
     MessageSource messageSource;
+	@Autowired
+	MiscUtils miscUtils;
 
 	/*
 	 * Devuelve todos los Medios de Pago registradas en formato JSON.
@@ -60,7 +62,7 @@ public class PaymentMethodController {
 		catch (Exception e) {
 			logger.error("ListPaymentMethods - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("PaymentMethod","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 	
@@ -83,13 +85,13 @@ public class PaymentMethodController {
             else {
             	logger.warn(String.format("GetPaymentMethod - GET - Request failed - Payment Method with id <%s> not found.", id));
                 FieldError error = new FieldError("PaymentMethod","error",messageSource.getMessage("paymentMethod.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
-                return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
         catch (Exception e) {
 			logger.error("GetPaymentMethod - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("PaymentMethod","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }
 }

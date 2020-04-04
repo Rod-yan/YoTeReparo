@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.controller.dto.UserPasswordChangeDto;
 import com.yotereparo.controller.dto.converter.UserConverter;
@@ -62,6 +62,8 @@ public class UserController {
 	ValidationUtils validationUtils;
 	@Autowired
 	UserConverter userConverter;
+	@Autowired
+	MiscUtils miscUtils;
 
 	/*
 	 * Devuelve todos los usuarios registrados en formato JSON.
@@ -92,7 +94,7 @@ public class UserController {
 		catch (Exception e) {
 			logger.error("ListUsers - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
     }
 	
@@ -115,13 +117,13 @@ public class UserController {
             else {
             	logger.warn(String.format("GetUser - GET - Request failed - User with id <%s> not found.", id));
                 FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-                return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
         catch (Exception e) {
 			logger.error("GetUser - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 	
@@ -153,22 +155,22 @@ public class UserController {
 				else {
 					logger.warn(String.format("CreateUser - POST - Request failed - Unable to create user. User <%s> already exist.", clientInput.getId()));
 		            FieldError error = new FieldError("User","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
-		            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.CONFLICT);
+		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 				}
 			}
 			else {
 				logger.warn("CreateUser - POST - Request failed - Input validation error(s) detected.");
-				return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 			}
 		}
 		catch (CustomResponseError e) {
 			logger.warn("CreateUser - POST - Request failed - Validation error(s) detected.");
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(e), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("CreateUser - POST - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 	
@@ -200,23 +202,23 @@ public class UserController {
 				}
 				else {
 					logger.warn("UpdateUser - PUT - Request failed - Input validation error(s) detected.");
-					return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 				}
 	        }
 			else {
 				logger.warn(String.format("UpdateUser - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
 	            FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (CustomResponseError e) {
 			logger.warn("UpdateUser - PUT - Request failed - Validation error(s) detected.");
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(e), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("UpdateUser - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 	
@@ -243,23 +245,23 @@ public class UserController {
 				}
 				else {
 					logger.warn("ChangeUserPassword - PUT - Request failed - Input validation error(s) detected.");
-					return new ResponseEntity<>(MiscUtils.getFormatedResponseErrorList(result).toString(), HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 				}
 	        }
 			else {
 				logger.warn(String.format("ChangeUserPassword - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
 	            FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (CustomResponseError e) {
 			logger.warn("ChangeUserPassword - PUT - Request failed - Validation error(s) detected.");
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(e).toString(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(e), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("ChangeUserPassword - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 
@@ -274,7 +276,6 @@ public class UserController {
 		id = id.toLowerCase();
 		logger.info(String.format("DeleteUser - DELETE - Processing request for user <%s>.", id));
 		try {
-			
 			if (userService.getUserById(id) != null) {
 	        	userService.deleteUserById(id);
 	        	
@@ -284,13 +285,13 @@ public class UserController {
 	        else {
 	        	logger.warn(String.format("DeleteUser - DELETE - Request failed - Unable to delete user. User <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-	        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
 		catch (Exception e) {
 			logger.error("DeleteUser - DELETE - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }
 	
@@ -338,19 +339,19 @@ public class UserController {
 				else {
 					logger.warn(String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. No photo was found for user <%s>.", id));
 		        	FieldError error = new FieldError("User","foto",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
-		        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+		        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 				}
 	        }
 			else {
 				logger.warn(String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. User <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (Exception e) {
 			logger.error("GetUserPhoto - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
 	}
 	
@@ -363,40 +364,41 @@ public class UserController {
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody String photoPayload) {
+    public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody ObjectNode photoPayload) {
 		id = id.toLowerCase();
 		logger.info(String.format("UpdateUserPhoto - PUT - Processing request for user's <%s> photo.", id));
-		
 		// parseamos el json object recibido y generamos el byte array validando la estructura del request al mismo tiempo.
 		try { 
-			JSONObject jsonPhotoPayload = new JSONObject(photoPayload);
-			byte[] b64photo = jsonPhotoPayload.getString("foto").getBytes();
-			if (userService.getUserById(id) != null) {
-				userService.updateUserPhotoById(id, Base64.getDecoder().decode(b64photo));
-				
-				logger.info("UpdateUserPhoto - PUT - Exiting method, providing response resource to client.");
-				return new ResponseEntity<String>(HttpStatus.OK);
-	        }
+			JsonNode jsonPhotoPayload = photoPayload.get("foto");
+			if (jsonPhotoPayload != null) {
+				byte[] b64photo = jsonPhotoPayload.asText().getBytes();
+				if (userService.getUserById(id) != null) {
+					userService.updateUserPhotoById(id, Base64.getDecoder().decode(b64photo));
+					
+					logger.info("UpdateUserPhoto - PUT - Exiting method, providing response resource to client.");
+					return new ResponseEntity<String>(HttpStatus.OK);
+		        }
+				else {
+					logger.warn(String.format("UpdateUserPhoto - PUT - Request failed - Unable to update user's photo. User <%s> doesn't exist.", id));
+		        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
+				}
+			}
 			else {
-				logger.warn(String.format("UpdateUserPhoto - PUT - Request failed - Unable to update user's photo. User <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+				logger.warn("UpdateUserPhoto - PUT - Request failed - Received malformed request, returning error to client.");
+	        	FieldError error = new FieldError("User","foto",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
+	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.BAD_REQUEST);
 			}
 		}
 		catch (IllegalArgumentException e){
-			logger.error("UpdateUserPhoto - PUT - Request failed - Received invalid base64 image, returning error to client.");
-        	FieldError error =new FieldError("User","error",messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
-        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
-		}
-		catch (JSONException e) {
-			logger.error("UpdateUserPhoto - PUT - Request failed - Received malformed request, returning error to client.");
-        	FieldError error = new FieldError("User","error",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
-        	return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.BAD_REQUEST);
+			logger.warn("UpdateUserPhoto - PUT - Request failed - Received invalid base64 image, returning error to client.");
+        	FieldError error =new FieldError("User","foto",messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
+        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("UpdateUserPhoto - PUT - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		} 
 	}
 	
@@ -420,13 +422,13 @@ public class UserController {
 			else {
 				logger.warn(String.format("DeleteUserPhoto - DELETE - Request failed - Unable to delete user's photo. User <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
-	            return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (Exception e) {
 			logger.error("DeleteUserPhoto - DELETE - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

@@ -35,6 +35,8 @@ public class RequirementController {
     RequirementService requirementService;
 	@Autowired
     MessageSource messageSource;
+	@Autowired
+	MiscUtils miscUtils;
 
 	/*
 	 * Devuelve todos los Requerimientos registradas en formato JSON.
@@ -60,7 +62,7 @@ public class RequirementController {
 		catch (Exception e) {
 			logger.error("ListRequirements - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Requirement","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 	
@@ -83,13 +85,13 @@ public class RequirementController {
             else {
             	logger.warn(String.format("GetRequirement - GET - Request failed - Requirement with id <%s> not found.", id));
                 FieldError error = new FieldError("Requirement","error",messageSource.getMessage("requirement.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
-                return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
         catch (Exception e) {
 			logger.error("GetRequirement - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Requirement","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }
 }

@@ -35,6 +35,8 @@ public class CityController {
     CityService cityService;
 	@Autowired
     MessageSource messageSource;
+	@Autowired
+	MiscUtils miscUtils;
 
 	/*
 	 * Devuelve todas las ciudades registradas en formato JSON.
@@ -60,7 +62,7 @@ public class CityController {
 		catch (Exception e) {
 			logger.error("ListCities - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("City","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 	
@@ -84,13 +86,13 @@ public class CityController {
             else {
             	logger.warn(String.format("GetCity - GET - Request failed - City with id <%s> not found.", id));
                 FieldError error = new FieldError("City","error",messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
-                return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
         catch (Exception e) {
 			logger.error("GetCity - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("City","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }
 }

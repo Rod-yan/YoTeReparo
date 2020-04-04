@@ -35,6 +35,8 @@ public class ServiceTypeController {
     ServiceTypeService serviceTypeService;
 	@Autowired
     MessageSource messageSource;
+	@Autowired
+	MiscUtils miscUtils;
 
 	/*
 	 * Devuelve todos los Tipos de Servicio registradas en formato JSON.
@@ -60,7 +62,7 @@ public class ServiceTypeController {
 		catch (Exception e) {
 			logger.error("ListServiceTypes - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("ServiceType","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
 	
@@ -83,13 +85,13 @@ public class ServiceTypeController {
             else {
             	logger.warn(String.format("GetServiceType - GET - Request failed - Service Type with id <%s> not found.", id));
                 FieldError error = new FieldError("ServiceType","error",messageSource.getMessage("serviceType.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
-                return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
         catch (Exception e) {
 			logger.error("GetServiceType - GET - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("ServiceType","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(MiscUtils.getFormatedResponseError(error).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }
 }
