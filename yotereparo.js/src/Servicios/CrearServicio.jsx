@@ -113,7 +113,6 @@ const CrearServicio = (props) => {
         }
       })
       .catch((error) => {
-        console.log(error.response);
         let errors = processErrors(error.response.data);
         setErrors({ ...formErrors, errors });
         setIsCreationService(false);
@@ -134,8 +133,6 @@ const CrearServicio = (props) => {
       });
     }
   };
-
-  console.log(service);
 
   const clearAll = () => {
     var elements = document.getElementsByTagName("input");
@@ -188,8 +185,6 @@ const CrearServicio = (props) => {
     }
     return value;
   };
-
-  console.log(formErrors);
 
   useEffect(() => {
     fetchData(

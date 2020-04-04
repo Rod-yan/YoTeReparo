@@ -1,8 +1,6 @@
 export const processErrors = (incomingErrors) => {
   let errors = [];
 
-  console.log(incomingErrors);
-
   if (incomingErrors.length >= 1) {
     incomingErrors.forEach((error) => {
       errors.push({
