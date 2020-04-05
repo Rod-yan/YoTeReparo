@@ -355,31 +355,35 @@ public class UserServiceImpl implements UserService {
 	
 	/*
 	 *  Actualiza la foto y el thumbnail del Usuario haciendo un resize de la foto suscripta,
-	 *  si el procesamiento del thumbnail levanta excepcion, no suscribe la actualizacion
-	 *  de la foto. Si la foto es nula, eliminamos la foto y thumbnail actual del usuario.
+	 *  Si el parámetro <foto> es nulo, eliminamos la foto y thumbnail actual del usuario.
 	 */
 	public void updateUserPhotoById(String id, byte[] photo) {
 		User entity = dao.getUserById(id);
 		if (photo != null) {
 	        try {
-	        	logger.debug(String.format("Updating attribute 'Foto' from user <%s>",id));
-	        	entity.setFoto(photo);
-	        	
-				// construye y guarda el thumbnail a partir de la foto suscripta
-	        	logger.debug("Building thumbnail from input image");
+	        	// Reformateamos la imagen suscripta para normalizar archivos muy grandes, y generamos el thumbnail
 	        	InputStream is = new ByteArrayInputStream(photo);
 		        BufferedImage img = ImageIO.read(is);
-		        BufferedImage thumbImg = Scalr.resize(img, Method.ULTRA_QUALITY,
+		        logger.debug("Resizing input image");
+		        BufferedImage userPhoto = Scalr.resize(img, Method.ULTRA_QUALITY,
+	                    Mode.AUTOMATIC, 300, 300);
+		        logger.debug("Building thumbnail from input image");
+		        BufferedImage userThumbnail = Scalr.resize(img, Method.ULTRA_QUALITY,
 	                    Mode.AUTOMATIC, 100, 100);
 		        
 		        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	        	ImageIO.write(thumbImg, "png", baos);
+		        ImageIO.write(userPhoto, "png", baos);
+		        logger.debug(String.format("Updating attribute 'Foto' from user <%s>",id));
+	        	entity.setFoto(baos.toByteArray());
 	        	
+	        	baos.reset();
+	        	ImageIO.write(userThumbnail, "png", baos);
 	        	logger.debug(String.format("Updating attribute 'Thumbnail' from user <%s>",id));
 		        entity.setThumbnail(baos.toByteArray());
 		        
 		        img.flush();
-		        thumbImg.flush();
+		        userPhoto.flush();
+		        userThumbnail.flush();
 		        baos.close();		        
 	        }
 	        catch (IOException e) {
