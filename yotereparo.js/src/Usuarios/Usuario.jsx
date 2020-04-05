@@ -260,6 +260,15 @@ function Usuario(props) {
                                 <div className="text-center">
                                   {<ButtonSave></ButtonSave>}
                                 </div>
+                                <div className="text-center">
+                                  <button
+                                    type="button"
+                                    className="btn btn-success btn-block mt-2"
+                                    onClick={props.modifyAddress}
+                                  >
+                                    AGREGAR DIRECCIONES
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>

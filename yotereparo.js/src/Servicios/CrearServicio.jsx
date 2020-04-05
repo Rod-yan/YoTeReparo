@@ -138,9 +138,9 @@ const CrearServicio = (props) => {
     var elements = document.getElementsByTagName("input");
 
     for (var ii = 0; ii < elements.length; ii++) {
-      if (elements[ii].type == "text") {
+      if (elements[ii].type === "text") {
         elements[ii].value = "";
-      } else if (elements[ii].type == "number") {
+      } else if (elements[ii].type === "number") {
         elements[ii].value = 0;
       }
     }

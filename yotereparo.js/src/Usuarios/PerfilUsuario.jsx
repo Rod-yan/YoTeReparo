@@ -21,12 +21,18 @@ function PerfilUsuario(props) {
   const [auth, setAuth] = useState(true);
   const [modify, activateModify] = useState(true);
   const [modal, setModal] = useState(false);
+  const [address, setAddress] = useState(false);
   const [loadingUser, setLoadingUser] = useState(false);
   const [errors, setErrors] = useState(false);
+  const [errorAddress, setAddressError] = useState(false);
 
   const toggle = () => {
     setModal(!modal);
     setErrors(false);
+  };
+
+  const toggleAddress = () => {
+    setAddress(!address);
   };
 
   const securityToken = !session.security
@@ -92,6 +98,7 @@ function PerfilUsuario(props) {
       ciudad: profile.ciudad,
       barrios: profile.barrios,
       email: profile.email,
+      direcciones: profile.direcciones,
       contrasena: password,
       membresia: profile.membresia,
     };
@@ -253,6 +260,130 @@ function PerfilUsuario(props) {
           </ModalFooter>
         </Modal>
       </div>
+      <div>
+        <Modal isOpen={address} toggle={toggleAddress}>
+          <ModalHeader toggle={toggleAddress}>
+            {" "}
+            Direcciones del usuario {profile.nombre}
+          </ModalHeader>
+          <ModalBody>
+            {errorAddress ? (
+              <ElementContainer>
+                <div>
+                  <div className="col d-flex justify-content-center">
+                    <div className="cover-screen">
+                      Estas intentado ingresar una direccion erronea
+                    </div>
+                  </div>
+                </div>
+              </ElementContainer>
+            ) : (
+              <ElementContainer>
+                {profile.direcciones.length > 0 ? (
+                  profile.direcciones.map((item, idx) => {
+                    return (
+                      <div key={idx}>
+                        <div className="input-group mb-3">
+                          <div className="input-group-prepend">
+                            <span
+                              className="input-group-text"
+                              id="inputGroup-sizing-default"
+                            >
+                              Calle
+                            </span>
+                          </div>
+                          <input
+                            className="form-control"
+                            defaultValue={item.calle}
+                            disabled={true}
+                          />
+                        </div>
+                        <div className="input-group mb-3">
+                          <div className="input-group-prepend">
+                            <span
+                              className="input-group-text"
+                              id="inputGroup-sizing-default"
+                            >
+                              Altura
+                            </span>
+                          </div>
+                          <input
+                            className="form-control"
+                            defaultValue={item.altura}
+                            disabled={true}
+                          />
+                        </div>
+                        <div className="input-group mb-3">
+                          <div className="input-group-prepend">
+                            <span
+                              className="input-group-text"
+                              id="inputGroup-sizing-default"
+                            >
+                              Piso
+                            </span>
+                          </div>
+                          <input
+                            className="form-control"
+                            defaultValue={item.piso}
+                            disabled={true}
+                          />
+                        </div>
+                        <div className="input-group mb-3">
+                          <div className="input-group-prepend">
+                            <span
+                              className="input-group-text"
+                              id="inputGroup-sizing-default"
+                            >
+                              Departamento
+                            </span>
+                          </div>
+                          <input
+                            className="form-control"
+                            defaultValue={item.departamento}
+                            disabled={true}
+                          />
+                        </div>
+                        <div className="input-group mb-3">
+                          <div className="input-group-prepend">
+                            <span
+                              className="input-group-text"
+                              id="inputGroup-sizing-default"
+                            >
+                              Descripcion
+                            </span>
+                          </div>
+                          <input
+                            className="form-control"
+                            defaultValue={item.descripcion}
+                            disabled={true}
+                          />
+                        </div>
+                        <Button>Modificar</Button>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-center">
+                    Actualmente no posee direcciones cargadas{" "}
+                    <Button>Agregar una!</Button>
+                  </div>
+                )}
+              </ElementContainer>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              onClick={() => console.log("TODO: Validate address")}
+            >
+              Aceptar
+            </Button>{" "}
+            <Button color="secondary" onClick={toggleAddress}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </div>
       {profile === undefined || auth === false ? (
         <ElementContainer>
           <div>
@@ -272,6 +403,9 @@ function PerfilUsuario(props) {
             activateEdit={() => handleActivateModifications()}
             activateSave={() => {
               toggle();
+            }}
+            modifyAddress={() => {
+              setAddress(!address);
             }}
           ></Usuario>
         </ProfileContext.Provider>
