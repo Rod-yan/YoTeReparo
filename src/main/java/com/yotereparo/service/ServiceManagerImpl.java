@@ -244,7 +244,7 @@ public class ServiceManagerImpl implements ServiceManager {
 		        BufferedImage img = ImageIO.read(is);
 		        logger.debug("Resizing input image");
 		        BufferedImage serviceImage = Scalr.resize(img, Method.ULTRA_QUALITY,
-	                    Mode.AUTOMATIC, 300, 300);
+	                    Mode.AUTOMATIC, 1000, 1000);
 		        logger.debug("Building thumbnail from input image");
 		        BufferedImage serviceThumbnail = Scalr.resize(img, Method.ULTRA_QUALITY,
 	                    Mode.AUTOMATIC, 100, 100);
@@ -262,7 +262,7 @@ public class ServiceManagerImpl implements ServiceManager {
 		        img.flush();
 		        serviceImage.flush();
 		        serviceThumbnail.flush();
-		        baos.close();		        
+		        baos.close();
 	        }
 	        catch (IOException e) {
 	        	logger.error("IOException: "+e.getMessage());
