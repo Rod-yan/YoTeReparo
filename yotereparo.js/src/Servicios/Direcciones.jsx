@@ -2,6 +2,8 @@ import React from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import ElementContainer from "../Container/ElementContainer";
 import ResourceNotFound from "../Errors/ResourceNotFound";
+import { InputField } from "../Utils/InputField";
+import { useState } from "react";
 
 function Direcciones(props) {
   return (
@@ -20,89 +22,106 @@ function Direcciones(props) {
                 props.profile.direcciones.map((item, idx) => {
                   return (
                     <div key={idx}>
-                      <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                          <span
-                            className="input-group-text"
-                            id="inputGroup-sizing-default"
-                          >
-                            Calle
-                          </span>
-                        </div>
-                        <input
-                          className="form-control"
-                          defaultValue={item.calle}
-                          disabled={true}
-                        />
+                      <InputField
+                        fieldTitle="Calle"
+                        fieldValue={item.calle}
+                        fieldActivate={props.addressModify}
+                        fieldChange={props.handleChange}
+                        fieldId={"calle"}
+                      ></InputField>
+                      <InputField
+                        fieldTitle="Altura"
+                        fieldValue={item.altura}
+                        fieldActivate={props.addressModify}
+                        fieldChange={props.handleChange}
+                        fieldId={"altura"}
+                      ></InputField>
+                      <InputField
+                        fieldTitle="Piso"
+                        fieldValue={item.piso}
+                        fieldActivate={props.addressModify}
+                        fieldChange={props.handleChange}
+                        fieldId={"piso"}
+                      ></InputField>
+                      <InputField
+                        fieldTitle="Departamento"
+                        fieldValue={item.departamento}
+                        fieldActivate={props.addressModify}
+                        fieldChange={props.handleChange}
+                        fieldId={"departamento"}
+                      ></InputField>
+                      <InputField
+                        fieldTitle="Descripcion"
+                        fieldValue={item.descripcion}
+                        fieldActivate={props.addressModify}
+                        fieldChange={props.handleChange}
+                        fieldId={"descripcion"}
+                      ></InputField>
+                      <div className="text-center">
+                        <Button
+                          disabled={!props.addressModify}
+                          onClick={props.ModifyOne}
+                        >
+                          Modificar
+                        </Button>
                       </div>
-                      <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                          <span
-                            className="input-group-text"
-                            id="inputGroup-sizing-default"
-                          >
-                            Altura
-                          </span>
-                        </div>
-                        <input
-                          className="form-control"
-                          defaultValue={item.altura}
-                          disabled={true}
-                        />
-                      </div>
-                      <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                          <span
-                            className="input-group-text"
-                            id="inputGroup-sizing-default"
-                          >
-                            Piso
-                          </span>
-                        </div>
-                        <input
-                          className="form-control"
-                          defaultValue={item.piso}
-                          disabled={true}
-                        />
-                      </div>
-                      <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                          <span
-                            className="input-group-text"
-                            id="inputGroup-sizing-default"
-                          >
-                            Departamento
-                          </span>
-                        </div>
-                        <input
-                          className="form-control"
-                          defaultValue={item.departamento}
-                          disabled={true}
-                        />
-                      </div>
-                      <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                          <span
-                            className="input-group-text"
-                            id="inputGroup-sizing-default"
-                          >
-                            Descripcion
-                          </span>
-                        </div>
-                        <input
-                          className="form-control"
-                          defaultValue={item.descripcion}
-                          disabled={true}
-                        />
-                      </div>
-                      <Button onClick={props.ModifyOne}>Modificar</Button>
                     </div>
                   );
                 })
               ) : (
-                <div className="text-center">
-                  Actualmente no posee direcciones cargadas{" "}
-                  <Button onClick={props.AddOne}>Agregar una!</Button>
+                <div>
+                  <InputField
+                    fieldTitle="Calle"
+                    fieldValue=""
+                    fieldActivate={props.addressModify}
+                    fieldChange={props.onChangeNewAddress}
+                    fieldId={"calle"}
+                    type="number"
+                    max={9999}
+                    min={0}
+                  ></InputField>
+                  <InputField
+                    fieldTitle="Altura"
+                    fieldValue=""
+                    fieldActivate={props.addressModify}
+                    fieldChange={props.onChangeNewAddress}
+                    fieldId={"altura"}
+                    type="number"
+                    max={9999}
+                    min={0}
+                  ></InputField>
+                  <InputField
+                    fieldTitle="Piso"
+                    fieldValue=""
+                    fieldActivate={props.addressModify}
+                    fieldChange={props.onChangeNewAddress}
+                    fieldId={"piso"}
+                    type="number"
+                    max={12}
+                    min={0}
+                  ></InputField>
+                  <InputField
+                    fieldTitle="Departamento"
+                    fieldValue=""
+                    fieldActivate={props.addressModify}
+                    fieldChange={props.onChangeNewAddress}
+                    fieldId={"departamento"}
+                  ></InputField>
+                  <InputField
+                    fieldTitle="Descripcion"
+                    fieldValue=""
+                    fieldActivate={props.addressModify}
+                    fieldChange={props.onChangeNewAddress}
+                    fieldId={"descripcion"}
+                  ></InputField>
+                  <div className="text-center">
+                    <Button
+                      disabled={!props.addressModify}
+                      onClick={props.ModifyOne}
+                    >
+                      Agregar
+                    </Button>
+                  </div>
                 </div>
               )}
             </ElementContainer>

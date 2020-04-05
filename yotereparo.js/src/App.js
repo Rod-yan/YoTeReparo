@@ -21,8 +21,6 @@ function App() {
   const history = createBrowserHistory();
   const [session, setSession] = useState(getSessionCookie());
 
-  console.log(session);
-
   useEffect(() => {
     const newCookie = getSessionCookie();
     if (newCookie.uniqueId !== session.uniqueId) {

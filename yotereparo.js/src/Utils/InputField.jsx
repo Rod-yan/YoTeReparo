@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const InputField = props => {
+export const InputField = (props) => {
   return (
     <div className="input-group mb-3">
       <div className="input-group-prepend">
@@ -13,7 +13,10 @@ export const InputField = props => {
         defaultValue={props.fieldValue}
         disabled={props.fieldActivate}
         onChange={props.fieldChange}
+        type={props.type ? props.type : "text"}
         id={props.fieldId}
+        min={props.min}
+        max={props.max}
       />
     </div>
   );

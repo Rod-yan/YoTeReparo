@@ -31,7 +31,7 @@ export const LoginHandler = ({ history }) => {
         requestConfig
       )
         .then((response) => {
-          console.log(response);
+          console.log("INFO: Usuario correctamente autorizado");
           result = response;
         })
         .catch((error) => {
@@ -56,7 +56,7 @@ export const LoginHandler = ({ history }) => {
       setErrors(false);
       setSessionCokie({ username: username, security: result.data });
       history.push("/");
-      // window.location.reload();
+      window.location.reload();
     } else {
       setLoadingUser(false);
       setErrors(true);

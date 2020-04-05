@@ -27,6 +27,19 @@ function PerfilUsuario(props) {
   const [address, setAddress] = useState(false);
   const [errors, setErrors] = useState(false);
   const [errorAddress, setAddressError] = useState(false);
+  const [modifyAddressFields, setModifyAddress] = useState(true);
+
+  const [newAddress, setNewAddress] = useState({
+    calle: 0,
+    altura: 0,
+    piso: 0,
+    departamento: "No definido",
+    descripcion: "No definido",
+  });
+
+  const onChangeNewAddress = (event) => {
+    setNewAddress({ ...newAddress, [event.target.id]: event.target.value });
+  };
 
   const toggle = () => {
     setModal(!modal);
@@ -61,7 +74,7 @@ function PerfilUsuario(props) {
         requestConfig
       )
         .then((response) => {
-          console.log(response);
+          console.log("INFO: Usuario validado correctamente");
           result = response;
         })
         .catch((error) => {
@@ -81,7 +94,9 @@ function PerfilUsuario(props) {
 
     if (result.data && result.status === 200) {
       updateProfile();
-      handleActivateModifications();
+      activateModify(true);
+      setModifyAddress(true);
+      setAddress(false);
       toggle();
     } else {
       setErrors(true);
@@ -96,7 +111,12 @@ function PerfilUsuario(props) {
       ciudad: profile.ciudad,
       barrios: profile.barrios,
       email: profile.email,
-      direcciones: profile.direcciones,
+      direcciones:
+        profile.direcciones.length > 0
+          ? profile.direcciones
+          : newAddress.altura === 0
+          ? []
+          : [newAddress],
       contrasena: password,
       membresia: profile.membresia,
     };
@@ -106,6 +126,12 @@ function PerfilUsuario(props) {
       nombre: profile.nombre,
       apellido: profile.apellido,
       ciudad: profile.ciudad,
+      direcciones:
+        profile.direcciones.length > 0
+          ? profile.direcciones
+          : newAddress.altura === 0
+          ? []
+          : [newAddress],
       email: profile.email,
       contrasena: password,
     };
@@ -138,6 +164,10 @@ function PerfilUsuario(props) {
           "ERROR: There is a problem with the update of an User" + error
         );
       });
+  };
+
+  const updateAddress = (event) => {
+    profile.direcciones[0][event.target.id] = event.target.value;
   };
 
   const handleActivateModifications = () => {
@@ -219,10 +249,14 @@ function PerfilUsuario(props) {
             address={address}
             toggleAddress={toggleAddress}
             errors={errorAddress}
+            addressModify={modifyAddressFields}
             profile={profile}
-            CreateCallback={() => console.log("TODO: Validate address")}
-            ModifyOne={() => console.log("TODO: Modify Address")}
-            CreateOne={() => console.log("TODO: Create Address")}
+            handleChange={updateAddress}
+            onChangeNewAddress={onChangeNewAddress}
+            CreateCallback={() =>
+              modifyAddressFields == false ? toggle() : toggleAddress()
+            }
+            ModifyOne={() => setModifyAddress(!modifyAddressFields)}
           ></Direcciones>
           {profile === undefined || auth === false ? (
             <NotAuth></NotAuth>
