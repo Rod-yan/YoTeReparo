@@ -232,32 +232,36 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	/*
 	 *  Actualiza la imagen y el thumbnail del Servicio haciendo un resize de la imagen suscripta,
-	 *  si el procesamiento del thumbnail levanta excepcion, no suscribe la actualizacion
-	 *  de la imagen. Si la imagen es nula, eliminamos la imagen y thumbnail actual del servicio.
+	 *  Si el parámetro <image> es nulo, eliminamos la imagen y thumbnail actual del servicio.
 	 */
 	@Override
 	public void updateServiceImageById(Integer id, byte[] image) {
 		Service entity = dao.getServiceById(id);
 		if (image != null) {
 	        try {
-	        	logger.debug(String.format("Updating attribute 'Imagen' from service <%s>",id));
-	        	entity.setImagen(image);
-	        	
-				// construye y guarda el thumbnail a partir de la foto suscripta
-	        	logger.debug("Building thumbnail from input image");
+	        	// Reformateamos la imagen suscripta para normalizar archivos muy grandes, y generamos el thumbnail
 	        	InputStream is = new ByteArrayInputStream(image);
 		        BufferedImage img = ImageIO.read(is);
-		        BufferedImage thumbImg = Scalr.resize(img, Method.ULTRA_QUALITY,
+		        logger.debug("Resizing input image");
+		        BufferedImage serviceImage = Scalr.resize(img, Method.ULTRA_QUALITY,
+	                    Mode.AUTOMATIC, 300, 300);
+		        logger.debug("Building thumbnail from input image");
+		        BufferedImage serviceThumbnail = Scalr.resize(img, Method.ULTRA_QUALITY,
 	                    Mode.AUTOMATIC, 100, 100);
 		        
 		        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	        	ImageIO.write(thumbImg, "png", baos);
-	        	
+		        ImageIO.write(serviceImage, "png", baos);
+		        logger.debug(String.format("Updating attribute 'Imagen' from service <%s>",id));
+		        entity.setImagen(baos.toByteArray());
+		        
+		        baos.reset();
+	        	ImageIO.write(serviceThumbnail, "png", baos);
 	        	logger.debug(String.format("Updating attribute 'Thumbnail' from service <%s>",id));
 		        entity.setThumbnail(baos.toByteArray());
 		        
 		        img.flush();
-		        thumbImg.flush();
+		        serviceImage.flush();
+		        serviceThumbnail.flush();
 		        baos.close();		        
 	        }
 	        catch (IOException e) {
