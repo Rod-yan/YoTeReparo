@@ -3,7 +3,7 @@ import "../Header/Header.css";
 import { Link } from "react-router-dom";
 import imgSrcLogo from "../android-chrome-512x512.png";
 
-const Header = props => {
+const Header = (props) => {
   return (
     <div className="navbar">
       <nav>{props.children}</nav>
@@ -11,7 +11,7 @@ const Header = props => {
         <Link to={"/"}>
           <img
             src={imgSrcLogo}
-            alt="Logo MercadoLibre"
+            alt="Logo YoTeReparo.js"
             className="icon-picture"
           />
         </Link>
