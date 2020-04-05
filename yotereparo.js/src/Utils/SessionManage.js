@@ -1,7 +1,7 @@
 import * as Cookies from "js-cookie";
 import React from "react";
 
-export const setSessionCokie = session => {
+export const setSessionCokie = (session) => {
   Cookies.remove("userSession");
   Cookies.set("userSession", session, { expires: 14 });
 };
@@ -16,7 +16,7 @@ export const getSessionCookie = () => {
   }
 };
 
-export const deleteSessionCookie = nameOfSession => {
+export const deleteSessionCookie = (nameOfSession) => {
   try {
     Cookies.remove(nameOfSession);
   } catch (error) {

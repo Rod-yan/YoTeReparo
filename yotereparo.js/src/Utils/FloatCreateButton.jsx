@@ -9,7 +9,7 @@ function FloatCreateButton(props) {
 
   return (
     <>
-      {session.roles != null ? (
+      {session.security.roles.length > 0 ? (
         <div
           className="float-button"
           onClick={() => history.push("/servicio/crear")}
