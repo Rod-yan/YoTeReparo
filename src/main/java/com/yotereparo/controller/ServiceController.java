@@ -81,7 +81,6 @@ public class ServiceController {
 			value = { "/services" }, 
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
-	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
 	public ResponseEntity<?> listServices(@RequestParam(required = false) Map<String,String> filters) {
 		logger.info("ListServices - GET - Processing request for a list with all existing services.");
 		try {
@@ -115,7 +114,6 @@ public class ServiceController {
 			value = { "/services/{id}" }, 
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
-	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
 	public ResponseEntity<?> getService(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetService - GET - Processing request for service <%s>.", id));
         try {
@@ -402,7 +400,6 @@ public class ServiceController {
 			value = { "/services/{id}/photo", "/services/{id}/photo/thumbnail" }, 
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.GET)
-	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> getServiceImage(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetServiceImage - GET - Processing request for service's <%s> image.", id));
 		try {
