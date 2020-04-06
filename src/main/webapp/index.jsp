@@ -25,11 +25,11 @@
 	            </div>
 	        </div>
 	        <div class="footer">
-	        	<p><b>Information Systems Engineering Final Project</b></p>
-	        	<p><b><a href="https://github.com/Rod-yan">Rodrigo Yanis</a> - <a href="https://github.com/Warkanlock">Ignacio Brasca</a> - <a href="https://github.com/GabiCapitanelli">Gabriel Capitanelli</a></b></p>
-	        	<p><i>Universidad Tecnológica Nacional - Rosario - Santa Fe - Argentina</i></p>
-	        	<p><i>2019-2020</i></p>
-	        	<p><i>© All Rights Reserved.</i></p>
+	        	<p><b>Information Systems Engineering Final Project</b><br/>
+	        	<b><a href="https://github.com/Rod-yan">Rodrigo Yanis</a> - <a href="https://github.com/Warkanlock">Ignacio Brasca</a> - <a href="https://github.com/GabiCapitanelli">Gabriel Capitanelli</a></b><br/>
+	        	<i>Universidad Tecnológica Nacional - Rosario - Santa Fe - Argentina</i><br/>
+	        	<i>2019-2020</i><br/>
+	        	<i>© All Rights Reserved.</i></p>
 	        </div>
 	    </section>
 		
