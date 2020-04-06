@@ -212,9 +212,9 @@ const FormRegistro = (props) => {
             <div className="text-center">
               <div className="lead mb-2">
                 {isFormEmpleador ? (
-                  <strong>REGISTRARSE COMO TRABAJADOR</strong>
+                  <strong>REGISTRARSE COMO PRESTADOR</strong>
                 ) : (
-                  <strong>REGISTRARSE COMO USUARIO</strong>
+                  <strong>REGISTRARSE COMO CLIENTE</strong>
                 )}
               </div>
             </div>
@@ -250,7 +250,7 @@ const FormRegistro = (props) => {
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
-                  CIUDAD
+                  CIUDAD EN LA QUE PRESTAS SERVICIO
                 </Label>
                 <Input
                   type="select"
@@ -278,7 +278,7 @@ const FormRegistro = (props) => {
                       for="ciudadLabel"
                       className="mr-sm-2 font-weight-bold"
                     >
-                      BARRIOS
+                      BARRIOS EN LOS QUE PRESTAS SERVICIO
                     </Label>
                     <Input
                       multiple={isFormEmpleador}
@@ -426,7 +426,7 @@ const FormRegistro = (props) => {
                   }}
                 />
                 <FormFeedback className="lead box-message-letter">
-                  El email que ingresaste no cumple con las politicas
+                  El email que ingresaste es inválido.
                 </FormFeedback>
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
@@ -446,8 +446,8 @@ const FormRegistro = (props) => {
                   }}
                 />
                 <FormFeedback className="lead box-message-letter">
-                  La contraseña que ingresaste debe poseer una letra mayuscula,
-                  un caracter numerico y debe ser de 8 caracteres o más.
+                  La contraseña debe poseer al menos una letra mayúscula, 
+					un caracter numérico y debe ser de 8 caracteres o más.
                 </FormFeedback>
               </FormGroup>
               {isFormEmpleador ? (

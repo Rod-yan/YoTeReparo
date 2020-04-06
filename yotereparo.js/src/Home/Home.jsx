@@ -5,12 +5,12 @@ import CardContent from "../Container/CardContent";
 
 const descriptionServices = (
   <div>
-    Si estas buscando solucionar <strong>TUS</strong> problemas...
+    ¿Querés publicar tus servicios profesionales en tu zona <strong>fácilmente y sin complicaciones</strong>?
   </div>
 );
 const descriptionHelp = (
   <div>
-    Si estas buscando solucionar <strong>problemas de otras personas...</strong>
+	¿Necesitas encontrar una solución <strong>rápida y accesible</strong> a tus problemas del hogar?
   </div>
 );
 
@@ -23,7 +23,7 @@ function Home(props) {
             cardIcon="fa-hands-helping"
             cardDescription={descriptionHelp}
             cardUrl="/buscar"
-            cardButtonText="BUSCAR AYUDA"
+            cardButtonText="BUSCÁ SERVICIOS EN TU ZONA"
             cardButtonStyle="danger"
           />
         </div>
@@ -32,7 +32,7 @@ function Home(props) {
             cardIcon="fa-tools"
             cardDescription={descriptionServices}
             cardUrl="/registro"
-            cardButtonText="ENCONTRAR TRABAJOS"
+            cardButtonText="REGISTRÁ TU USUARIO"
             cardButtonStyle="danger"
           />
         </div>
