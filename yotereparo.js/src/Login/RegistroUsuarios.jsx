@@ -29,6 +29,7 @@ const FormRegistro = (props) => {
   let membresiaObject = isFormEmpleador ? "GRATUITA" : null;
 
   let [account, setAccount] = useState({
+    id: "",
     email: "",
     password: "",
     nombre: "",
@@ -91,7 +92,7 @@ const FormRegistro = (props) => {
       let barriosSelected = intersect(hoods, account.barrios);
 
       requestData = {
-        id: account.nombre + account.apellido,
+        id: account.id,
         nombre: account.nombre,
         apellido: account.apellido,
         ciudad: account.ciudad,
@@ -103,7 +104,7 @@ const FormRegistro = (props) => {
       };
     } else {
       requestData = {
-        id: account.nombre + account.apellido,
+        id: account.id,
         nombre: account.nombre,
         apellido: account.apellido,
         ciudad: account.ciudad,
@@ -112,6 +113,8 @@ const FormRegistro = (props) => {
         membresia: membresiaObject,
       };
     }
+
+    console.log(requestData);
 
     //TODO: SET membresia en funcion del formulario de entrada
 
@@ -204,6 +207,8 @@ const FormRegistro = (props) => {
     }
   };
 
+  console.log(account);
+
   return (
     <div className="registercentered card-center-form">
       <div className="row">
@@ -220,6 +225,23 @@ const FormRegistro = (props) => {
             </div>
             <Errors formErrors={formErrors}></Errors>
             <Form onSubmit={handleSubmit}>
+              <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                <Label for="usernameLabel" className="mr-sm-2 font-weight-bold">
+                  USUARIO
+                </Label>
+                <Input
+                  type="text"
+                  name="id"
+                  style={{ textTransform: "lowercase" }}
+                  id="usernameLabel"
+                  placeholder="Tu nombre de usuario..."
+                  minLength="5"
+                  maxLength="15"
+                  onChange={(e) => {
+                    handleChange(e);
+                  }}
+                />
+              </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="nombreLabel" className="mr-sm-2 font-weight-bold">
                   NOMBRE
@@ -446,8 +468,8 @@ const FormRegistro = (props) => {
                   }}
                 />
                 <FormFeedback className="lead box-message-letter">
-                  La contraseña debe poseer al menos una letra mayúscula, 
-					un caracter numérico y debe ser de 8 caracteres o más.
+                  La contraseña debe poseer al menos una letra mayúscula, un
+                  caracter numérico y debe ser de 8 caracteres o más.
                 </FormFeedback>
               </FormGroup>
               {isFormEmpleador ? (
