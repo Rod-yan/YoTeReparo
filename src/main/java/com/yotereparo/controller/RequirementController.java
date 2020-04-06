@@ -84,7 +84,8 @@ public class RequirementController {
             }
             else {
             	logger.warn(String.format("GetRequirement - GET - Request failed - Requirement with id <%s> not found.", id));
-                FieldError error = new FieldError("Requirement","error",messageSource.getMessage("requirement.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+                FieldError error = new FieldError(
+                		"Requirement","error",messageSource.getMessage("requirement.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }

@@ -113,14 +113,18 @@ public class QuoteController {
                     return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quote), HttpStatus.OK);
             	}
     			else {
-    				logger.warn(String.format("GetQuote - GET - Request failed - Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+    				logger.warn(
+    						String.format("GetQuote - GET - Request failed - Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError(
+							"Quote","error",messageSource.getMessage(
+									"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
     			}
             }
             else {
             	logger.warn(String.format("GetQuote - GET - Request failed - Quote with id <%s> not found.", id));
-                FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+                FieldError error = new FieldError(
+                		"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             }
         }
@@ -162,7 +166,10 @@ public class QuoteController {
 					logger.warn(String.format("CreateQuote - POST - Request failed - Unable to create quote. An active quote already exist between "
 							+ "service <%s> and"
 							+ "user <%s>.", quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()));
-		            FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.active.already.exist", new String[]{quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()}, Locale.getDefault()));
+		            FieldError error = new FieldError(
+		            		"Quote","error",messageSource.getMessage(
+		            				"quote.active.already.exist", 
+		            				new String[]{quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()}, Locale.getDefault()));
 		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 				}
 			}
@@ -221,8 +228,11 @@ public class QuoteController {
     				}
     			}
     			else {
-    				logger.warn(String.format("UpdateQuote - PUT - Request failed - Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+    				logger.warn(String.format("UpdateQuote - PUT - Request failed - "
+    						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError(
+							"Quote","error",messageSource.getMessage(
+									"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
     			}
 	        }
@@ -267,8 +277,11 @@ public class QuoteController {
     	            return new ResponseEntity<>(HttpStatus.OK);
     			}
     			else {
-    				logger.warn(String.format("AcceptQuote - PUT - Request failed - Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+    				logger.warn(String.format("AcceptQuote - PUT - Request failed - "
+    						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError(
+							"Quote","error",messageSource.getMessage(
+									"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
     			}
 	        }
@@ -315,8 +328,11 @@ public class QuoteController {
 	    			else if ((isServiceAccountOrAdministrator || isOwnerAndProvider) && "provider".equals(userType))
 	    				quoteService.providerRejectsQuote(id);
 	    			else {
-	    				logger.warn(String.format("RejectQuote - PUT - Request failed - Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-						FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+	    				logger.warn(String.format("RejectQuote - PUT - Request failed - "
+	    						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+						FieldError error = new FieldError(
+								"Quote","error",messageSource.getMessage(
+										"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
 						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 	    			}
 	    			
@@ -325,13 +341,16 @@ public class QuoteController {
 		        }
 		        else {
 		        	logger.warn(String.format("RejectQuote - PUT - Request failed - Unable to reject quote. Quote <%s> doesn't exist.", id));
-		        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+		        	FieldError error = new FieldError(
+		        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 		        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 		        }
 			}
 			else {
-				logger.warn(String.format("RejectQuote - PUT - Request failed - Incorrect URI path argument <%s> (must be customer | provider).", userType));
-	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.incorrect.rejection.uri.argument", new Integer[]{id}, Locale.getDefault()));
+				logger.warn(String.format("RejectQuote - PUT - Request failed - "
+						+ "Incorrect URI path argument <%s> (must be customer | provider).", userType));
+	        	FieldError error = new FieldError(
+	        			"Quote","error",messageSource.getMessage("quote.incorrect.rejection.uri.argument", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.METHOD_NOT_ALLOWED);
 			}
 		}

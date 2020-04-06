@@ -127,7 +127,8 @@ public class ServiceController {
             }
             else {
             	logger.warn(String.format("GetService - GET - Request failed - Service with id <%s> not found.", id));
-                FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+                FieldError error = new FieldError(
+                		"Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             }
         }
@@ -169,8 +170,12 @@ public class ServiceController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 				}
 				else {
-					logger.warn(String.format("CreateService - POST - Request failed - Unable to create service. Service <%s> is too similar to another service", service.getTitulo()));
-		            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
+					logger.warn(
+							String.format(
+									"CreateService - POST - Request failed - "
+									+ "Unable to create service. Service <%s> is too similar to another service", service.getTitulo()));
+		            FieldError error = new FieldError(
+		            		"Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
 		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 				}
 			}
@@ -212,9 +217,11 @@ public class ServiceController {
 			if (service != null) {
 				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				boolean isOwnerProvider = service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
 				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
-				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
-					// Setteamos el usuario prestador del input del cliente (servicio actualizado) como el usuario prestador que es dueño del servicio a actualizar
+				if (isServiceAccountOrAdministrator || isOwnerProvider) {
+					// Setteamos el usuario prestador del input del cliente (servicio actualizado) 
+					// como el usuario prestador que es dueño del servicio a actualizar
 					clientInput.setUsuarioPrestador(service.getUsuarioPrestador().getId());
 					if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
 						Service updatedService = serviceConverter.convertToEntity(clientInput);
@@ -225,8 +232,11 @@ public class ServiceController {
 							return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
 						}
 						else {
-							logger.warn(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> is too similar to another service", service.getTitulo()));
-				            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
+							logger.warn(
+									String.format("UpdateService - PUT - Request failed - "
+											+ "Unable to update service. Service <%s> is too similar to another service", service.getTitulo()));
+				            FieldError error = new FieldError(
+				            		"Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
 				            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 						}
 					}
@@ -236,8 +246,10 @@ public class ServiceController {
 					}
 				}
 				else {
-					logger.warn(String.format("UpdateService - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					logger.warn(String.format("UpdateService - PUT - Request failed - "
+							+ "Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError(
+							"Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 				}
 	        }
@@ -276,16 +288,19 @@ public class ServiceController {
 			if (service != null) {
 				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				boolean isOwnerProvider = service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
 				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
-				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+				if (isServiceAccountOrAdministrator || isOwnerProvider) {
 					serviceManager.enableServiceById(id);
 		        	
 		        	logger.info("EnableService - PUT - Exiting method, providing response resource to client.");
 		            return new ResponseEntity<>(HttpStatus.OK);
 				}
 				else {
-					logger.warn(String.format("EnableService - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					logger.warn(String.format("EnableService - PUT - Request failed - "
+							+ "Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError(
+							"Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 				}
 	        }
@@ -320,16 +335,19 @@ public class ServiceController {
 			if (service != null) {
 				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				boolean isOwnerProvider = service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
 				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
-				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+				if (isServiceAccountOrAdministrator || isOwnerProvider) {
 					serviceManager.disableServiceById(id);
 		        	
 		        	logger.info("DisableService - PUT - Exiting method, providing response resource to client.");
 		            return new ResponseEntity<>(HttpStatus.OK);
 				}
 				else {
-					logger.warn(String.format("DisableService - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					logger.warn(String.format("DisableService - PUT - Request failed - "
+							+ "Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError(
+							"Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 				}
 	        }
@@ -418,14 +436,18 @@ public class ServiceController {
 					return new ResponseEntity<byte[]>(serviceImage, headers, HttpStatus.OK);
 				}
 				else {
-					logger.warn(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. No image was found for service <%s>.", id));
-		        	FieldError error = new FieldError("Service","imagen",messageSource.getMessage("service.doesnt.have.image", new Integer[]{id}, Locale.getDefault()));
+					logger.warn(String.format("GetServiceImage - GET - Request failed - "
+							+ "Unable to fetch service's image. No image was found for service <%s>.", id));
+		        	FieldError error = new FieldError(
+		        			"Service","imagen",messageSource.getMessage("service.doesnt.have.image", new Integer[]{id}, Locale.getDefault()));
 		        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 				}
 	        }
 			else {
-				logger.warn(String.format("GetServiceImage - GET - Request failed - Unable to fetch service's image. Service <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+				logger.warn(String.format("GetServiceImage - GET - Request failed - "
+						+ "Unable to fetch service's image. Service <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError(
+	        			"Service","error",messageSource.getMessage("service.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -460,16 +482,19 @@ public class ServiceController {
 				if (service != null) {
 					String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 					boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+					boolean isOwnerProvider = service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
 					// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
-					if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+					if (isServiceAccountOrAdministrator || isOwnerProvider) {
 						serviceManager.updateServiceImageById(id, Base64.getDecoder().decode(b64photo));
 						
 						logger.info("UpdateServiceImage - PUT - Exiting method, providing response resource to client.");
 						return new ResponseEntity<String>(HttpStatus.OK);
 					}
 					else {
-						logger.warn(String.format("UpdateServiceImage - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-						FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+						logger.warn(String.format("UpdateServiceImage - PUT - Request failed - "
+								+ "Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+						FieldError error = new FieldError(
+								"Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
 						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 					}
 		        }
@@ -515,16 +540,19 @@ public class ServiceController {
 			if (service != null) {
 				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				boolean isOwnerProvider = service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
 				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
-				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+				if (isServiceAccountOrAdministrator || isOwnerProvider) {
 					serviceManager.updateServiceImageById(id, null);
 					
 					logger.info("DeleteServiceImage - DELETE - Exiting method, providing response resource to client.");
 					return new ResponseEntity<String>(HttpStatus.OK);
 				}
 				else {
-					logger.warn(String.format("DeleteServiceImage - DELETE - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					logger.warn(String.format("DeleteServiceImage - DELETE - Request failed - "
+							+ "Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError(
+							"Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 				}
 	        }

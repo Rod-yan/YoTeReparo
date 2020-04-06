@@ -84,7 +84,8 @@ public class ServiceTypeController {
             }
             else {
             	logger.warn(String.format("GetServiceType - GET - Request failed - Service Type with id <%s> not found.", id));
-                FieldError error = new FieldError("ServiceType","error",messageSource.getMessage("serviceType.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+                FieldError error = new FieldError(
+                		"ServiceType","error",messageSource.getMessage("serviceType.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }

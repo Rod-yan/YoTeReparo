@@ -119,7 +119,8 @@ public class UserController {
             }
             else {
             	logger.warn(String.format("GetUser - GET - Request failed - User with id <%s> not found.", id));
-                FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+                FieldError error = new FieldError("User","error",
+                		messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
@@ -153,8 +154,10 @@ public class UserController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 		        }
 				else {
-					logger.warn(String.format("CreateUser - POST - Request failed - Unable to create user. User <%s> already exist.", clientInput.getId()));
-		            FieldError error = new FieldError("User","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
+					logger.warn(
+							String.format("CreateUser - POST - Request failed - Unable to create user. User <%s> already exist.", clientInput.getId()));
+		            FieldError error = new FieldError(
+		            		"User","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
 		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 				}
 			}
@@ -204,7 +207,8 @@ public class UserController {
 	        }
 			else {
 				logger.warn(String.format("UpdateUser - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
-	            FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+	            FieldError error = new FieldError(
+	            		"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -245,8 +249,10 @@ public class UserController {
 				}
 	        }
 			else {
-				logger.warn(String.format("ChangeUserPassword - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
-	            FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+				logger.warn(
+						String.format("ChangeUserPassword - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
+	            FieldError error = new FieldError(
+	            		"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -280,8 +286,10 @@ public class UserController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format("DeleteUser - DELETE - Request failed - Unable to delete user. User <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+	        	logger.warn(
+	        			String.format("DeleteUser - DELETE - Request failed - Unable to delete user. User <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError(
+	        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -335,14 +343,18 @@ public class UserController {
 					return new ResponseEntity<byte[]>(userPhoto, headers, HttpStatus.OK);
 				}
 				else {
-					logger.warn(String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. No photo was found for user <%s>.", id));
-		        	FieldError error = new FieldError("User","foto",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
+					logger.warn(
+							String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. No photo was found for user <%s>.", id));
+		        	FieldError error = new FieldError(
+		        			"User","foto",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
 		        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 				}
 	        }
 			else {
-				logger.warn(String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. User <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+				logger.warn(
+						String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. User <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError(
+	        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -378,8 +390,10 @@ public class UserController {
 					return new ResponseEntity<String>(HttpStatus.OK);
 		        }
 				else {
-					logger.warn(String.format("UpdateUserPhoto - PUT - Request failed - Unable to update user's photo. User <%s> doesn't exist.", id));
-		        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+					logger.warn(
+							String.format("UpdateUserPhoto - PUT - Request failed - Unable to update user's photo. User <%s> doesn't exist.", id));
+		        	FieldError error = new FieldError(
+		        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 				}
 			}
@@ -420,8 +434,10 @@ public class UserController {
 				return new ResponseEntity<String>(HttpStatus.OK);
 	        }
 			else {
-				logger.warn(String.format("DeleteUserPhoto - DELETE - Request failed - Unable to delete user's photo. User <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+				logger.warn(
+						String.format("DeleteUserPhoto - DELETE - Request failed - Unable to delete user's photo. User <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError(
+	        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}

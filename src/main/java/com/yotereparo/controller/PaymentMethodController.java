@@ -84,7 +84,8 @@ public class PaymentMethodController {
             }
             else {
             	logger.warn(String.format("GetPaymentMethod - GET - Request failed - Payment Method with id <%s> not found.", id));
-                FieldError error = new FieldError("PaymentMethod","error",messageSource.getMessage("paymentMethod.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+                FieldError error = new FieldError(
+                		"PaymentMethod","error",messageSource.getMessage("paymentMethod.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }

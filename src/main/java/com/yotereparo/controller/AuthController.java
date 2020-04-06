@@ -103,7 +103,8 @@ public class AuthController {
 					}
 					else {
 						logger.warn("AuthenticateUser - POST - Request failed - User is not an active user.");
-						FieldError error = new FieldError("User","error",messageSource.getMessage("user.not.active", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
+						FieldError error = new FieldError(
+								"User","error",messageSource.getMessage("user.not.active", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
 						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 					}
 				}
@@ -115,7 +116,8 @@ public class AuthController {
 			}
 			else {
 				logger.warn(String.format("AuthenticateUser - POST - Request failed - User with id <%s> not found.", loginRequest.getUsername()));
-				FieldError error = new FieldError("User","error",messageSource.getMessage("user.doesnt.exist", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
+				FieldError error = new FieldError(
+						"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
 				return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}

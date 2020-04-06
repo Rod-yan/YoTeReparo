@@ -85,7 +85,8 @@ public class CityController {
             }
             else {
             	logger.warn(String.format("GetCity - GET - Request failed - City with id <%s> not found.", id));
-                FieldError error = new FieldError("City","error",messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
+                FieldError error = new FieldError(
+                		"City","error",messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
