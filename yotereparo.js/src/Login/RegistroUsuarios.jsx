@@ -250,7 +250,7 @@ const FormRegistro = (props) => {
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
-                  CIUDAD EN LA QUE PRESTAS SERVICIO
+                  CIUDAD
                 </Label>
                 <Input
                   type="select"
