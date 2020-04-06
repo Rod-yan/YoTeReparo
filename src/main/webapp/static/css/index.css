@@ -19,7 +19,7 @@ html {
 }
 .main-section {
     height: 100%;
-    padding-top: 150px;
+    padding-top: 20px;
     text-align: center;
     background-image: linear-gradient(to bottom right, #464861, #F18B8B);
 }
@@ -27,6 +27,8 @@ html {
 	border-radius: 25px;
 	border: 4px solid #e84545;
 	padding: 20px;
+	padding-bottom: 0px;
+    padding-top: 0px;
 	color: #E1E1E1;
 	background: #191919;
 }
