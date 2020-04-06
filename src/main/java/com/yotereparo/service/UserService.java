@@ -27,4 +27,6 @@ public interface UserService {
     boolean isProvider(User user);
     
     boolean isCustomer(User user);
+    
+    boolean isServiceAccountOrAdministrator(User user);
 }

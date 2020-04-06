@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -72,12 +73,13 @@ public class UserController {
 			value = { "/users" }, 
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
 	public ResponseEntity<?> listUsers() {
 		logger.info("ListUsers - GET - Processing request for a list with all existing users.");
         try {
 			List<User> users = userService.getAllUsers();
 	        		
-			if (!users.isEmpty()) {
+			if (users != null && !users.isEmpty()) {
 				
 				List<UserDto> usersDto = users.stream()
 		                .map(user -> userConverter.convertToDto(user))
@@ -105,6 +107,7 @@ public class UserController {
 			value = { "/users/{id}" }, 
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
+	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
 	public ResponseEntity<?> getUser(@PathVariable("id") String id) {
 		logger.info(String.format("GetUser - GET - Processing request for user <%s>.", id));
         try {
@@ -131,7 +134,7 @@ public class UserController {
 	 * Crea un usuario con los valores del JSON payload recibido.
 	 */
 	@RequestMapping(
-			value = { "/users" }, 
+			value = { "/users", "/auth/signup" }, 
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.POST)
@@ -175,13 +178,13 @@ public class UserController {
 	 * Actualiza los atributos del usuario con los valores recibidos en el JSON payload. 
 	 * Si estos no se incluyen en el request body entonces se considera que se está intentando vaciar su valor. 
 	 * Esto es legal solo para atributos no mandatorios en la entidad.
-	 * La foto y el thumbnail del usuario serán ignorados por este método (Ignorados, no ilegales).
 	 */
 	@RequestMapping(
 			value = { "/users/{id}" },
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.PUT)
+	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody UserDto clientInput, BindingResult result) {
 		id = id.toLowerCase();
 		logger.info(String.format("UpdateUser - PUT - Processing request for user <%s>.", id));
@@ -265,6 +268,7 @@ public class UserController {
 			value = { "/users/{id}" }, 
 			produces = "application/json; charset=UTF-8",			
 			method = RequestMethod.DELETE)
+	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
 		id = id.toLowerCase();
 		logger.info(String.format("DeleteUser - DELETE - Processing request for user <%s>.", id));
@@ -296,6 +300,7 @@ public class UserController {
 			value = { "/users/{id}/photo", "/users/{id}/photo/thumbnail" }, 
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.GET)
+	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> getUserPhoto(@PathVariable("id") String id) {
 		id = id.toLowerCase();
 		logger.info(String.format("GetUserPhoto - GET - Processing request for user's <%s> photo.", id));
@@ -357,6 +362,7 @@ public class UserController {
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.PUT)
+	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody ObjectNode photoPayload) {
 		id = id.toLowerCase();
 		logger.info(String.format("UpdateUserPhoto - PUT - Processing request for user's <%s> photo.", id));
@@ -402,6 +408,7 @@ public class UserController {
 			value = { "/users/{id}/photo" },
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.DELETE)
+	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteUserPhoto(@PathVariable("id") String id) {
 		id = id.toLowerCase();
 		logger.info(String.format("DeleteUserPhoto - DELETE - Processing request for user's <%s> photo.", id));

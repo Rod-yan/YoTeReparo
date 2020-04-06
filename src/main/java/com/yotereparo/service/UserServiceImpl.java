@@ -353,6 +353,14 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 	
+	public boolean isServiceAccountOrAdministrator(User user) {
+		logger.debug(String.format("Verifying if user's <%s> is of type CUENTA SERVICIO or ADMINISTRADOR", user.getId()));
+		if (user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.serviceaccount")))
+		 || user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.administrator"))))
+			return true;
+		return false;
+	}
+	
 	/*
 	 *  Actualiza la foto y el thumbnail del Usuario haciendo un resize de la foto suscripta,
 	 *  Si el parámetro <foto> es nulo, eliminamos la foto y thumbnail actual del usuario.

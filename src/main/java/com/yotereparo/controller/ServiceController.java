@@ -21,6 +21,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -39,8 +42,6 @@ import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.converter.ServiceConverter;
 import com.yotereparo.controller.filter.ServiceFilter;
 import com.yotereparo.model.Service;
-import com.yotereparo.service.CityService;
-import com.yotereparo.service.PaymentMethodService;
 import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
@@ -63,10 +64,6 @@ public class ServiceController {
 	@Autowired
     UserService userService;
 	@Autowired
-    CityService cityService;
-	@Autowired
-    PaymentMethodService paymentMethodService;
-	@Autowired
     MessageSource messageSource;
 	@Autowired
 	ValidationUtils validationUtils;
@@ -84,6 +81,7 @@ public class ServiceController {
 			value = { "/services" }, 
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
 	public ResponseEntity<?> listServices(@RequestParam(required = false) Map<String,String> filters) {
 		logger.info("ListServices - GET - Processing request for a list with all existing services.");
 		try {
@@ -117,6 +115,7 @@ public class ServiceController {
 			value = { "/services/{id}" }, 
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
 	public ResponseEntity<?> getService(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetService - GET - Processing request for service <%s>.", id));
         try {
@@ -147,9 +146,17 @@ public class ServiceController {
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAuthority('USUARIO_PRESTADOR_GRATUITA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_PLATA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_ORO')"
+			+ " or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> createService(@RequestBody ServiceDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {	
 		logger.info(String.format("CreateService - POST - Processing request for service <%s>.", clientInput.getTitulo()));
 		try {
+			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+			
+			// Setteamos el usuario prestador de acuerdo al usuario autenticado que está registrando el request.
+			clientInput.setUsuarioPrestador(authenticatedUsername);
 			if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
 				Service service = serviceConverter.convertToEntity(clientInput);
 				if (!serviceManager.similarExist(service)) {
@@ -187,29 +194,32 @@ public class ServiceController {
 	 * Actualiza los atributos del servicio con los valores recibidos en el JSON payload. 
 	 * Si estos no se incluyen en el request body entonces se considera que se está intentando vaciar su valor. 
 	 * Esto es legal solo para atributos no mandatorios en la entidad.
-	 * Las imagenes del servicio seran ignoradas por este método (Ignorados, no ilegales).
 	 */
 	@RequestMapping(
 			value = { "/services/{id}" }, 
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.PUT)
+	@PreAuthorize("hasAuthority('USUARIO_PRESTADOR_GRATUITA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_PLATA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_ORO')"
+			+ " or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> updateService(@PathVariable("id") Integer id, @RequestBody ServiceDto clientInput, BindingResult result) {	
 		logger.info(String.format("UpdateService - PUT - Processing request for service <%s>.", id));
 		try {
 			clientInput.setId(id);
-			if (serviceManager.getServiceById(id) != null) {
-				if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
-					Service service = serviceConverter.convertToEntity(clientInput);
-					Boolean serviceIsRegisteredToUser = false;
-					for (Service s : service.getUsuarioPrestador().getServicios())
-						if (s.getId().equals(id)) {
-							serviceIsRegisteredToUser = true;
-							break;
-						}
-					if (serviceIsRegisteredToUser)
-						if (!serviceManager.similarExist(service)) {
-							serviceManager.updateService(service);
+			Service service = serviceManager.getServiceById(id);
+			if (service != null) {
+				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
+				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+					// Setteamos el usuario prestador del input del cliente (servicio actualizado) como el usuario prestador que es dueño del servicio a actualizar
+					clientInput.setUsuarioPrestador(service.getUsuarioPrestador().getId());
+					if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
+						Service updatedService = serviceConverter.convertToEntity(clientInput);
+						if (!serviceManager.similarExist(updatedService)) {
+							serviceManager.updateService(updatedService);
 							
 							logger.info("UpdateService - PUT - Exiting method, providing response resource to client.");
 							return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
@@ -219,15 +229,16 @@ public class ServiceController {
 				            FieldError error = new FieldError("Service","error",messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
 				            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 						}
+					}
 					else {
-						logger.warn(String.format("UpdateService - PUT - Request failed - Unable to update service. Service <%s> doesn't belong to user <%s>.", id, service.getUsuarioPrestador().getId()));
-						FieldError error = new FieldError("Service","servicios",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
-						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.BAD_REQUEST);
+						logger.warn("UpdateService - PUT - Request failed - Input validation error(s) detected.");
+						return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 					}
 				}
 				else {
-					logger.warn("UpdateService - PUT - Request failed - Input validation error(s) detected.");
-					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
+					logger.warn(String.format("UpdateService - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 				}
 	        }
 			else {
@@ -254,14 +265,29 @@ public class ServiceController {
 			value = { "/services/{id}/enable" }, 
 			produces = "application/json; charset=UTF-8",			
 			method = RequestMethod.PUT)
+	@PreAuthorize("hasAuthority('USUARIO_PRESTADOR_GRATUITA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_PLATA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_ORO')"
+			+ " or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> enableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("EnableService - PUT - Processing request for service <%s>.", id));
 		try {
-			if (serviceManager.getServiceById(id) != null) {
-				serviceManager.enableServiceById(id);
-	        	
-	        	logger.info("EnableService - PUT - Exiting method, providing response resource to client.");
-	            return new ResponseEntity<>(HttpStatus.OK);
+			Service service = serviceManager.getServiceById(id);
+			if (service != null) {
+				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
+				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+					serviceManager.enableServiceById(id);
+		        	
+		        	logger.info("EnableService - PUT - Exiting method, providing response resource to client.");
+		            return new ResponseEntity<>(HttpStatus.OK);
+				}
+				else {
+					logger.warn(String.format("EnableService - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+				}
 	        }
 	        else {
 	        	logger.warn(String.format("EnableService - PUT - Request failed - Unable to enable service. Service <%s> doesn't exist.", id));
@@ -283,14 +309,29 @@ public class ServiceController {
 			value = { "/services/{id}/disable" }, 
 			produces = "application/json; charset=UTF-8",			
 			method = RequestMethod.PUT)
+	@PreAuthorize("hasAuthority('USUARIO_PRESTADOR_GRATUITA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_PLATA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_ORO')"
+			+ " or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> disableService(@PathVariable("id") Integer id) {
 		logger.info(String.format("DisableService - PUT - Processing request for service <%s>.", id));
 		try {
-			if (serviceManager.getServiceById(id) != null) {
-				serviceManager.disableServiceById(id);
-	        	
-	        	logger.info("DisableService - PUT - Exiting method, providing response resource to client.");
-	            return new ResponseEntity<>(HttpStatus.OK);
+			Service service = serviceManager.getServiceById(id);
+			if (service != null) {
+				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
+				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+					serviceManager.disableServiceById(id);
+		        	
+		        	logger.info("DisableService - PUT - Exiting method, providing response resource to client.");
+		            return new ResponseEntity<>(HttpStatus.OK);
+				}
+				else {
+					logger.warn(String.format("DisableService - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+				}
 	        }
 	        else {
 	        	logger.warn(String.format("DisableService - PUT - Request failed - Unable to disable service. Service <%s> doesn't exist.", id));
@@ -312,6 +353,7 @@ public class ServiceController {
 			value = { "/services/{id}" }, 
 			produces = "application/json; charset=UTF-8",			
 			method = RequestMethod.DELETE)
+	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteService(@PathVariable("id") Integer id) {
 		logger.info(String.format("DeleteService - DELETE - Processing request for service <%s>.", id));
 		try {
@@ -342,11 +384,12 @@ public class ServiceController {
 			value = { "/services/{id}/photo", "/services/{id}/photo/thumbnail" }, 
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> getServiceImage(@PathVariable("id") Integer id) {
 		logger.info(String.format("GetServiceImage - GET - Processing request for service's <%s> image.", id));
 		try {
 			Service service = serviceManager.getServiceById(id);
-			if (service != null) {			
+			if (service != null) {
 				// evaluamos el uri path del request para determinar si vamos a estar trabajando con la foto o con el thumbnail
 				String requestUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
 				byte[] serviceImage;
@@ -402,6 +445,10 @@ public class ServiceController {
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.PUT)
+	@PreAuthorize("hasAuthority('USUARIO_PRESTADOR_GRATUITA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_PLATA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_ORO')"
+			+ " or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> updateServiceImage(@PathVariable("id") Integer id, @RequestBody ObjectNode photoPayload) {
 		logger.info(String.format("UpdateServiceImage - PUT - Processing request for service's <%s> image.", id));
 		// parseamos el json object recibido y generamos el byte array validando la estructura del request al mismo tiempo.
@@ -409,11 +456,22 @@ public class ServiceController {
 			JsonNode jsonPhotoPayload = photoPayload.get("foto");
 			if (jsonPhotoPayload != null) {
 				byte[] b64photo = jsonPhotoPayload.asText().getBytes();
-				if (serviceManager.getServiceById(id) != null) {
-					serviceManager.updateServiceImageById(id, Base64.getDecoder().decode(b64photo));
-					
-					logger.info("UpdateServiceImage - PUT - Exiting method, providing response resource to client.");
-					return new ResponseEntity<String>(HttpStatus.OK);
+				Service service = serviceManager.getServiceById(id);
+				if (service != null) {
+					String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+					boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+					// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
+					if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+						serviceManager.updateServiceImageById(id, Base64.getDecoder().decode(b64photo));
+						
+						logger.info("UpdateServiceImage - PUT - Exiting method, providing response resource to client.");
+						return new ResponseEntity<String>(HttpStatus.OK);
+					}
+					else {
+						logger.warn(String.format("UpdateServiceImage - PUT - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+						FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+					}
 		        }
 				else {
 					logger.warn(String.format("UpdateServiceImage - PUT - Request failed - Unable to update service's image. Service <%s> doesn't exist.", id));
@@ -446,14 +504,29 @@ public class ServiceController {
 			value = { "/services/{id}/photo" },
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.DELETE)
+	@PreAuthorize("hasAuthority('USUARIO_PRESTADOR_GRATUITA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_PLATA')"
+			+ " or hasAuthority('USUARIO_PRESTADOR_ORO')"
+			+ " or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteServiceImage(@PathVariable("id") Integer id) {
 		logger.info(String.format("DeleteServiceImage - DELETE - Processing request for service's <%s> image.", id));
 		try {
-			if (serviceManager.getServiceById(id) != null) {
-				serviceManager.updateServiceImageById(id, null);
-				
-				logger.info("DeleteServiceImage - DELETE - Exiting method, providing response resource to client.");
-				return new ResponseEntity<String>(HttpStatus.OK);
+			Service service = serviceManager.getServiceById(id);
+			if (service != null) {
+				String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				// Verificamos que el servicio siendo procesado le pertenezca al usuario autenticado
+				if (isServiceAccountOrAdministrator || service.getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername)) {
+					serviceManager.updateServiceImageById(id, null);
+					
+					logger.info("DeleteServiceImage - DELETE - Exiting method, providing response resource to client.");
+					return new ResponseEntity<String>(HttpStatus.OK);
+				}
+				else {
+					logger.warn(String.format("DeleteServiceImage - DELETE - Request failed - Service <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+					FieldError error = new FieldError("Service","error",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+				}
 	        }
 			else {
 				logger.warn(String.format("DeleteServiceImage - DELETE - Request failed - Unable to delete service's image. Service <%s> doesn't exist.", id));

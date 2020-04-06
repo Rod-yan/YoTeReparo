@@ -24,7 +24,7 @@ public class ServiceDto {
 	@JsonProperty(access = Access.READ_ONLY)
 	private Integer id;
 	
-	@NotEmpty(message = "{service.usuarioPrestador.not.empty}")
+	@JsonProperty(access = Access.READ_ONLY)
 	private String usuarioPrestador;
 	
 	@NotEmpty(message = "{service.titulo.not.empty}")
@@ -101,7 +101,8 @@ public class ServiceDto {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
+	
+	@JsonIgnore
 	public String getUsuarioPrestador() {
 		return usuarioPrestador;
 	}

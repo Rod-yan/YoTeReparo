@@ -23,7 +23,7 @@ public class QuoteDto {
 	@NotNull(message = "{quote.servicio.not.null}")
 	private Integer servicio;
 	
-	@NotEmpty(message = "{quote.usuarioFinal.not.null}")
+	@JsonProperty(access = Access.READ_ONLY)
 	private String usuarioFinal;
 	
 	@Size(max = 255, message = "{quote.descripcionSolicitud.too.long}")
@@ -77,6 +77,7 @@ public class QuoteDto {
 		this.servicio = servicio;
 	}
 
+	@JsonIgnore
 	public String getUsuarioFinal() {
 		return usuarioFinal;
 	}
