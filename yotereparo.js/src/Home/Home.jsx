@@ -4,12 +4,12 @@ import "../Home/Home.css";
 import CardContent from "../Container/CardContent";
 
 const descriptionServices = (
-  <div>
-    ¿Querés publicar tus servicios profesionales en tu zona <strong>fácilmente y sin complicaciones</strong>?
+  <div align="center">
+    ¿Querés contratar o publicar servicios profesionales en tu zona <strong>fácilmente y sin complicaciones</strong>?
   </div>
 );
 const descriptionHelp = (
-  <div>
+  <div align="center">
 	¿Necesitas encontrar una solución <strong>rápida y accesible</strong> a tus problemas del hogar?
   </div>
 );
