@@ -1,27 +1,18 @@
 import React from "react";
-import ElementContainer from "../Container/ElementContainer";
 import SingleServicio from "./SingleServicio";
+import Loading from "../Loading/Loading";
+import ResourceNotFound from "../Errors/ResourceNotFound";
 
-const ListaServicios = props => {
+const ListaServicios = (props) => {
   if (props.data.loading) {
     return (
-      <ElementContainer>
-        <div>
-          <div className="col d-flex justify-content-center">
-            <div className="cover-screen">
-              Cargando la lista de servicios, por favor espera...
-            </div>
-          </div>
-        </div>
-      </ElementContainer>
+      <Loading loadingMessage="Cargando la lista de servicios, por favor espera..."></Loading>
     );
   }
   return (
     <>
       {props.data.users === undefined ? (
-        <div className="col d-flex justify-content-center">
-          <div className="cover-screen">No hay resultados.</div>
-        </div>
+        <ResourceNotFound errorMessage="No hay resultados."></ResourceNotFound>
       ) : (
         <div>
           {props.data.users.map((item, i) => (

@@ -11,6 +11,8 @@ import { intersect } from "../Utils/ArrayUtils";
 import { processErrors } from "../Utils/Errors";
 import Axios from "axios";
 import { useRef } from "react";
+import Errors from "../Errors/Errors";
+import { useHistory } from "react-router-dom";
 
 // -> GET: /YoTeReparo/requirements
 // -> GET: /YoTeReparo/requirements/{id}
@@ -34,7 +36,7 @@ const CrearServicio = (props) => {
   const [emitirFactura, setEmitirFactura] = useState(false);
   const refRequerimientos = useRef([React.createRef()]);
   const refMediosDePago = useRef([React.createRef()]);
-
+  const history = useHistory();
   const session = useContext(SessionContext);
 
   //We use this object in the handleSubmit in order to cross over all the data
@@ -101,12 +103,10 @@ const CrearServicio = (props) => {
       requestConfig
     )
       .then((response) => {
-        console.log(response.status);
         if (response.status === 400) {
           console.log(response.json);
         } else {
-          console.log(response.data);
-          window.history.push({
+          history.push({
             pathname: "/buscar",
             state: { service: requestService },
           });
@@ -138,9 +138,9 @@ const CrearServicio = (props) => {
     var elements = document.getElementsByTagName("input");
 
     for (var ii = 0; ii < elements.length; ii++) {
-      if (elements[ii].type == "text") {
+      if (elements[ii].type === "text") {
         elements[ii].value = "";
-      } else if (elements[ii].type == "number") {
+      } else if (elements[ii].type === "number") {
         elements[ii].value = 0;
       }
     }
@@ -215,20 +215,7 @@ const CrearServicio = (props) => {
                 </Button>
               </div>
             </div>
-            {formErrors.errors.length >= 1 ? (
-              <div className="errors-list">
-                {formErrors.errors.map((error, i) => (
-                  <p key={i} className="font-weight-light">
-                    <span className="fa-stack fa-1x">
-                      <i className={`fas fa-times fa-stack-1x`}></i>
-                    </span>{" "}
-                    {error.message}
-                  </p>
-                ))}
-              </div>
-            ) : (
-              <></>
-            )}
+            <Errors formErrors={formErrors}></Errors>
             <Form onSubmit={handleSubmit}>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="titulo" className="mr-sm-2 font-weight-bold">
@@ -405,15 +392,26 @@ const CrearServicio = (props) => {
                 </Input>
               </FormGroup>
               <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-2">
-                <Label
-                  for="facturaEmitida"
-                  className="mr-sm-2 font-weight-bold"
-                >
-                  MEDIOS DE PAGO
-                </Label>
-                <Button size="sm" color="link" onClick={clearMediosDePago}>
-                  Limpiar Seleccion
-                </Button>
+                <div className="row">
+                  <div className="col-6">
+                    <div className="float-left">
+                      <Label for="titulo" className="mr-sm-2 font-weight-bold">
+                        MEDIOS DE PAGO
+                      </Label>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <div className="float-right">
+                      <Button
+                        size="sm"
+                        color="link"
+                        onClick={clearMediosDePago}
+                      >
+                        Limpiar Seleccion
+                      </Button>
+                    </div>
+                  </div>
+                </div>
                 <Input
                   type="select"
                   multiple
@@ -435,12 +433,27 @@ const CrearServicio = (props) => {
                 </Input>
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                <Label for="titulo" className="mr-sm-2 font-weight-bold">
-                  REQUERIMIENTOS ADICIONALES DEL SERVICIO
-                </Label>
-                <Button size="sm" color="link" onClick={clearRequerimientos}>
-                  Limpiar Seleccion
-                </Button>
+                <div className="row">
+                  <div className="col-6 ">
+                    <div className="float-left">
+                      <Label for="titulo" className="mr-sm-2 font-weight-bold">
+                        REQUERIMIENTOS ADICIONALES
+                      </Label>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <div className="float-right">
+                      <Button
+                        size="sm"
+                        color="link"
+                        onClick={clearRequerimientos}
+                      >
+                        Limpiar Seleccion
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
                 <Input
                   type="select"
                   multiple

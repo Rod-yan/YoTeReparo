@@ -1,6 +1,5 @@
 import * as React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import { InputField } from "../Utils/InputField";
 import { useContext } from "react";
 import { ProfileContext, SessionContext } from "../Utils/SessionManage";
 import { useEffect } from "react";
@@ -8,6 +7,9 @@ import { useRef } from "react";
 import Axios from "axios";
 import { useState } from "react";
 import { toDataURL } from "../Utils/Images";
+import ProfilePicture from "./ProfilePicture";
+import ProfileInformation from "./ProfileInformation";
+import Loading from "../Loading/Loading";
 
 function Usuario(props) {
   const session = useContext(SessionContext);
@@ -15,6 +17,7 @@ function Usuario(props) {
   const fileUploader = useRef(null);
   const profilePicture = useRef(null);
   const [changePicture, updateProfilePicture] = useState(0);
+  const [pictureLoading, setPictureLoading] = useState(true);
   const [userPicture, setUserPicture] = useState(
     "https://api.adorable.io/avatars/216/yotereparo"
   );
@@ -87,54 +90,18 @@ function Usuario(props) {
               requestConfig
             ).then((dataUrl) => {
               setUserPicture(dataUrl);
+              setPictureLoading(false);
             });
           }
         })
         .catch((error) => {
           console.error(error);
           setUserPicture("https://api.adorable.io/avatars/216/yotereparo");
+          setPictureLoading(false);
         });
     };
     fetchData();
   }, [profile.id, changePicture, updateProfilePicture]);
-
-  const ButtonSave = () => {
-    if (props.updatingUser) {
-      return (
-        <button
-          type="button"
-          className="btn btn-success btn-block"
-          onClick={props.activateSave}
-        >
-          <div className="spinner-border" role="status">
-            <span className="sr-only">Creando Usuario...</span>
-          </div>
-        </button>
-      );
-    } else {
-      if (!props.modify) {
-        return (
-          <button
-            type="button"
-            className="btn btn-success btn-block"
-            onClick={props.activateSave}
-          >
-            <i className="fas fa-save fa-2x"></i>
-          </button>
-        );
-      } else {
-        return (
-          <button
-            type="button"
-            className="btn btn-danger btn-block"
-            onClick={props.activateEdit}
-          >
-            <i className="fas fa-user-edit fa-2x"></i>
-          </button>
-        );
-      }
-    }
-  };
 
   const updatePicture = (event) => {
     var file = event.target.files[0];
@@ -165,6 +132,7 @@ function Usuario(props) {
               requestConfig
             ).then((dataUrl) => {
               setUserPicture(dataUrl);
+              setPictureLoading(false);
             });
           }
         })
@@ -178,87 +146,40 @@ function Usuario(props) {
   };
 
   return (
-    <ElementContainer>
-      <div className="d-flex align-items-center mx-auto">
-        <div className="row">
-          <div className="col-xs-12">
+    <>
+      {pictureLoading ? (
+        <Loading loadingMessage="Cargando la informacion del usuario..."></Loading>
+      ) : (
+        <ElementContainer>
+          <div className="d-flex align-items-center mx-auto">
             <div className="row">
-              <div className="col-12">
-                <div className="card mb-2">
-                  <div className="card card-element">
-                    <div className="row no-gutters">
-                      <div className="col-md-4 my-auto">
-                        <img
-                          src={userPicture}
-                          className="card-img img-thumbnail rounded-circle on-profile-click"
-                          alt="placeholder"
-                          key={Date.now()}
-                          ref={profilePicture}
-                          onClick={() => fileUploader.current.click()}
-                        ></img>
-                        <input
-                          type="file"
-                          name="file"
-                          accept="image/*"
-                          ref={fileUploader}
-                          onChange={updatePicture}
-                          hidden
-                        ></input>
-                      </div>
-                      <div className="col-md-8 text-right">
-                        <div className="card-body">
-                          <div className="row">
-                            <div className="col-md-12">
-                              <h5>
-                                {profile.roles?.map((rol) => {
-                                  return (
-                                    <span
-                                      key={rol.id}
-                                      className="badge badge-pill badge-danger mt-1 mb-1 mr-1 ml-1"
-                                    >
-                                      {rol.descripcion.toUpperCase()}
-                                    </span>
-                                  );
-                                })}
-                              </h5>
-                              <InputField
-                                fieldTitle="Username"
-                                fieldValue={profile.id}
-                                fieldActivate={true}
-                                fieldChange={handleChange}
-                                fieldId={"id"}
-                              ></InputField>
-                              <div className="card-text">
-                                <InputField
-                                  fieldTitle="Email"
-                                  fieldValue={profile.email}
-                                  fieldActivate={true}
-                                  fieldChange={handleChange}
-                                  fieldId={"email"}
-                                ></InputField>
-                                <InputField
-                                  fieldTitle="Nombre"
-                                  fieldValue={profile.nombre}
-                                  fieldActivate={props.modify}
-                                  fieldChange={handleChange}
-                                  fieldId={"nombre"}
-                                ></InputField>
-                                <InputField
-                                  fieldTitle="Apellido"
-                                  fieldValue={profile.apellido}
-                                  fieldActivate={props.modify}
-                                  fieldChange={handleChange}
-                                  fieldId={"apellido"}
-                                ></InputField>
-                                <InputField
-                                  fieldTitle="Ciudad"
-                                  fieldValue={profile.ciudad}
-                                  fieldActivate={true}
-                                  fieldChange={handleChange}
-                                  fieldId={"ciudad"}
-                                ></InputField>
-                                <div className="text-center">
-                                  {<ButtonSave></ButtonSave>}
+              <div className="col-xs-12">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="card mb-2">
+                      <div className="card card-element">
+                        <div className="row no-gutters">
+                          <div className="col-md-4 my-auto">
+                            <ProfilePicture
+                              userPicture={userPicture}
+                              callbackClick={() => fileUploader.current.click()}
+                              profilePicture={profilePicture}
+                              fileUploader={fileUploader}
+                              updatePicture={updatePicture}
+                            ></ProfilePicture>
+                          </div>
+                          <div className="col-md-8 text-right">
+                            <div className="card-body">
+                              <div className="row">
+                                <div className="col-md-12">
+                                  <ProfileInformation
+                                    profile={profile}
+                                    handleChange={handleChange}
+                                    modify={props.modify}
+                                    modifyAddress={props.modifyAddress}
+                                    activateSave={props.activateSave}
+                                    activateEdit={props.activateEdit}
+                                  ></ProfileInformation>
                                 </div>
                               </div>
                             </div>
@@ -271,9 +192,9 @@ function Usuario(props) {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </ElementContainer>
+        </ElementContainer>
+      )}
+    </>
   );
 }
 

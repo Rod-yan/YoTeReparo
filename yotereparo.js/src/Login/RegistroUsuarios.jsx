@@ -19,6 +19,7 @@ import { validateEmail, validatePassword } from "../Utils/Security";
 import { deleteSessionCookie } from "../Utils/SessionManage";
 import { processErrors } from "../Utils/Errors";
 import { intersect } from "../Utils/ArrayUtils";
+import Errors from "../Errors/Errors";
 
 const FormRegistro = (props) => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
@@ -217,20 +218,7 @@ const FormRegistro = (props) => {
                 )}
               </div>
             </div>
-            {formErrors.errors.length >= 1 ? (
-              <div className="errors-list">
-                {formErrors.errors.map((error, i) => (
-                  <p key={i} className="font-weight-light">
-                    <span className="fa-stack fa-1x">
-                      <i className={`fas fa-times fa-stack-1x`}></i>
-                    </span>{" "}
-                    {error.message}
-                  </p>
-                ))}
-              </div>
-            ) : (
-              <></>
-            )}
+            <Errors formErrors={formErrors}></Errors>
             <Form onSubmit={handleSubmit}>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="nombreLabel" className="mr-sm-2 font-weight-bold">

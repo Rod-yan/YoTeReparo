@@ -1,21 +1,21 @@
+import "./App.css";
 import React, { useState, useEffect } from "react";
+import { getSessionCookie, SessionContext } from "./Utils/SessionManage";
+import { Router, Switch, Route, Link } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import { LoginHandler, LogOutHandler } from "./Utils/SessionHandlers";
+import Container from "./Container/Container";
+import Servicio from "./Servicios/Servicio";
 import Home from "./Home/Home";
 import About from "./About/About";
+import CrearServicio from "./Servicios/CrearServicio";
 import Header from "./Header/Header";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import "./App.css";
-import Container from "./Container/Container";
 import SelectorDeCategorias from "./Login/SelectorDeCategorias";
+import TourUser from "./Tour/TourUser";
 import FormRegistro from "./Login/RegistroUsuarios";
 import EncontrarServicios from "./Find/EncontrarServicios";
-import TourUser from "./Tour/TourUser";
-import TourService from "./Tour/TourService";
 import PerfilUsuario from "./Usuarios/PerfilUsuario";
-import { createBrowserHistory } from "history";
-import Servicio from "./Servicios/Servicio";
-import { LoginHandler, LogOutHandler, NoMatch } from "./Utils/SessionHandlers";
-import CrearServicio from "./Servicios/CrearServicio";
-import { getSessionCookie, SessionContext } from "./Utils/SessionManage";
+import { NoMatch } from "./Errors/NoMatch";
 
 function App() {
   const history = createBrowserHistory();
@@ -87,7 +87,7 @@ function App() {
 
             <Route
               path="/perfil/:userId"
-              render={props => (
+              render={(props) => (
                 <Container>
                   <PerfilUsuario {...props} />
                 </Container>
@@ -95,7 +95,7 @@ function App() {
             />
             <Route
               path="/buscar"
-              render={props => (
+              render={(props) => (
                 <Container>
                   <EncontrarServicios {...props}></EncontrarServicios>
                 </Container>
@@ -104,7 +104,7 @@ function App() {
 
             <Route
               path="/servicio/crear"
-              render={props => (
+              render={(props) => (
                 <Container>
                   <CrearServicio {...props}></CrearServicio>
                 </Container>
@@ -113,7 +113,7 @@ function App() {
 
             <Route
               path="/servicio/:id"
-              render={props => (
+              render={(props) => (
                 <Container>
                   <Servicio {...props}></Servicio>
                 </Container>
@@ -141,12 +141,6 @@ function App() {
             <Route path="/tour">
               <Container>
                 <TourUser />
-              </Container>
-            </Route>
-
-            <Route path="/tourService">
-              <Container>
-                <TourService />
               </Container>
             </Route>
 

@@ -1,6 +1,4 @@
 import React from "react";
-import ElementContainer from "../Container/ElementContainer";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState, useContext } from "react";
 import Axios from "axios";
 import { useEffect } from "react";
@@ -8,12 +6,17 @@ import { SessionContext, ProfileContext } from "../Utils/SessionManage";
 import "../Usuarios/PerfilUsuario.css";
 import Usuario from "./Usuario";
 import { useHistory } from "react-router-dom";
+import Loading from "../Loading/Loading";
+import NotAuth from "../Errors/NotAuth";
+import Direcciones from "../Servicios/Direcciones";
+import ConfirmPassword from "./ConfirmPassword";
 
 //TODO: Add CRUD for address and neighbours if the user is prestador
+//TODO: Validate token expired
 
 function PerfilUsuario(props) {
+  const history = useHistory();
   const session = useContext(SessionContext);
-  let history = useHistory();
   const [profile, setProfile] = useState({});
   const [password, setPassword] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,17 +24,35 @@ function PerfilUsuario(props) {
   const [auth, setAuth] = useState(true);
   const [modify, activateModify] = useState(true);
   const [modal, setModal] = useState(false);
-  const [loadingUser, setLoadingUser] = useState(false);
+  const [address, setAddress] = useState(false);
   const [errors, setErrors] = useState(false);
+  const [errorAddress, setAddressError] = useState(false);
+  const [modifyAddressFields, setModifyAddress] = useState(true);
+
+  const [newAddress, setNewAddress] = useState({
+    calle: 0,
+    altura: 0,
+    piso: 0,
+    departamento: "No definido",
+    descripcion: "No definido",
+  });
+
+  const onChangeNewAddress = (event) => {
+    setNewAddress({ ...newAddress, [event.target.id]: event.target.value });
+  };
 
   const toggle = () => {
     setModal(!modal);
     setErrors(false);
   };
 
-  const securityToken = !session.security
-    ? props.history.push("/ingresar")
-    : false;
+  const toggleAddress = () => {
+    setAddress(!address);
+  };
+
+  if (!session.security) {
+    props.history.push("/ingresar");
+  }
 
   let requestConfig = {
     headers: {
@@ -44,7 +65,6 @@ function PerfilUsuario(props) {
     //TODO: Validate password for the user
     let result;
     try {
-      setLoadingUser(true);
       await Axios.post(
         `http://localhost:8080/YoTeReparo/auth/signin`,
         {
@@ -54,7 +74,7 @@ function PerfilUsuario(props) {
         requestConfig
       )
         .then((response) => {
-          console.log(response);
+          console.log("INFO: Usuario validado correctamente");
           result = response;
         })
         .catch((error) => {
@@ -65,21 +85,20 @@ function PerfilUsuario(props) {
     }
 
     if (result.status >= 400 && result.status <= 500) {
-      // setLoadingUser(false);
       setErrors(true);
     }
 
     if (typeof result == "undefined") {
-      // setLoadingUser(false);
       setErrors(true);
     }
 
     if (result.data && result.status === 200) {
       updateProfile();
-      handleActivateModifications();
+      activateModify(true);
+      setModifyAddress(true);
+      setAddress(false);
       toggle();
     } else {
-      // setLoadingUser(false);
       setErrors(true);
     }
   };
@@ -92,6 +111,12 @@ function PerfilUsuario(props) {
       ciudad: profile.ciudad,
       barrios: profile.barrios,
       email: profile.email,
+      direcciones:
+        profile.direcciones.length > 0
+          ? profile.direcciones
+          : newAddress.altura === 0
+          ? []
+          : [newAddress],
       contrasena: password,
       membresia: profile.membresia,
     };
@@ -101,6 +126,12 @@ function PerfilUsuario(props) {
       nombre: profile.nombre,
       apellido: profile.apellido,
       ciudad: profile.ciudad,
+      direcciones:
+        profile.direcciones.length > 0
+          ? profile.direcciones
+          : newAddress.altura === 0
+          ? []
+          : [newAddress],
       email: profile.email,
       contrasena: password,
     };
@@ -133,6 +164,10 @@ function PerfilUsuario(props) {
           "ERROR: There is a problem with the update of an User" + error
         );
       });
+  };
+
+  const updateAddress = (event) => {
+    profile.direcciones[0][event.target.id] = event.target.value;
   };
 
   const handleActivateModifications = () => {
@@ -191,90 +226,56 @@ function PerfilUsuario(props) {
   }
 
   if (loading) {
-    return (
-      <ElementContainer>
-        <div>
-          <div className="col d-flex justify-content-center">
-            <div className="cover-screen">Cargando, por favor espera...</div>
-          </div>
-        </div>
-      </ElementContainer>
-    );
+    return <Loading loadingMessage="Cargando, por favor espera..."></Loading>;
   } else if (auth === false) {
-    return (
-      <ElementContainer>
-        <>
-          <div className="col d-flex justify-content-center">
-            <div className="cover-screen">
-              No estas autorizado para ver esta pagina
-            </div>
-          </div>
-        </>
-      </ElementContainer>
-    );
+    return <NotAuth></NotAuth>;
   }
+
   return (
     <>
-      <div>
-        <Modal isOpen={modal} toggle={toggle}>
-          <ModalHeader toggle={toggle}>
-            {" "}
-            ¿Estas seguro que deseas confirmar tus cambios?
-          </ModalHeader>
-          <ModalBody>
-            {errors ? (
-              <ElementContainer>
-                <div>
-                  <div className="col d-flex justify-content-center">
-                    <div className="cover-screen">
-                      La contraseña que estas intentando ingresar caduco o no es
-                      valida
-                    </div>
-                  </div>
-                </div>
-              </ElementContainer>
-            ) : (
-              <input
-                type="password"
-                placeholder="Ingresa tu contraseña de usuario"
-                className="form-control btn-block"
-                onChange={(event) => setPassword(event.target.value)}
-                required
-              />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={validatePassword}>
-              Confirmar
-            </Button>{" "}
-            <Button color="secondary" onClick={toggle}>
-              Cerrar
-            </Button>
-          </ModalFooter>
-        </Modal>
-      </div>
-      {profile === undefined || auth === false ? (
-        <ElementContainer>
-          <div>
-            <div className="col d-flex justify-content-center">
-              <div className="cover-screen">
-                No existe ese nombre de usuario y/o no estas autorizado a ver
-                esta pantalla.
-              </div>
-            </div>
-          </div>
-        </ElementContainer>
+      {loading ? (
+        <Loading loadingMessage="Cargando, por favor espera..."></Loading>
       ) : (
-        <ProfileContext.Provider value={profile}>
-          <Usuario
-            modify={modify}
-            updatingUser={updating}
-            activateEdit={() => handleActivateModifications()}
-            activateSave={() => {
-              toggle();
-            }}
-          ></Usuario>
-        </ProfileContext.Provider>
+        <>
+          <ConfirmPassword
+            toggle={toggle}
+            modal={modal}
+            profile={profile}
+            errors={errors}
+            validatePassword={validatePassword}
+            onChange={(event) => setPassword(event.target.value)}
+          ></ConfirmPassword>
+          <Direcciones
+            address={address}
+            toggleAddress={toggleAddress}
+            errors={errorAddress}
+            addressModify={modifyAddressFields}
+            profile={profile}
+            handleChange={updateAddress}
+            onChangeNewAddress={onChangeNewAddress}
+            CreateCallback={() =>
+              modifyAddressFields == false ? toggle() : toggleAddress()
+            }
+            ModifyOne={() => setModifyAddress(!modifyAddressFields)}
+          ></Direcciones>
+          {profile === undefined || auth === false ? (
+            <NotAuth></NotAuth>
+          ) : (
+            <ProfileContext.Provider value={profile}>
+              <Usuario
+                modify={modify}
+                updatingUser={updating}
+                activateEdit={() => handleActivateModifications()}
+                activateSave={() => {
+                  toggle();
+                }}
+                modifyAddress={() => {
+                  setAddress(!address);
+                }}
+              ></Usuario>
+            </ProfileContext.Provider>
+          )}
+        </>
       )}
     </>
   );

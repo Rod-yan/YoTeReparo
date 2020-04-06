@@ -2,14 +2,16 @@ import React from "react";
 import ElementContainer from "../Container/ElementContainer";
 import { useLocation, useHistory } from "react-router-dom";
 import { useState } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import "../Servicios/Servicios.css";
 import { useEffect } from "react";
 import Axios from "axios";
 import { useContext } from "react";
 import { SessionContext } from "../Utils/SessionManage";
+import ResourceNotFound from "../Errors/ResourceNotFound";
+import Loading from "../Loading/Loading";
+import ModalServicio from "./ModalServicio";
 
-const Servicio = props => {
+const Servicio = (props) => {
   let location = useLocation();
   let history = useHistory();
   let session = useContext(SessionContext);
@@ -27,30 +29,30 @@ const Servicio = props => {
         provider: location.state.provider,
         avaliable: location.state.avaliable,
         estimateTime: location.state.estimateTime,
-        averagePrice: location.state.averagePrice
+        averagePrice: location.state.averagePrice,
       });
       setLoading(false);
     } else {
-      const fetchData = async urlToFetch => {
+      const fetchData = async (urlToFetch) => {
         let requestConfig = {
           headers: {
             "Access-Control-Allow-Origin": "*",
-            Authorization: "Bearer " + session.token
-          }
+            Authorization: "Bearer " + session.security.accessToken,
+          },
         };
 
         const result = await Axios(urlToFetch, requestConfig)
-          .then(resp => {
+          .then((resp) => {
             return resp;
           })
-          .catch(error => {
+          .catch((error) => {
             return error;
           });
         return result;
       };
       fetchData(
         `http://localhost:8080/YoTeReparo/services/${props.match.params.id}`
-      ).then(resp => {
+      ).then((resp) => {
         setLoading(false);
         if (resp.response != null) {
           setErrors(resp.response.data);
@@ -62,7 +64,7 @@ const Servicio = props => {
             provider: resp.data.usuarioPrestador,
             avaliable: resp.data.disponibilidad,
             estimateTime: resp.data.horasEstimadasEjecucion,
-            averagePrice: resp.data.precioPromedio
+            averagePrice: resp.data.precioPromedio,
           });
         }
       });
@@ -77,24 +79,14 @@ const Servicio = props => {
 
   if (errorValidation != null) {
     return (
-      <ElementContainer>
-        <div>
-          <div className="col d-flex justify-content-center">
-            <div className="cover-screen">{errorValidation.defaultMessage}</div>
-          </div>
-        </div>
-      </ElementContainer>
+      <ResourceNotFound
+        errorMessage={errorValidation.defaultMessage}
+      ></ResourceNotFound>
     );
   } else {
     if (loading) {
       return (
-        <ElementContainer>
-          <div>
-            <div className="col d-flex justify-content-center">
-              <div className="cover-screen">Cargando, por favor espera...</div>
-            </div>
-          </div>
-        </ElementContainer>
+        <Loading loadingMessage="Cargando el servicio. Por favor espera."></Loading>
       );
     } else {
       return (
@@ -153,47 +145,11 @@ const Servicio = props => {
               </div>
             </div>
           </ElementContainer>
-          <Modal isOpen={modal} toggle={toggle} size="xl">
-            <ModalHeader toggle={toggle}>{properties.title}</ModalHeader>
-            <ModalBody>
-              El servicio que esta por contratar no se relaciona directamente
-              con nuestra organizacion. Te pedimos por favor, que denuncies todo
-              usuario que no cumple con las normas de YoTeReparo.com para el
-              bien tuyo y de la comunidad.
-              <div className="table-responsive mt-4">
-                <table className="table">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th scope="col">Nombre del servicio</th>
-                      <th scope="col">Descripcion del servicio</th>
-                      <th scope="col">Proveedor</th>
-                      <th scope="col">Disponiblidad</th>
-                      <th scope="col">Tiempo Estimado</th>
-                      <th scope="col">Precio Promedio</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">{properties.title}</th>
-                      <td>{properties.body}</td>
-                      <td>{properties.provider}</td>
-                      <td>{properties.avaliable}</td>
-                      <td>{properties.estimateTime}</td>
-                      <td>{properties.averagePrice}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" onClick={toggle}>
-                PEDIR PRESUPUESTO
-              </Button>{" "}
-              <Button color="info" onClick={toggle}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Modal>
+          <ModalServicio
+            toggle={toggle}
+            modal={modal}
+            properties={properties}
+          ></ModalServicio>
         </>
       );
     }

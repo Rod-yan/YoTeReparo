@@ -1,34 +1,9 @@
-import { setSessionCokie, deleteSessionCookie } from "./SessionManage";
 import React, { useState, useEffect } from "react";
+import { setSessionCokie, deleteSessionCookie } from "./SessionManage";
 import Container from "../Container/Container";
 import ElementContainer from "../Container/ElementContainer";
 import { Button } from "reactstrap";
-import { useLocation } from "react-router-dom";
 import Axios from "axios";
-
-export const NoMatch = () => {
-  let location = useLocation();
-
-  return (
-    <>
-      {" "}
-      <ElementContainer>
-        <div className="card-center-form d-flex align-items-center mx-auto">
-          <div className="row">
-            <div className="col-xs-12">
-              Donde sea que estes yendo, este no es el camino.
-              <br></br>
-              <br></br>
-              <code>
-                <strong>{location.pathname}</strong>
-              </code>
-            </div>
-          </div>
-        </div>
-      </ElementContainer>
-    </>
-  );
-};
 
 export const LoginHandler = ({ history }) => {
   const [username, setUsername] = useState("");
@@ -56,7 +31,7 @@ export const LoginHandler = ({ history }) => {
         requestConfig
       )
         .then((response) => {
-          console.log(response);
+          console.log("INFO: Usuario correctamente autorizado");
           result = response;
         })
         .catch((error) => {
@@ -161,7 +136,7 @@ export const LogOutHandler = ({ history }) => {
     window.location.reload();
   }, [history]);
 
-  return <div>Has salido de la aplicación</div>;
+  return <></>;
 };
 
 export const fetchData = async (urlToFetch, callback) => {
