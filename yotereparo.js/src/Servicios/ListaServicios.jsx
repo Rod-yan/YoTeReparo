@@ -16,7 +16,7 @@ const ListaServicios = (props) => {
       ) : (
         <div>
           {props.data.users.map((item, i) => (
-            <div key={i}>
+            <div className="text-center" key={i}>
               <SingleServicio data={item}></SingleServicio>
             </div>
           ))}

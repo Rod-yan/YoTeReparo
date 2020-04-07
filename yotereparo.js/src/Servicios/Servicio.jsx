@@ -12,10 +12,9 @@ import Loading from "../Loading/Loading";
 import ModalServicio from "./ModalServicio";
 
 const Servicio = (props) => {
-  let location = useLocation();
-  let history = useHistory();
-  let session = useContext(SessionContext);
-
+  const location = useLocation();
+  const history = useHistory();
+  const { session } = useContext(SessionContext);
   const [loading, setLoading] = useState(true);
   const [errorValidation, setErrors] = useState(null);
   const [modal, setModal] = useState(false);

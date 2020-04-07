@@ -26,11 +26,13 @@ function App() {
     if (newCookie.uniqueId !== session.uniqueId) {
       setSession(newCookie);
     }
-  }, [session]);
+  }, [session.uniqueId]);
 
   return (
     <div>
-      <SessionContext.Provider value={session}>
+      <SessionContext.Provider
+        value={{ session: session, setSession: setSession }}
+      >
         <Router history={history}>
           <Header>
             <ul>

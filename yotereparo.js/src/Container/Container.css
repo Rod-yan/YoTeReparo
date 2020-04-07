@@ -2,6 +2,7 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   width: 100%;
   height: auto;
+  position: relative;
   margin: auto;
   background-image: linear-gradient(to right, #903749, #53354a);
 }
@@ -29,30 +30,3 @@
     display: block;
   }
 }
-
-/* 
-@media screen and (max-width: 596px) {
-  .container-child {
-    padding-top: 50px;
-  }
-
-  .card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    width: 100%;
-    height: auto;
-    margin: auto;
-    background-image: linear-gradient(to right, #903749, #53354a);
-  }
-
-  .card .card-element {
-    box-shadow: 0 8px 16px 0px rgba(0, 0, 0, 0.2),
-      0 8px 32px 0 rgba(0, 0, 0, 0.19);
-    width: 350px;
-    height: 100%;
-    padding: 15px;
-    margin: auto;
-    position: sticky;
-    background-image: initial;
-    max-height: 500px;
-  }
-} */

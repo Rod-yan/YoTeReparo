@@ -16,7 +16,7 @@ import ConfirmPassword from "./ConfirmPassword";
 
 function PerfilUsuario(props) {
   const history = useHistory();
-  const session = useContext(SessionContext);
+  const { session } = useContext(SessionContext);
   const [profile, setProfile] = useState({});
   const [password, setPassword] = useState(null);
   const [loading, setLoading] = useState(true);

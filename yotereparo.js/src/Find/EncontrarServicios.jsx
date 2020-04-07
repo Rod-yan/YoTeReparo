@@ -10,11 +10,11 @@ import { SessionContext } from "../Utils/SessionManage";
 function EncontrarServicios(props) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const session = useContext(SessionContext);
+  const { session } = useContext(SessionContext);
 
-  const securityToken = !session.security
-    ? props.history.push("/ingresar")
-    : false;
+  if (!session.security) {
+    props.history.push("/ingresar");
+  }
 
   let requestConfig = {
     headers: {
@@ -46,14 +46,8 @@ function EncontrarServicios(props) {
 
   return (
     <ElementContainer>
-      <div className="card-center-form d-flex align-items-center mx-auto">
-        <div className="row">
-          <div className="col-xs-12">
-            <Servicios></Servicios>
-          </div>
-          <FloatCreateButton></FloatCreateButton>
-        </div>
-      </div>
+      <Servicios></Servicios>
+      <FloatCreateButton></FloatCreateButton>
     </ElementContainer>
   );
 }

@@ -37,7 +37,7 @@ const CrearServicio = (props) => {
   const refRequerimientos = useRef([React.createRef()]);
   const refMediosDePago = useRef([React.createRef()]);
   const history = useHistory();
-  const session = useContext(SessionContext);
+  const { session } = useContext(SessionContext);
 
   //We use this object in the handleSubmit in order to cross over all the data
   let [service, setService] = useState({

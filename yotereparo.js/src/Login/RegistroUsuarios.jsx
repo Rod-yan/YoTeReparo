@@ -58,6 +58,7 @@ const FormRegistro = (props) => {
   let [isCreatingUser, setIsCreatingUser] = useState(false);
 
   let [infomessage, setMessage] = useState("");
+  let [passwordCheck, setPasswordCheck] = useState("");
 
   //For the account
   useEffect(() => {
@@ -83,6 +84,17 @@ const FormRegistro = (props) => {
   //Fetch hoods for only one city
   let handleSubmit = (event) => {
     event.preventDefault();
+
+    if (account.password !== passwordCheck) {
+      let errors = [
+        {
+          type: "securityCheck",
+          message: "Las contraseñas no son iguales",
+        },
+      ];
+      setErrors({ ...formErrors, errors });
+      return;
+    }
 
     setIsCreatingUser(true);
 
@@ -465,6 +477,21 @@ const FormRegistro = (props) => {
                   onChange={(e) => {
                     handleChange(e);
                     validatePassword(e, account);
+                  }}
+                />
+                <Label
+                  for="passwordLabel"
+                  className="mr-sm-4 mt-sm-2 font-weight-bold"
+                >
+                  REPITE LA CONTRASEÑA
+                </Label>
+                <Input
+                  type="password"
+                  name="passwordDobleCheck"
+                  id="passwordDobleCheck"
+                  placeholder="********"
+                  onChange={(e) => {
+                    setPasswordCheck(e.target.value);
                   }}
                 />
                 <FormFeedback className="lead box-message-letter">

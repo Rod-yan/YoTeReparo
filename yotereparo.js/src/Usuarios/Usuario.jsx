@@ -12,7 +12,7 @@ import ProfileInformation from "./ProfileInformation";
 import Loading from "../Loading/Loading";
 
 function Usuario(props) {
-  const session = useContext(SessionContext);
+  const { session } = useContext(SessionContext);
   const profile = useContext(ProfileContext);
   const fileUploader = useRef(null);
   const profilePicture = useRef(null);

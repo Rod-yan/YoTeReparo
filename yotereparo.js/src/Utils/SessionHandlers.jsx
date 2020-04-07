@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { setSessionCokie, deleteSessionCookie } from "./SessionManage";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  setSessionCokie,
+  deleteSessionCookie,
+  SessionContext,
+  getSessionCookie,
+} from "./SessionManage";
 import Container from "../Container/Container";
 import ElementContainer from "../Container/ElementContainer";
 import { Button } from "reactstrap";
@@ -10,6 +15,7 @@ export const LoginHandler = ({ history }) => {
   const [password, setPassword] = useState("");
   const [loadingUser, setLoadingUser] = useState(false);
   const [errors, setErrors] = useState(false);
+  const { session, setSession } = useContext(SessionContext);
 
   let requestConfig = {
     headers: {
@@ -55,7 +61,14 @@ export const LoginHandler = ({ history }) => {
       setLoadingUser(false);
       setErrors(false);
       setSessionCokie({ username: username, security: result.data });
-      history.push("/buscar");
+      setSession(getSessionCookie());
+      history.push({
+        pathname: `/buscar`,
+        state: {
+          username: username,
+          security: result.data,
+        },
+      });
       window.location.reload();
     } else {
       setLoadingUser(false);
