@@ -18,7 +18,7 @@ function ProfileInformation(props) {
         })}
       </h5>
       <InputField
-        fieldTitle="Username"
+        fieldTitle="Usuario"
         fieldValue={props.profile.id}
         fieldActivate={true}
         fieldChange={props.handleChange}
