@@ -48,7 +48,7 @@ function App() {
                   </li>
                   <li>
                     <Link to="/ingresar">
-                      <i className="fas fa-sign-in-alt"></i>
+                      <i className="fas fa-address-card"></i>
                     </Link>
                   </li>
                 </>

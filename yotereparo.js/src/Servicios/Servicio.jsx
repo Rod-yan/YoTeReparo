@@ -109,9 +109,6 @@ const Servicio = (props) => {
                           <div className="row">
                             <div className="col-md-12">
                               <h3 className="card-title">
-                                {props.match.params.id}
-                              </h3>
-                              <h3 className="card-title">
                                 {" "}
                                 {properties.title}
                               </h3>

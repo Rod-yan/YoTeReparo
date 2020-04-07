@@ -55,7 +55,7 @@ export const LoginHandler = ({ history }) => {
       setLoadingUser(false);
       setErrors(false);
       setSessionCokie({ username: username, security: result.data });
-      history.push("/");
+      history.push("/buscar");
       window.location.reload();
     } else {
       setLoadingUser(false);
