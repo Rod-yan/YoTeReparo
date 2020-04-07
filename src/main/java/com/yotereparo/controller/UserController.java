@@ -227,7 +227,7 @@ public class UserController {
 	 * Actualiza la contraseña del usuario.
 	 */
 	@RequestMapping(
-			value = { "/users/{id}/changepassword" },
+			value = { "/users/{id}/password" },
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.PUT)

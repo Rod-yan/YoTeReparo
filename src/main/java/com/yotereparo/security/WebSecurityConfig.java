@@ -64,7 +64,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					// Recursos públicos
 					.antMatchers(
 							"/auth/**",
-							"/users/*/changepassword",
 							"/static/**",
 							"/cities/**",
 							"/paymentmethods/**",
@@ -72,7 +71,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 							"/servicetypes/**").permitAll()
 			.and()
 				.authorizeRequests()
-					// Sólo es publico el acceso a servicios por Http GET
+					// Acceso diferido por verbo
+					.antMatchers(HttpMethod.PUT, "/users/*/password").permitAll()
 					.antMatchers(HttpMethod.GET, "/services", "/services/**").permitAll()
 				// Por omisión, el requester debe estar autenticado
 				.anyRequest().authenticated()
