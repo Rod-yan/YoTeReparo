@@ -101,8 +101,8 @@ export const LoginHandler = ({ history }) => {
                   </div>
                 </h1>
                 <div className="lead text-center">
-                  Ingresa con sus datos para empezar a buscar sus soluciones mas
-                  cercanas...
+				  Contratá o registrá nuevos servicios para tu hogar<br/>
+				  Rápido, seguro, y gratuito :) 
                 </div>
                 <div className="mt-4">
                   <form onSubmit={handleSubmit}>
