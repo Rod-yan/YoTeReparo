@@ -28,8 +28,9 @@ function ProfileInformation(props) {
         <InputField
           fieldTitle="Email"
           fieldValue={props.profile.email}
-          fieldActivate={true}
+          fieldActivate={props.modify}
           fieldChange={props.handleChange}
+          type="email"
           fieldId={"email"}
         ></InputField>
         <InputField
