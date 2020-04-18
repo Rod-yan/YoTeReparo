@@ -10,6 +10,7 @@ const SingleServicio = (props) => {
     history.push({
       pathname: "/servicio/" + data.id,
       state: {
+        id: data.id,
         title: data.titulo,
         body: data.descripcion,
         provider: data.usuarioPrestador,

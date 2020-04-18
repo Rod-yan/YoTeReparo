@@ -16,6 +16,7 @@ import FormRegistro from "./Login/RegistroUsuarios";
 import EncontrarServicios from "./Find/EncontrarServicios";
 import PerfilUsuario from "./Usuarios/PerfilUsuario";
 import { NoMatch } from "./Errors/NoMatch";
+import PresupuestarServicio from "./Presupuestos/Presupuestos";
 
 function App() {
   const history = createBrowserHistory();
@@ -95,6 +96,16 @@ function App() {
                 </Container>
               )}
             />
+
+            <Route
+              path="/presupuestar"
+              render={(props) => (
+                <Container>
+                  <PresupuestarServicio {...props} />
+                </Container>
+              )}
+            />
+
             <Route
               path="/buscar"
               render={(props) => (

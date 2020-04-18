@@ -1,7 +1,19 @@
 import React from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { useHistory } from "react-router-dom";
 
 const ModalServicio = (props) => {
+  const history = useHistory();
+
+  const AskPresupuesto = () => {
+    history.push({
+      pathname: "/presupuestar",
+      state: {
+        presupuesto: props.properties,
+      },
+    });
+  };
+
   return (
     <Modal isOpen={props.modal} toggle={props.toggle} size="xl">
       <ModalHeader toggle={props.toggle}>{props.properties.title}</ModalHeader>
@@ -36,7 +48,7 @@ const ModalServicio = (props) => {
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" onClick={props.toggle}>
+        <Button color="danger" onClick={AskPresupuesto}>
           PEDIR PRESUPUESTO
         </Button>{" "}
         <Button color="info" onClick={props.toggle}>

@@ -29,6 +29,7 @@ const Servicio = (props) => {
         avaliable: location.state.avaliable,
         estimateTime: location.state.estimateTime,
         averagePrice: location.state.averagePrice,
+        id: location.state.id,
       });
       setLoading(false);
     } else {
@@ -56,7 +57,6 @@ const Servicio = (props) => {
         if (resp.response != null) {
           setErrors(resp.response.data);
         } else {
-          console.log("aca");
           setProperties({
             body: resp.data.descripcion,
             title: resp.data.titulo,
@@ -64,6 +64,7 @@ const Servicio = (props) => {
             avaliable: resp.data.disponibilidad,
             estimateTime: resp.data.horasEstimadasEjecucion,
             averagePrice: resp.data.precioPromedio,
+            id: resp.data.id,
           });
         }
       });
