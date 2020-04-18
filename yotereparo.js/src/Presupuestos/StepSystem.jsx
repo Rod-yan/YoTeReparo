@@ -1,12 +1,15 @@
 import React from "react";
-import { useContext } from "react";
-import { PresupuestoContext } from "./Presupuestos";
+import { Introduction, Discussion, Acceptance } from "./Modules";
 import StepWizard from "react-step-wizard";
 
 function StepSystem() {
-  const { presupuestosContextGet } = useContext(PresupuestoContext);
-
-  return <StepWizard></StepWizard>;
+  return (
+    <StepWizard>
+      <Introduction />
+      <Discussion />
+      <Acceptance />
+    </StepWizard>
+  );
 }
 
 export default StepSystem;

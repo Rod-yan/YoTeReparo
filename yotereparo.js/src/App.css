@@ -66,6 +66,17 @@ body {
   font-family: "Nunito Sans", sans-serif;
 }
 
+.jumbotron {
+  background-color: white !important;
+  padding-bottom: 5px !important;
+  margin-bottom: 5px !important;
+}
+
+.no-overflow {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
 @media screen and (max-width: 596px) {
   .centered {
     position: auto;

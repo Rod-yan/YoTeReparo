@@ -15,7 +15,7 @@ const PresupuestarServicio = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [presupuestoValues, setPresupuestoValues] = useState(
-    location.state.presupuesto
+    location.state?.presupuesto
   );
 
   const updateContext = () => {
@@ -33,18 +33,20 @@ const PresupuestarServicio = () => {
   return (
     <>
       {location.state === undefined ? (
-        <ResourceNotFound errorMessage="Estas ingresando sin tener un servicio en vista...Vuelve a buscarlos"></ResourceNotFound>
+        <ResourceNotFound errorMessage="Estas ingresando sin tener un servicio. Vuelve a buscarlos!"></ResourceNotFound>
       ) : (
-        <PresupuestoContext.Provider
-          value={{
-            presupuestosContextGet: presupuestoValues,
-            presupuestosContextUpdate: updateContext,
-          }}
-        >
-          <ElementContainer>
-            <StepSystem />
-          </ElementContainer>
-        </PresupuestoContext.Provider>
+        <div className="no-overflow">
+          <PresupuestoContext.Provider
+            value={{
+              presupuestosContextGet: presupuestoValues,
+              presupuestosContextUpdate: updateContext,
+            }}
+          >
+            <ElementContainer>
+              <StepSystem />
+            </ElementContainer>
+          </PresupuestoContext.Provider>
+        </div>
       )}
     </>
   );

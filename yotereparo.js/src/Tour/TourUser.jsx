@@ -10,7 +10,6 @@ function TourUser(props) {
     history.push({
       pathname: "/404",
     });
-    history.goBack();
   }
 
   let userId = location.state.user.nombre + location.state.user.apellido;

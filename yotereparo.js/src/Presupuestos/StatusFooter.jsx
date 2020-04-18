@@ -1,0 +1,45 @@
+import React from "react";
+import { Button } from "reactstrap";
+import { useHistory } from "react-router-dom";
+
+function StatusFooter(props) {
+  const history = useHistory();
+  console.log(props);
+
+  return (
+    <>
+      <p className="lead">
+        <Button
+          color="danger"
+          block={true}
+          className="my-auto pb-4 pt-4"
+          onClick={() => {
+            if (props.currentStep == 3) {
+              history.push("/buscar");
+            } else {
+              props.nextStep();
+            }
+          }}
+        >
+          <i className="fas fa-chevron-circle-right fa-2x"></i>
+        </Button>
+        <Button
+          color="info"
+          block={true}
+          className="mt-2"
+          onClick={() => {
+            if (props.currentStep == 1) {
+              history.go(-1);
+            } else {
+              props.previousStep();
+            }
+          }}
+        >
+          <i className="fas fa-chevron-circle-left fa-2x"></i>
+        </Button>
+      </p>
+    </>
+  );
+}
+
+export default StatusFooter;
