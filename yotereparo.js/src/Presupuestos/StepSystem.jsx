@@ -1,13 +1,12 @@
 import React from "react";
 import { useContext } from "react";
 import { PresupuestoContext } from "./Presupuestos";
-import { useEffect } from "react";
-import { Jumbotron, Button } from "reactstrap";
+import StepWizard from "react-step-wizard";
 
 function StepSystem() {
   const { presupuestosContextGet } = useContext(PresupuestoContext);
 
-  return <></>;
+  return <StepWizard></StepWizard>;
 }
 
 export default StepSystem;
