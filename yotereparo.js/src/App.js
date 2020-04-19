@@ -18,6 +18,7 @@ import PerfilUsuario from "./Usuarios/PerfilUsuario";
 import { NoMatch } from "./Errors/NoMatch";
 import PresupuestarServicio from "./Presupuestos/Presupuestos";
 import TablePresupuestos from "./Presupuestos/TablePresupuestos";
+import TableServicios from "./Presupuestos/TableServicios";
 
 function App() {
   const history = createBrowserHistory();
@@ -107,7 +108,11 @@ function App() {
               path="/presupuestos"
               render={(props) => (
                 <Container>
-                  <TablePresupuestos {...props}></TablePresupuestos>
+                  {session.security?.roles.length > 1 ? (
+                    <TableServicios {...props}></TableServicios>
+                  ) : (
+                    <TablePresupuestos {...props}></TablePresupuestos>
+                  )}
                 </Container>
               )}
             />

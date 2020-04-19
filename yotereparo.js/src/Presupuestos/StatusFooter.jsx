@@ -8,14 +8,14 @@ function StatusFooter(props) {
 
   return (
     <>
-      <p className="lead">
+      <div className="lead mt-3">
         <Button
           color="danger"
           block={true}
           className="my-auto pb-4 pt-4"
           onClick={() => {
             if (props.currentStep == 3) {
-              history.push("/buscar");
+              props.onSubmit();
             } else {
               props.nextStep();
             }
@@ -37,7 +37,7 @@ function StatusFooter(props) {
         >
           <i className="fas fa-chevron-circle-left fa-2x"></i>
         </Button>
-      </p>
+      </div>
     </>
   );
 }
