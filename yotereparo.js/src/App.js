@@ -17,6 +17,7 @@ import EncontrarServicios from "./Find/EncontrarServicios";
 import PerfilUsuario from "./Usuarios/PerfilUsuario";
 import { NoMatch } from "./Errors/NoMatch";
 import PresupuestarServicio from "./Presupuestos/Presupuestos";
+import TablePresupuestos from "./Presupuestos/TablePresupuestos";
 
 function App() {
   const history = createBrowserHistory();
@@ -67,6 +68,11 @@ function App() {
                       <i className="fas fa-sign-out-alt fa-1x"></i>
                     </Link>
                   </li>
+                  <li>
+                    <Link to={"/presupuestos"}>
+                      <i className="fas fa-money-check-alt fa-1x"></i>
+                    </Link>
+                  </li>
                 </>
               )}
             </ul>
@@ -93,6 +99,15 @@ function App() {
               render={(props) => (
                 <Container>
                   <PerfilUsuario {...props} />
+                </Container>
+              )}
+            />
+
+            <Route
+              path="/presupuestos"
+              render={(props) => (
+                <Container>
+                  <TablePresupuestos {...props}></TablePresupuestos>
                 </Container>
               )}
             />
