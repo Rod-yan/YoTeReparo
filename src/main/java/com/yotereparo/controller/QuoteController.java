@@ -1,7 +1,9 @@
 package com.yotereparo.controller;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -21,12 +23,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.converter.QuoteConverter;
 import com.yotereparo.model.Quote;
+import com.yotereparo.model.Service;
+import com.yotereparo.model.User;
 import com.yotereparo.service.QuoteService;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
@@ -64,11 +69,23 @@ public class QuoteController {
 			value = { "/quotes" }, 
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
-	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
-	public ResponseEntity<?> listQuotes() {
+	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
+	public ResponseEntity<?> listQuotes(@RequestParam(required = false) String userRole) {
 		logger.info("ListQuotes - GET - Processing request for a list with all existing quotes.");
 		try {
-			List<Quote> quotes = quoteService.getAllQuotes();
+			Set<Quote> quotes = new HashSet<Quote>(0);
+			
+			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+			User authenticatedUser = userService.getUserById(authenticatedUsername);
+			if (userRole == null) {
+				if (userService.isServiceAccountOrAdministrator(authenticatedUser))
+					quotes = new HashSet<Quote>(quoteService.getAllQuotes());
+			}
+			else if ("customer".equalsIgnoreCase(userRole))
+				quotes = authenticatedUser.getPresupuestos();
+			else if ("provider".equalsIgnoreCase(userRole))
+				for (Service service : authenticatedUser.getServicios())
+					quotes.addAll(service.getPresupuestos());
 			
 			if (quotes != null && !quotes.isEmpty()) {
 				List<QuoteDto> quotesDto = quotes.stream()

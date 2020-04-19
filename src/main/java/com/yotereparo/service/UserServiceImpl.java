@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -265,10 +267,15 @@ public class UserServiceImpl implements UserService {
 		currentPassword = SecurityUtils.encryptPassword(currentPassword.concat(user.getSalt()));
 		newPassword = SecurityUtils.encryptPassword(newPassword.concat(user.getSalt()));
 		String trueCurrentPassword = user.getContrasena();
+		
+		// Si el usuario autenticado es administrador o cuenta de servicio, ignoramos la validación de la contraseña actual
+		String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+		boolean isServiceAccountOrAdministrator = isServiceAccountOrAdministrator(getUserById(authenticatedUsername));
+		
 		// La verdadera contraseña actual debe ser igual a la contraseña actual ingresada por el usuario
-		if (currentPassword.equals(trueCurrentPassword)) {
+		if (currentPassword.equals(trueCurrentPassword) || isServiceAccountOrAdministrator) {
 			// La nueva contraseña no puede ser igual a la anterior
-			if (!newPassword.equals(trueCurrentPassword)) {
+			if (!newPassword.equals(trueCurrentPassword) || isServiceAccountOrAdministrator) {
 				logger.debug(String.format("Updating attribute 'Contrasena' (and derivates) from user <%s>", user.getId()));
 				user.setContrasena(newPassword);
 				user.setFechaUltimoCambioContrasena(new DateTime());
