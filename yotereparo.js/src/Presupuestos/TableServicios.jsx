@@ -6,7 +6,7 @@ import { Table } from "reactstrap";
 import { useEffect } from "react";
 import Axios from "axios";
 
-function TablePresupuestos(props) {
+function TableServicios(props) {
   const { session } = useContext(SessionContext);
   const [tableData, setTableData] = useState([]);
 
@@ -21,14 +21,20 @@ function TablePresupuestos(props) {
     const fetchData = async (urlToFetch) => {
       await Axios(urlToFetch, requestConfig)
         .then((resp) => {
-          setTableData(resp.data);
+          if (resp.status === 204) {
+            setTableData("No hay servicios disponibles para el usuario");
+          } else {
+            setTableData(resp.data);
+          }
         })
         .catch((error) => {
           return error;
         });
     };
     try {
-      fetchData(`http://localhost:8080/YoTeReparo/quotes`);
+      fetchData(
+        `http://localhost:8080/YoTeReparo/services?user=${session.username}`
+      );
     } catch (error) {
       console.log(error.response);
     }
@@ -37,26 +43,30 @@ function TablePresupuestos(props) {
   return (
     <>
       <ElementContainer>
-        <div className="display-4">Mis Presupuestos</div>
+        <div className="display-4">Mis servicios</div>
         <hr className="my-4"></hr>
         <div className="table table-striped table-responsive">
           <Table>
             <thead className="text-left thead-dark">
               <tr>
                 <th>Servicio</th>
-                <th>Usuario Final</th>
                 <th>Descripcion</th>
-                <th>Estado</th>
+                <th>Disponibilidad</th>
+                <th>Presupuestos</th>
               </tr>
             </thead>
             <tbody>
               {tableData.map((item) => {
                 return (
                   <tr>
-                    <td>{item.servicio}</td>
-                    <td>{item.usuarioFinal}</td>
-                    <td>{item.descripcionSolicitud}</td>
-                    <td>{item.estado}</td>
+                    <td>{item.titulo}</td>
+                    <td>{item.descripcion}</td>
+                    <td>{item.disponibilidad}</td>
+                    <td>
+                      <button className="btn btn-danger btn-block">
+                        <i className="fas fa-chevron-right fa-1x"></i>
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
@@ -68,4 +78,4 @@ function TablePresupuestos(props) {
   );
 }
 
-export default TablePresupuestos;
+export default TableServicios;
