@@ -1,5 +1,6 @@
 package com.yotereparo.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +19,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name="presupuesto")
 public class Quote {
-	
 	// Constantes de estado
 	public static final String AWAITING_PROVIDER = "ESPERANDO_USUARIO_PRESTADOR";
 	public static final String AWAITING_CUSTOMER = "ESPERANDO_USUARIO_FINAL";
@@ -82,6 +82,10 @@ public class Quote {
 	private DateTime fechaRespuesta;
 	
 	private String estado;
+	
+	@ManyToOne(cascade=CascadeType.MERGE, fetch = FetchType.EAGER)
+	@JoinColumn(name="id_direccion_usuario_final", nullable=true)
+	private Address direccionUsuarioFinal;
 	
 	public Quote() { }
 
@@ -196,6 +200,14 @@ public class Quote {
 		this.estado = estado;
 	}
 
+	public Address getDireccionUsuarioFinal() {
+		return direccionUsuarioFinal;
+	}
+
+	public void setDireccionUsuarioFinal(Address direccionUsuarioFinal) {
+		this.direccionUsuarioFinal = direccionUsuarioFinal;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -214,6 +226,11 @@ public class Quote {
 			if (other.descripcionSolicitud != null)
 				return false;
 		} else if (!descripcionSolicitud.equals(other.descripcionSolicitud))
+			return false;
+		if (direccionUsuarioFinal == null) {
+			if (other.direccionUsuarioFinal != null)
+				return false;
+		} else if (!direccionUsuarioFinal.equals(other.direccionUsuarioFinal))
 			return false;
 		if (estado == null) {
 			if (other.estado != null)
@@ -259,11 +276,11 @@ public class Quote {
 
 	@Override
 	public String toString() {
-		return "Quote [id=" + id + ", servicio=" + servicio + ", usuarioFinal=" + usuarioFinal
+		return "Quote [id=" + id + ", servicio=" + servicio.getId() + ", usuarioFinal=" + usuarioFinal.getId()
 				+ ", descripcionSolicitud=" + descripcionSolicitud + ", descripcionRespuesta=" + descripcionRespuesta
 				+ ", precioPresupuestado=" + precioPresupuestado + ", precioTotal=" + precioTotal
 				+ ", fechaInicioEjecucionPropuesta=" + fechaInicioEjecucionPropuesta + ", incluyeInsumos="
 				+ incluyeInsumos + ", incluyeAdicionales=" + incluyeAdicionales + ", fechaSolicitud=" + fechaSolicitud
-				+ ", fechaRespuesta=" + fechaRespuesta + ", estado=" + estado + "]";
+				+ ", fechaRespuesta=" + fechaRespuesta + ", estado=" + estado + ", direccionUsuarioFinal=" + direccionUsuarioFinal + "]";
 	}
 }

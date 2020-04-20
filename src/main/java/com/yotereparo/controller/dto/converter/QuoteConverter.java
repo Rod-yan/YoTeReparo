@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.yotereparo.controller.dto.QuoteDto;
+import com.yotereparo.model.Address;
 import com.yotereparo.model.Quote;
+import com.yotereparo.model.User;
 import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
 
@@ -34,8 +36,17 @@ public class QuoteConverter implements Converter<Quote, QuoteDto> {
 	@Override
 	public Quote convertToEntity(QuoteDto quoteDto) {
 		Quote quote = modelMapper.map(quoteDto, Quote.class);
-		quote.setUsuarioFinal(userService.getUserById(quoteDto.getUsuarioFinal().toLowerCase()));
 		quote.setServicio(serviceManager.getServiceById(quoteDto.getServicio()));
+		
+		User user = userService.getUserById(quoteDto.getUsuarioFinal());
+		quote.setUsuarioFinal(user);
+		if (quoteDto.getDireccionUsuarioFinal() != null)
+			for (Address address : user.getDirecciones()) {
+				if (address.equals(quoteDto.getDireccionUsuarioFinal())) {
+					quote.setDireccionUsuarioFinal(address);
+					break;
+				}
+			}
 	    return quote;
 	}
 }

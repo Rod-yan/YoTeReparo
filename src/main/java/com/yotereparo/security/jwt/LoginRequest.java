@@ -12,7 +12,7 @@ public class LoginRequest {
 	}
 
 	public void setUsername(String username) {
-		this.username = username;
+		this.username = (username != null && !username.isEmpty()) ? username.toLowerCase() : null;
 	}
 
 	public String getPassword() {

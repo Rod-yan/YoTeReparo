@@ -25,7 +25,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="usuario") 
 public class User
 {
-	
 	// Constantes de estado
 	public static final String ACTIVE = "ACTIVO";
 	public static final String INACTIVE = "INACTIVO";

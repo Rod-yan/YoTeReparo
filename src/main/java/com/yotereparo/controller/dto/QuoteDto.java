@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.yotereparo.model.Address;
 import com.yotereparo.model.Quote;
 
 public class QuoteDto {
@@ -58,6 +59,10 @@ public class QuoteDto {
 	@Pattern(regexp = Quote.STATUS_LIST_REGEXP, message = "{quote.estado.pattern}")
 	private String estado;
 	
+	// No debe ser null siempre y cuando el servicio asociado sea Insitu.
+	// Esto lo validamos en el ValidationUtils, pero sería más prolijo armar un custom validator.
+	private Address direccionUsuarioFinal;
+	
 	public QuoteDto() { }
 
 	@JsonIgnore
@@ -83,7 +88,7 @@ public class QuoteDto {
 	}
 
 	public void setUsuarioFinal(String usuarioFinal) {
-		this.usuarioFinal = usuarioFinal;
+		this.usuarioFinal = (usuarioFinal != null && !usuarioFinal.isEmpty()) ? usuarioFinal.toLowerCase() : null;
 	}
 
 	public String getDescripcionSolicitud() {
@@ -179,6 +184,14 @@ public class QuoteDto {
 		this.estado = estado;
 	}
 
+	public Address getDireccionUsuarioFinal() {
+		return direccionUsuarioFinal;
+	}
+
+	public void setDireccionUsuarioFinal(Address direccionUsuarioFinal) {
+		this.direccionUsuarioFinal = direccionUsuarioFinal;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -193,6 +206,7 @@ public class QuoteDto {
 		result = prime * result + (incluyeAdicionales ? 1231 : 1237);
 		result = prime * result + (incluyeInsumos ? 1231 : 1237);
 		result = prime * result + ((precioPresupuestado == null) ? 0 : precioPresupuestado.hashCode());
+		result = prime * result + ((direccionUsuarioFinal == null) ? 0 : direccionUsuarioFinal.hashCode());
 		result = prime * result + ((servicio == null) ? 0 : servicio.hashCode());
 		result = prime * result + ((usuarioFinal == null) ? 0 : usuarioFinal.hashCode());
 		return result;
@@ -246,6 +260,11 @@ public class QuoteDto {
 				return false;
 		} else if (!precioPresupuestado.equals(other.precioPresupuestado))
 			return false;
+		if (direccionUsuarioFinal == null) {
+			if (other.direccionUsuarioFinal != null)
+				return false;
+		} else if (!direccionUsuarioFinal.equals(other.direccionUsuarioFinal))
+			return false;
 		if (servicio == null) {
 			if (other.servicio != null)
 				return false;
@@ -266,6 +285,7 @@ public class QuoteDto {
 				+ ", precioPresupuestado=" + precioPresupuestado + ", precioTotal=" + precioTotal
 				+ ", fechaInicioEjecucionPropuesta=" + fechaInicioEjecucionPropuesta + ", incluyeInsumos="
 				+ incluyeInsumos + ", incluyeAdicionales=" + incluyeAdicionales + ", fechaSolicitud=" + fechaSolicitud
-				+ ", fechaRespuesta=" + fechaRespuesta + ", estado=" + estado + "]";
+				+ ", fechaRespuesta=" + fechaRespuesta + ", estado=" + estado + ", direccionUsuarioFinal="
+				+ direccionUsuarioFinal + "]";
 	}
 }
