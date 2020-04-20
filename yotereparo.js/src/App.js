@@ -64,14 +64,32 @@ function App() {
                       <i className="fas fa-user fa-1x"></i>
                     </Link>
                   </li>
+                  {session.security.roles.length > 1 ? (
+                    <>
+                      <li>
+                        <Link to={"/prestador/presupuestos"}>
+                          {" "}
+                          <i className="fas fa-money-check-alt fa-1x"></i>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to={"/prestador/servicios"}>
+                          {" "}
+                          <i className="fas fa-concierge-bell fa-1x"></i>
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
+                    <li>
+                      <Link to={"/presupuestos"}>
+                        {" "}
+                        <i className="fas fa-money-check-alt fa-1x"></i>
+                      </Link>
+                    </li>
+                  )}
                   <li>
                     <Link to={"/salir"}>
                       <i className="fas fa-sign-out-alt fa-1x"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={"/presupuestos"}>
-                      <i className="fas fa-money-check-alt fa-1x"></i>
                     </Link>
                   </li>
                 </>
@@ -108,11 +126,28 @@ function App() {
               path="/presupuestos"
               render={(props) => (
                 <Container>
-                  {session.security?.roles.length > 1 ? (
-                    <TableServicios {...props}></TableServicios>
-                  ) : (
-                    <TablePresupuestos {...props}></TablePresupuestos>
-                  )}
+                  <TablePresupuestos {...props}></TablePresupuestos>
+                </Container>
+              )}
+            />
+
+            <Route
+              path="/prestador/servicios"
+              render={(props) => (
+                <Container>
+                  <TableServicios {...props}></TableServicios>
+                </Container>
+              )}
+            />
+
+            <Route
+              path="/prestador/presupuestos"
+              render={(props) => (
+                <Container>
+                  <TablePresupuestos
+                    prestador={true}
+                    {...props}
+                  ></TablePresupuestos>
                 </Container>
               )}
             />

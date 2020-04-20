@@ -17,7 +17,7 @@ function Direcciones(props) {
             <ResourceNotFound errorMessage="Estas intentado ingresar una direccion erronea"></ResourceNotFound>
           ) : (
             <ElementContainer>
-              {props.profile.direcciones.length > 0 ? (
+              {props.profile?.direcciones.length > 0 ? (
                 props.profile.direcciones.map((item, idx) => {
                   return (
                     <div key={idx}>

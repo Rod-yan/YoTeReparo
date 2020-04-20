@@ -13,7 +13,7 @@ function TablePresupuestos(props) {
   let requestConfig = {
     headers: {
       "Access-Control-Allow-Origin": "*",
-      Authorization: "Bearer" + session.security?.accessToken,
+      Authorization: "Bearer " + session.security?.accessToken,
     },
   };
 
@@ -21,14 +21,18 @@ function TablePresupuestos(props) {
     const fetchData = async (urlToFetch) => {
       await Axios(urlToFetch, requestConfig)
         .then((resp) => {
-          setTableData(resp.data);
+          setTableData([resp.data]);
         })
         .catch((error) => {
           return error;
         });
     };
     try {
-      fetchData(`http://localhost:8080/YoTeReparo/quotes`);
+      props.prestador === true
+        ? fetchData(`http://localhost:8080/YoTeReparo/quotes?userRole=provider`)
+        : fetchData(
+            `http://localhost:8080/YoTeReparo/quotes?userRole=customer`
+          );
     } catch (error) {
       console.log(error.response);
     }
@@ -50,9 +54,9 @@ function TablePresupuestos(props) {
               </tr>
             </thead>
             <tbody>
-              {tableData.map((item) => {
+              {tableData.map((item, idx) => {
                 return (
-                  <tr>
+                  <tr key={idx}>
                     <td>{item.servicio}</td>
                     <td>{item.usuarioFinal}</td>
                     <td>{item.descripcionSolicitud}</td>

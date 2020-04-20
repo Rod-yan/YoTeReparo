@@ -5,9 +5,13 @@ import { SessionContext } from "../Utils/SessionManage";
 import { Table } from "reactstrap";
 import { useEffect } from "react";
 import Axios from "axios";
+import { useHistory } from "react-router-dom";
+import NotAuth from "../Errors/NotAuth";
 
 function TableServicios(props) {
   const { session } = useContext(SessionContext);
+  const { history } = useHistory();
+  const [auth, setAuth] = useState(false);
   const [tableData, setTableData] = useState([]);
 
   let requestConfig = {
@@ -22,7 +26,7 @@ function TableServicios(props) {
       await Axios(urlToFetch, requestConfig)
         .then((resp) => {
           if (resp.status === 204) {
-            setTableData("No hay servicios disponibles para el usuario");
+            setTableData(["No hay servicios disponibles para el usuario"]);
           } else {
             setTableData(resp.data);
           }
@@ -32,6 +36,11 @@ function TableServicios(props) {
         });
     };
     try {
+      if (session.security.roles.length <= 1) {
+        setAuth(false);
+      } else {
+        setAuth(true);
+      }
       fetchData(
         `http://localhost:8080/YoTeReparo/services?user=${session.username}`
       );
@@ -42,38 +51,42 @@ function TableServicios(props) {
 
   return (
     <>
-      <ElementContainer>
-        <div className="display-4">Mis servicios</div>
-        <hr className="my-4"></hr>
-        <div className="table table-striped table-responsive">
-          <Table>
-            <thead className="text-left thead-dark">
-              <tr>
-                <th>Servicio</th>
-                <th>Descripcion</th>
-                <th>Disponibilidad</th>
-                <th>Presupuestos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((item) => {
-                return (
-                  <tr>
-                    <td>{item.titulo}</td>
-                    <td>{item.descripcion}</td>
-                    <td>{item.disponibilidad}</td>
-                    <td>
-                      <button className="btn btn-danger btn-block">
-                        <i className="fas fa-chevron-right fa-1x"></i>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </div>
-      </ElementContainer>
+      {!auth ? (
+        <NotAuth></NotAuth>
+      ) : (
+        <ElementContainer>
+          <div className="display-4">Mis servicios</div>
+          <hr className="my-4"></hr>
+          <div className="table table-striped table-responsive">
+            <Table>
+              <thead className="text-left thead-dark">
+                <tr>
+                  <th>Servicio</th>
+                  <th>Descripcion</th>
+                  <th>Disponibilidad</th>
+                  <th>Presupuestos</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((item, idx) => {
+                  return (
+                    <tr key={idx}>
+                      <td>{item.titulo}</td>
+                      <td>{item.descripcion}</td>
+                      <td>{item.disponibilidad}</td>
+                      <td>
+                        <button className="btn btn-danger btn-block">
+                          <i className="fas fa-chevron-right fa-1x"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        </ElementContainer>
+      )}
     </>
   );
 }
