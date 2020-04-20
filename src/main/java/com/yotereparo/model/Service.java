@@ -43,6 +43,8 @@ public class Service {
 	
 	private String disponibilidad;
 	
+	private boolean insitu;
+	
 	@Column(name = "precio_maximo", columnDefinition = "NUMERIC", precision = 11, scale = 2, nullable = false)
 	private Float precioMaximo;
 	
@@ -141,6 +143,14 @@ public class Service {
 
 	public void setDisponibilidad(String disponibilidad) {
 		this.disponibilidad = disponibilidad;
+	}
+
+	public boolean isInsitu() {
+		return insitu;
+	}
+
+	public void setInsitu(boolean insitu) {
+		this.insitu = insitu;
 	}
 
 	public Float getPrecioMaximo() {
@@ -282,6 +292,7 @@ public class Service {
 		if (this.titulo.equalsIgnoreCase(service.titulo) ||
 				( this.descripcion.equalsIgnoreCase(service.descripcion) &&
 				  this.disponibilidad.equalsIgnoreCase(service.disponibilidad) &&
+				  this.insitu == service.insitu &&
 				  this.precioMaximo.equals(service.precioMaximo) &&
 				  this.precioMinimo.equals(service.precioMinimo) &&
 				  this.precioInsumos.equals(service.precioInsumos) &&
@@ -321,6 +332,8 @@ public class Service {
 			if (other.disponibilidad != null)
 				return false;
 		} else if (!disponibilidad.equals(other.disponibilidad))
+			return false;
+		if (insitu != other.insitu)
 			return false;
 		if (estado == null) {
 			if (other.estado != null)
@@ -399,13 +412,13 @@ public class Service {
 	@Override
 	public String toString() {
 		return "Service [id=" + id + ", usuarioPrestador=" + usuarioPrestador.getId() + ", titulo=" + titulo + ", descripcion="
-				+ descripcion + ", disponibilidad=" + disponibilidad + ", precioMaximo=" + precioMaximo
-				+ ", precioMinimo=" + precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos="
-				+ precioInsumos + ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion="
-				+ horasEstimadasEjecucion + ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida="
-				+ facturaEmitida + ", imagen=" + Arrays.toString(imagen) + ", thumbnail=" + Arrays.toString(thumbnail)
-				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + ", presupuestos="
-				+ presupuestos + "]";
+				+ descripcion + ", disponibilidad=" + disponibilidad + ", insitu=" + insitu + ", precioMaximo="
+				+ precioMaximo + ", precioMinimo=" + precioMinimo + ", precioPromedio=" + precioPromedio
+				+ ", precioInsumos=" + precioInsumos + ", precioAdicionales=" + precioAdicionales
+				+ ", horasEstimadasEjecucion=" + horasEstimadasEjecucion + ", cantidadTrabajadores="
+				+ cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", imagen=" + Arrays.toString(imagen)
+				+ ", thumbnail=" + Arrays.toString(thumbnail) + ", tipoServicio=" + tipoServicio + ", fechaCreacion="
+				+ fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago + ", requerimientos="
+				+ requerimientos + ", presupuestos=" + presupuestos + "]";
 	}
 }

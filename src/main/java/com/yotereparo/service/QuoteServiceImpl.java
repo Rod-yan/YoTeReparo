@@ -39,11 +39,18 @@ public class QuoteServiceImpl implements QuoteService {
 	
 	@Override
 	public void createQuote(Quote quote) {
-		if (quote.getPrecioPresupuestado() != null)
-			if (!(quote.getPrecioPresupuestado() <= quote.getServicio().getPrecioMaximo() && quote.getPrecioPresupuestado() >= quote.getServicio().getPrecioMinimo())) {
-				logger.debug(String.format("Quote <%s> quoted price: <%s> must be between <%s> (MIN) and <%s> (MAX)", quote.getId(), quote.getPrecioPresupuestado(), quote.getServicio().getPrecioMinimo(),quote.getServicio().getPrecioMaximo()));
-				throw new CustomResponseError("Quote","precioPresupuestado",messageSource.getMessage("quote.precioPresupuestado.out.of.service.boundaries", new Float[] {quote.getServicio().getPrecioMinimo(),quote.getServicio().getPrecioMaximo()}, Locale.getDefault()));
-			}
+		if (quote.getPrecioPresupuestado() != null) {
+			// Illegal
+			logger.debug("Quote's quoted price: setting a quoted price during creation is now allowed");
+			throw new CustomResponseError(
+					"Quote","precioPresupuestado",messageSource.getMessage("quote.precioPresupuestado.not.allowed", null, Locale.getDefault()));
+		}
+		if (quote.getDescripcionRespuesta() != null) {
+			// Illegal
+			logger.debug("Quote's response description: setting a response description during creation is now allowed");
+			throw new CustomResponseError(
+					"Quote","descripcionRespuesta",messageSource.getMessage("quote.descripcionRespuesta.not.allowed", null, Locale.getDefault()));
+		}
 		quote.setPrecioTotal();
 		quote.setFechaSolicitud(new DateTime());
 		quote.setEstado(Quote.AWAITING_PROVIDER);
@@ -69,7 +76,7 @@ public class QuoteServiceImpl implements QuoteService {
 				throw new CustomResponseError("Quote","servicio",messageSource.getMessage("quote.servicio.cant.change", null, Locale.getDefault()));
 			}
 			
-			if (quote.getEstado().equals(Quote.AWAITING_PROVIDER))
+			if (quote.getEstado().equals(Quote.AWAITING_PROVIDER)) {
 				if (quote.getDescripcionSolicitud() != null) {
 					if (!quote.getDescripcionSolicitud().equals(entity.getDescripcionSolicitud())) {
 						logger.debug(String.format("Updating attribute 'DescripcionSolicitud' from quote <%s>", quote.getId()));
@@ -81,6 +88,18 @@ public class QuoteServiceImpl implements QuoteService {
 						logger.debug(String.format("Updating attribute 'DescripcionSolicitud' from quote <%s>", quote.getId()));
 						entity.setDescripcionSolicitud(null);
 					}
+				if (quote.getDireccionUsuarioFinal() != null) {
+					if (!quote.getDireccionUsuarioFinal().equals(entity.getDireccionUsuarioFinal())) {
+						logger.debug(String.format("Updating attribute 'DireccionUsuarioFinal' from quote <%s>", quote.getId()));
+						entity.setDireccionUsuarioFinal(quote.getDireccionUsuarioFinal());
+					}
+				}
+				else
+					if (entity.getDireccionUsuarioFinal() != null) {
+						logger.debug(String.format("Updating attribute 'DireccionUsuarioFinal' from quote <%s>", quote.getId()));
+						entity.setDireccionUsuarioFinal(null);
+					}
+			}
 			
 			if (quote.getEstado().equals(Quote.AWAITING_CUSTOMER))
 				if (quote.getDescripcionRespuesta() != null) {

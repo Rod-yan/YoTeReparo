@@ -41,6 +41,9 @@ public class ServiceDto {
 	@Size(max = 255, message = "{service.disponibilidad.too.long}")
 	private String disponibilidad;
 	
+	@NotNull(message = "{service.insitu.not.null}")
+	private boolean insitu;
+	
 	@NotNull(message = "{service.precioMaximo.not.null}")
 	@Digits(integer = 9, fraction = 2, message = "{service.precioMaximo.out.of.boundaries}")
 	@Min(value = 0, message="{service.precioMaximo.less.than.min}")
@@ -108,7 +111,7 @@ public class ServiceDto {
 	}
 
 	public void setUsuarioPrestador(String usuarioPrestador) {
-		this.usuarioPrestador = usuarioPrestador;
+		this.usuarioPrestador = (usuarioPrestador != null && !usuarioPrestador.isEmpty()) ? usuarioPrestador.toLowerCase() : null;
 	}
 
 	public String getTitulo() {
@@ -133,6 +136,14 @@ public class ServiceDto {
 
 	public void setDisponibilidad(String disponibilidad) {
 		this.disponibilidad = disponibilidad;
+	}
+
+	public boolean isInsitu() {
+		return insitu;
+	}
+
+	public void setInsitu(boolean insitu) {
+		this.insitu = insitu;
 	}
 
 	public Float getPrecioMaximo() {
@@ -266,6 +277,7 @@ public class ServiceDto {
 		result = prime * result + ((cantidadTrabajadores == null) ? 0 : cantidadTrabajadores.hashCode());
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
 		result = prime * result + ((disponibilidad == null) ? 0 : disponibilidad.hashCode());
+		result = prime * result + (insitu ? 1231 : 1237);
 		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
 		result = prime * result + (facturaEmitida ? 1231 : 1237);
 		result = prime * result + ((fechaCreacion == null) ? 0 : fechaCreacion.hashCode());
@@ -306,6 +318,8 @@ public class ServiceDto {
 			if (other.disponibilidad != null)
 				return false;
 		} else if (!disponibilidad.equals(other.disponibilidad))
+			return false;
+		if (insitu != other.insitu)
 			return false;
 		if (estado == null) {
 			if (other.estado != null)
@@ -380,9 +394,9 @@ public class ServiceDto {
 	@Override
 	public String toString() {
 		return "ServiceDto [id=" + id + ", usuarioPrestador=" + usuarioPrestador + ", titulo=" + titulo
-				+ ", descripcion=" + descripcion + ", disponibilidad=" + disponibilidad + ", precioMaximo="
-				+ precioMaximo + ", precioMinimo=" + precioMinimo + ", precioPromedio=" + precioPromedio
-				+ ", precioInsumos=" + precioInsumos + ", precioAdicionales=" + precioAdicionales
+				+ ", descripcion=" + descripcion + ", disponibilidad=" + disponibilidad + ", insitu=" + insitu
+				+ ", precioMaximo=" + precioMaximo + ", precioMinimo=" + precioMinimo + ", precioPromedio="
+				+ precioPromedio + ", precioInsumos=" + precioInsumos + ", precioAdicionales=" + precioAdicionales
 				+ ", horasEstimadasEjecucion=" + horasEstimadasEjecucion + ", cantidadTrabajadores="
 				+ cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", tipoServicio=" + tipoServicio
 				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago

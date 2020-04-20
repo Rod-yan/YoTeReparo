@@ -113,6 +113,11 @@ public class ServiceManagerImpl implements ServiceManager {
 			}
 		}
 		
+		if (!service.isInsitu() == entity.isInsitu()) {
+			logger.debug(String.format("Updating attribute 'Insitu' from service <%s>", service.getId()));
+			entity.setInsitu(service.isInsitu());
+		}
+		
 		Boolean precioHasChanged = false;
 		if (!service.getPrecioMaximo().equals(entity.getPrecioMaximo())) {
 			logger.debug(String.format("Updating attribute 'PrecioMaximo' from service <%s>", service.getId()));

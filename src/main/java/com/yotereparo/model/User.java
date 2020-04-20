@@ -25,7 +25,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="usuario") 
 public class User
 {
-	
 	// Constantes de estado
 	public static final String ACTIVE = "ACTIVO";
 	public static final String INACTIVE = "INACTIVO";
@@ -133,7 +132,7 @@ public class User
 		return id;
 	}
 	public void setId(String id) {
-		this.id = id;
+		this.id = (id != null && !id.isEmpty()) ? id.toLowerCase() : null;
 	}
 
 	public String getNombre() {
@@ -266,7 +265,7 @@ public class User
 		return membresia;
 	}
 	public void setMembresia(String membresia) {
-		this.membresia = membresia;
+		this.membresia = (membresia != null && !membresia.isEmpty()) ? membresia.toUpperCase() : null;
 	}
 
 	public Set<Role> getRoles() {

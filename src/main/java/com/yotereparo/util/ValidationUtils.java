@@ -289,11 +289,38 @@ public class ValidationUtils {
 			logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","Service"));
 		}
 		
-		if (service != null && user != null)
+		if (service != null && user != null) {
 			if (user.getId().equals(service.getUsuarioPrestador().getId())) {
 				result.addError(new FieldError("Quote","usuarioFinal",messageSource.getMessage("quote.user.owns.service", new String[]{user.getId()}, Locale.getDefault())));
 				logger.info(String.format("Validation error in entity <%s>, user owns the service for the processed quote.","Quote"));
 			}
+			// Si el servicio es Insitu...
+			if (service.isInsitu()) {
+				// Validamos que se haya ingresado una dirección de usuario final
+				if (quoteDto.getDireccionUsuarioFinal() == null) {
+					result.addError(new FieldError("Quote","direccionUsuarioFinal",messageSource.getMessage("quote.direccionUsuarioFinal.not.null", null, Locale.getDefault())));
+					logger.info(String.format("Validation error in entity <%s>, this service requires a customer address to be appointed.","Quote"));
+				}
+				// Validamos que la dirección ingresada sea del usuario final en cuestión
+				else {
+					boolean addressIsOfCustomer = false;
+					for (Address address : user.getDirecciones()) {
+						addressIsOfCustomer = (address.equals(quoteDto.getDireccionUsuarioFinal()));
+						if (addressIsOfCustomer)
+							break;
+					}
+					if (!addressIsOfCustomer) {
+						result.addError(new FieldError("Quote","direccionUsuarioFinal",messageSource.getMessage("quote.direccionUsuarioFinal.doesnt.belong.to.user", null, Locale.getDefault())));
+						logger.info(String.format("Validation error in entity <%s>, appointed address doesn't belong to customer.","Quote"));
+					}
+				}
+			}
+			else
+				if (quoteDto.getDireccionUsuarioFinal() != null) {
+					result.addError(new FieldError("Quote","direccionUsuarioFinal",messageSource.getMessage("quote.direccionUsuarioFinal.not.allowed", null, Locale.getDefault())));
+					logger.info(String.format("Validation error in entity <%s>, this service does not allow to appoint a customer address.","Quote"));
+				}
+		}
 		
 		return result;
 	}
