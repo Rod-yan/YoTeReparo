@@ -216,10 +216,7 @@ public class QuoteController {
 			consumes = "application/json; charset=UTF-8",
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.PUT)
-	@PreAuthorize("hasAuthority('USUARIO_PRESTADOR_GRATUITA')"
-			+ " or hasAuthority('USUARIO_PRESTADOR_PLATA')"
-			+ " or hasAuthority('USUARIO_PRESTADOR_ORO')"
-			+ " or hasAuthority('ADMINISTRATOR')")
+	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> updateQuote(@PathVariable("id") Integer id, @RequestBody QuoteDto clientInput, BindingResult result) {	
 		logger.info(String.format("UpdateQuote - PUT - Processing request for quote <%s>.", id));
 		try {
@@ -324,25 +321,25 @@ public class QuoteController {
 	 * de acuerdo a lo recibido en el URI path (customer/provider).
 	 */
 	@RequestMapping(
-			value = { "/quotes/{id}/reject/{userType}" }, 
+			value = { "/quotes/{id}/reject/{userRole}" }, 
 			produces = "application/json; charset=UTF-8",			
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
-    public ResponseEntity<?> rejectQuote(@PathVariable("id") Integer id, @PathVariable("userType") String userType) {
-		logger.info(String.format("RejectQuote - PUT - Processing request for quote <%s> and entity <%s>.", id, userType));
+    public ResponseEntity<?> rejectQuote(@PathVariable("id") Integer id, @PathVariable("userRole") String userRole) {
+		logger.info(String.format("RejectQuote - PUT - Processing request for quote <%s> and entity <%s>.", id, userRole));
 		try {
-			if (userType != null && !userType.isEmpty() && ("customer".equalsIgnoreCase(userType) || "provider".equalsIgnoreCase(userType))) {
+			if (userRole != null && !userRole.isEmpty() && ("customer".equalsIgnoreCase(userRole) || "provider".equalsIgnoreCase(userRole))) {
 				Quote quote = quoteService.getQuoteById(id);
 				if (quote != null) {
-					userType = userType.toLowerCase();
+					userRole = userRole.toLowerCase();
 					// Validamos si el presupuesto siendo procesado le pertenezca al usuario autenticado (como usuario prestador, o como usuario final)
 	    			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 	    			boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
 	    			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
 	    			boolean isOwnerAndProvider = quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
-	    			if ((isServiceAccountOrAdministrator || isOwnerAndCustomer) && "customer".equals(userType))
+	    			if ((isServiceAccountOrAdministrator || isOwnerAndCustomer) && "customer".equals(userRole))
 	    				quoteService.customerRejectsQuote(id);
-	    			else if ((isServiceAccountOrAdministrator || isOwnerAndProvider) && "provider".equals(userType))
+	    			else if ((isServiceAccountOrAdministrator || isOwnerAndProvider) && "provider".equals(userRole))
 	    				quoteService.providerRejectsQuote(id);
 	    			else {
 	    				logger.warn(String.format("RejectQuote - PUT - Request failed - "
@@ -365,7 +362,7 @@ public class QuoteController {
 			}
 			else {
 				logger.warn(String.format("RejectQuote - PUT - Request failed - "
-						+ "Incorrect URI path argument <%s> (must be customer | provider).", userType));
+						+ "Incorrect URI path argument <%s> (must be customer | provider).", userRole));
 	        	FieldError error = new FieldError(
 	        			"Quote","error",messageSource.getMessage("quote.incorrect.rejection.uri.argument", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.METHOD_NOT_ALLOWED);
