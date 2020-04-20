@@ -77,7 +77,7 @@ public class QuoteController {
 			
 			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 			User authenticatedUser = userService.getUserById(authenticatedUsername);
-			if (userRole == null) {
+			if (userRole == null || userRole.isEmpty()) {
 				if (userService.isServiceAccountOrAdministrator(authenticatedUser))
 					quotes = new HashSet<Quote>(quoteService.getAllQuotes());
 			}
@@ -331,15 +331,14 @@ public class QuoteController {
 			if (userRole != null && !userRole.isEmpty() && ("customer".equalsIgnoreCase(userRole) || "provider".equalsIgnoreCase(userRole))) {
 				Quote quote = quoteService.getQuoteById(id);
 				if (quote != null) {
-					userRole = userRole.toLowerCase();
 					// Validamos si el presupuesto siendo procesado le pertenezca al usuario autenticado (como usuario prestador, o como usuario final)
 	    			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 	    			boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
 	    			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
 	    			boolean isOwnerAndProvider = quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
-	    			if ((isServiceAccountOrAdministrator || isOwnerAndCustomer) && "customer".equals(userRole))
+	    			if ((isServiceAccountOrAdministrator || isOwnerAndCustomer) && "customer".equalsIgnoreCase(userRole))
 	    				quoteService.customerRejectsQuote(id);
-	    			else if ((isServiceAccountOrAdministrator || isOwnerAndProvider) && "provider".equals(userRole))
+	    			else if ((isServiceAccountOrAdministrator || isOwnerAndProvider) && "provider".equalsIgnoreCase(userRole))
 	    				quoteService.providerRejectsQuote(id);
 	    			else {
 	    				logger.warn(String.format("RejectQuote - PUT - Request failed - "

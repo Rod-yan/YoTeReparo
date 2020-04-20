@@ -101,7 +101,7 @@ public class UserDto {
 		return id;
 	}
 	public void setId(String id) {
-		this.id = id;
+		this.id = (id != null && !id.isEmpty()) ? id.toLowerCase() : null;
 	}
 	public String getNombre() {
 		return nombre;
@@ -204,7 +204,7 @@ public class UserDto {
 		return membresia;
 	}
 	public void setMembresia(String membresia) {
-		this.membresia = membresia;
+		this.membresia = (membresia != null && !membresia.isEmpty()) ? membresia.toUpperCase() : null;
 	}
 	@JsonIgnore
 	public Set<Role> getRoles() {

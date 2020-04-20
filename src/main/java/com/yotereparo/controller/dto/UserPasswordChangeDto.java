@@ -20,7 +20,7 @@ public class UserPasswordChangeDto {
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this.id = (id != null && !id.isEmpty()) ? id.toLowerCase() : null;
 	}
 
 	public String getContrasenaActual() {

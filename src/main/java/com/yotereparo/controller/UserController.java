@@ -143,7 +143,6 @@ public class UserController {
 		logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId().toLowerCase()));
 		try {
 			if (!validationUtils.userInputValidation(clientInput, result).hasErrors()) {
-				clientInput.setId(clientInput.getId().toLowerCase());
 				if (userService.getUserById(clientInput.getId()) == null) {
 					userService.createUser(userConverter.convertToEntity(clientInput));
 					
@@ -189,7 +188,6 @@ public class UserController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody UserDto clientInput, BindingResult result) {
-		id = id.toLowerCase();
 		logger.info(String.format("UpdateUser - PUT - Processing request for user <%s>.", id));
 		try {
 			clientInput.setId(id);
@@ -232,7 +230,6 @@ public class UserController {
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.PUT)
     public ResponseEntity<?> changeUserPassword(@PathVariable("id") String id, @RequestBody UserPasswordChangeDto clientInput, BindingResult result) {
-		id = id.toLowerCase();
 		logger.info(String.format("ChangeUserPassword - PUT - Processing request for user <%s>.", id));
 		try {
 			clientInput.setId(id);
