@@ -4,12 +4,12 @@ import { SessionContext } from "./SessionManage";
 import { useHistory } from "react-router-dom";
 
 function FloatCreateButton(props) {
-  var session = useContext(SessionContext);
-  var history = useHistory();
+  const { session } = useContext(SessionContext);
+  const history = useHistory();
 
   return (
     <>
-      {session.security?.roles.length > 1 ? (
+      {session.security.roles.length > 1 ? (
         <div
           className="float-button"
           onClick={() => history.push("/servicio/crear")}

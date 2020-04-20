@@ -34,6 +34,7 @@ const CrearServicio = (props) => {
   const [mediosDePago, setMediosDePago] = useState([]);
   const [requerimientos, setRequerimientos] = useState([]);
   const [emitirFactura, setEmitirFactura] = useState(false);
+  const [requiereDomicilio, setRequiereDomicilio] = useState(false);
   const refRequerimientos = useRef([React.createRef()]);
   const refMediosDePago = useRef([React.createRef()]);
   const history = useHistory();
@@ -81,7 +82,8 @@ const CrearServicio = (props) => {
       precioAdicionales: service.precioAdicionales,
       horasEstimadasEjecucion: horasEstimadasEjecucion,
       cantidadTrabajadores: cantidadTrabajadores,
-      facturaEmitida: !emitirFactura,
+      insitu: requiereDomicilio,
+      facturaEmitida: emitirFactura,
       tipoServicio:
         tipoServicioSeleccionado[0] === undefined
           ? "null"
@@ -351,23 +353,46 @@ const CrearServicio = (props) => {
                 </div>
               </FormGroup>
               <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-2">
-                <Label
-                  for="facturaEmitida"
-                  className="mr-sm-2 font-weight-bold"
-                >
-                  EMITIR FACTURA
-                </Label>
-                <Input
-                  className="ml-4 mr-4"
-                  type="checkbox"
-                  name="emitirFactura"
-                  id="emitirFactura"
-                  defaultChecked={emitirFactura}
-                  placeholder="Emitir Factura"
-                  onChange={(e) => {
-                    setEmitirFactura(!e.target.checked);
-                  }}
-                />
+                <div className="row">
+                  <div className="col-md-6">
+                    <Label
+                      for="facturaEmitida"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      EMITIR FACTURA
+                    </Label>
+                    <Input
+                      className="ml-4 mr-4"
+                      type="checkbox"
+                      name="emitirFactura"
+                      id="emitirFactura"
+                      defaultChecked={emitirFactura}
+                      placeholder="Emitir Factura"
+                      onChange={(e) => {
+                        setEmitirFactura(e.target.checked);
+                      }}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <Label
+                      for="requiereDomicilio"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      REQUIERE VISITA DOMICILIO
+                    </Label>
+                    <Input
+                      className="ml-4 mr-4"
+                      type="checkbox"
+                      name="requiereDomicilio"
+                      id="requiereDomicilio"
+                      defaultChecked={requiereDomicilio}
+                      placeholder="Requiere Visita Domicilio"
+                      onChange={(e) => {
+                        setRequiereDomicilio(e.target.checked);
+                      }}
+                    />
+                  </div>
+                </div>
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                 <Label for="tipoServicio" className="mr-sm-2 font-weight-bold">
