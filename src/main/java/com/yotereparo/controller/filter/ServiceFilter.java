@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 public class ServiceFilter extends AbstractFilter {
 	
 	public ServiceFilter() {
-		super.filters = new String[] {"user", "city", "district"};
+		super.filters = new String[] {"user", "city", "district", "title", "description"};
 	}
 }

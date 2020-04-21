@@ -11,6 +11,8 @@ public interface ServiceDao {
     void createService(Service service);
      
     void deleteServiceById(Integer id);
+    
+    List<Service> getAllServices(String attributeKey, String attributeValue);
      
     List<Service> getAllServices(Object filter);
 }

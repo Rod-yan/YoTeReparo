@@ -2,6 +2,7 @@ package com.yotereparo.dao;
 
 import java.util.List;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -41,6 +42,29 @@ public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements Ser
 		Query<?> query = getSession().createSQLQuery("DELETE FROM servicio WHERE id_servicio = :id");
 		query.setParameter("id", id);
         query.executeUpdate();
+	}
+	
+	public List<Service> getAllServices(String attributeKey, String attributeValue) {
+		TypedQuery<Service> query = getSession().createQuery(
+				"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(:attribute) LIKE :value",
+				Service.class);
+		if (attributeKey != null && !attributeKey.isEmpty()) {
+			switch (attributeKey) {
+				case ("title"):
+					query = getSession().createQuery(
+							"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(s.titulo) LIKE :value",
+							Service.class);
+					break;
+				case ("description"):
+					query = getSession().createQuery(
+							"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(s.descripcion) LIKE :value",
+							Service.class);
+					break;
+			}
+			query.setParameter("value", "%"+attributeValue+"%");
+		}
+		
+		return query.getResultList();
 	}
  
 	public List<Service> getAllServices(Object filter) {

@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -307,34 +308,62 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public List<Service> getAllServices(Map<String,String> filters) {
-		List<Service> services = null;
-		Entry <String, String> filter = filters.entrySet().iterator().next();
-		String filterKey = filter.getKey().toLowerCase();
-		String filterValue = filter.getValue().toLowerCase();
-		switch (filterKey) {
-			case "user":
-				User user = userService.getUserById(filterValue);
-				logger.debug("Fetching all services by user: <"+filterValue+">");
-				if (user != null)
-					services = dao.getAllServices(user);
-				break;
-			case "district":
-				try {
-					District district = districtService.getDistrictById(Integer.parseInt(filterValue));
-					logger.debug("Fetching all services by district: <"+filterValue+">");
-					if (district != null)
-						services = dao.getAllServices(district);
+		List<Service> filteredServices = new ArrayList<Service>();
+		List<Service> serviceListAfterFilters = new ArrayList<Service>();
+		//Entry <String, String> filter = filters.entrySet().iterator().next();
+		if (filters != null && !filters.isEmpty()) {
+			String filterKey = null;
+			String filterValue = null;
+			int entryCount = 0;
+			for (Entry <String, String> filter : filters.entrySet()) {
+				entryCount++;
+				filterKey = filter.getKey().toLowerCase();
+				filterValue = filter.getValue().toLowerCase();
+				switch (filterKey) {
+					case "user":
+						User user = userService.getUserById(filterValue);
+						logger.debug("Fetching all services by user: <"+filterValue+">");
+						if (user != null)
+							filteredServices = dao.getAllServices(user);
+						break;
+					case "district":
+						try {
+							District district = districtService.getDistrictById(Integer.parseInt(filterValue));
+							logger.debug("Fetching all services by district: <"+filterValue+">");
+							if (district != null)
+								filteredServices = dao.getAllServices(district);
+						}
+						catch (NumberFormatException e) { }
+						break;
+					case "city":
+						City city = cityService.getCityById(filterValue);
+						logger.debug("Fetching all services by city: <"+filterValue+">");
+						if (city != null)
+							filteredServices = dao.getAllServices(city);
+						break;
+					case "title":
+						logger.debug("Fetching all services by title: <"+filterValue+">");
+						if (filterValue != null && !filterValue.isEmpty())
+							filteredServices = dao.getAllServices(filterKey, filterValue);
+						break;
+					case "description":
+						logger.debug("Fetching all services by description: <"+filterValue+">");
+						if (filterValue != null && !filterValue.isEmpty())
+							filteredServices = dao.getAllServices(filterKey, filterValue);
+						break;
 				}
-				catch (NumberFormatException e) { }
-				break;
-			case "city":
-				City city = cityService.getCityById(filterValue);
-				logger.debug("Fetching all services by city: <"+filterValue+">");
-				if (city != null)
-					services = dao.getAllServices(city);
-				break;
-			// TODO: más filtros y filtro compuesto
+				
+				if (entryCount == 1)
+					serviceListAfterFilters.addAll(filteredServices);
+				else
+					serviceListAfterFilters.retainAll(filteredServices);
+				
+				filteredServices.clear();
+				
+				if (serviceListAfterFilters.isEmpty())
+					break;
+			}
 		}
-		return services;
+		return serviceListAfterFilters;
 	}
 }
