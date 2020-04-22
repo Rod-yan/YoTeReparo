@@ -27,6 +27,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name="servicio")
 public class Service {
+	// Constantes de estado
+	public static final String ACTIVE = "ACTIVO";
+	public static final String INACTIVE = "INACTIVO";
+	public static final String BLOCKED = "BLOQUEADO";
+	public static final String ARCHIVED = "ARCHIVADO";
+	
+	public static final String STATUS_LIST_REGEXP =
+			ACTIVE + "|" +
+			INACTIVE + "|" +
+			BLOCKED + "|" +
+			ARCHIVED;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -99,7 +110,7 @@ public class Service {
 	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
 	
 	@OneToMany(mappedBy = "servicio", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
-	@Where(clause = "estado <> 'ARCHIVADO'")
+	@Where(clause = "estado <> '"+Quote.ARCHIVED+"'")
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 		
 	public Service() { }

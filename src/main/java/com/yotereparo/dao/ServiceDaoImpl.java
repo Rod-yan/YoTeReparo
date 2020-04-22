@@ -7,6 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
@@ -45,25 +46,25 @@ public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements Ser
 	}
 	
 	public List<Service> getAllServices(String attributeKey, String attributeValue) {
-		TypedQuery<Service> query = getSession().createQuery(
-				"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(:attribute) LIKE :value",
-				Service.class);
+		TypedQuery<Service> query = null;
 		if (attributeKey != null && !attributeKey.isEmpty()) {
+			String filterNonFinalServices = " AND s.estado <> '"+Service.ARCHIVED+"' AND s.estado <> '"+Service.BLOCKED+"'";
 			switch (attributeKey) {
 				case ("title"):
 					query = getSession().createQuery(
-							"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(s.titulo) LIKE :value",
+							"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(s.titulo) LIKE :value"
+							+ filterNonFinalServices,
 							Service.class);
 					break;
 				case ("description"):
 					query = getSession().createQuery(
-							"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(s.descripcion) LIKE :value",
+							"SELECT s FROM com.yotereparo.model.Service s WHERE LOWER(s.descripcion) LIKE :value"
+							+ filterNonFinalServices,
 							Service.class);
 					break;
 			}
 			query.setParameter("value", "%"+attributeValue+"%");
 		}
-		
 		return query.getResultList();
 	}
  
@@ -72,29 +73,36 @@ public class ServiceDaoImpl extends AbstractDao<Integer, Service> implements Ser
 		CriteriaBuilder cb = getSession().getCriteriaBuilder();
 		CriteriaQuery<Service> cq = cb.createQuery(Service.class);
 		Root<Service> service = cq.from(Service.class);
-		if (filter != null)
+		
+		Predicate constructedFilter = null;
+		Predicate filterNonFinalServices = cb.and(
+				cb.notEqual(service.get("estado"), Service.ARCHIVED), 
+				cb.notEqual(service.get("estado"), Service.BLOCKED));
+		
+		if (filter != null) {
 			switch (filter.getClass().getSimpleName()) {
 				case ("User"):
-					cq.select(service).where(cb.equal(service.get("usuarioPrestador"), (User) filter));
+					constructedFilter = cb.equal(service.get("usuarioPrestador"), (User) filter);
 					break;
 				case ("District"):
-					{
-						District district = (District) filter;
-						Subquery<User> sub = cq.subquery(User.class);
-						Root<User> subRoot = sub.from(User.class);
-						SetJoin<User, District> subDistricts = subRoot.join(User_.barrios);
-						sub.select(subRoot);
-						sub.where(cb.equal(subDistricts.get(District_.id), district.getId()));
-						
-						cq.select(service).where(service.get("usuarioPrestador").in(sub));
-					}
+					District district = (District) filter;
+					Subquery<User> sub = cq.subquery(User.class);
+					Root<User> subRoot = sub.from(User.class);
+					SetJoin<User, District> subDistricts = subRoot.join(User_.barrios);
+					sub.select(subRoot);
+					sub.where(cb.equal(subDistricts.get(District_.id), district.getId()));
+					constructedFilter = service.get("usuarioPrestador").in(sub);
 					break;
 				case ("City"):
 					Join<Service, User> p = service.join("usuarioPrestador", JoinType.INNER);
-					cq.select(service).where(cb.equal(p.get("ciudad"), (City) filter));
+					constructedFilter = cb.equal(p.get("ciudad"), (City) filter);
 					break;
 			}
-		
+		}
+		if (constructedFilter != null)
+			cq.select(service).where(cb.and(constructedFilter, filterNonFinalServices));
+		else
+			cq.select(service).where(filterNonFinalServices);
 		query = getSession().createQuery(cq);
 		return query.getResultList();
 	}

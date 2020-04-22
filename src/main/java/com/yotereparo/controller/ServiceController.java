@@ -82,10 +82,20 @@ public class ServiceController {
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> listServices(@RequestParam(required = false) Map<String,String> filters) {
-		logger.info("ListServices - GET - Processing request for a list with all existing services.");
+		logger.info("ListServices - GET - Processing request from all existing services.");
 		try {
 			List<Service> services = null;
-			services = supportedFilters.contains(filters) ? serviceManager.getAllServices(filters) : serviceManager.getAllServices();
+			if (filters != null && !filters.isEmpty()) {
+				if (supportedFilters.contains(filters))
+					services = serviceManager.getAllServices(filters);
+				else {
+					logger.warn("ListServices - GET - Request failed - Unsupported filters.");
+					FieldError error = new FieldError("Service","error",messageSource.getMessage("unsupported.filters", null, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.BAD_REQUEST);
+				}
+			}
+			else
+				services = serviceManager.getAllServices();
 			
 			if (services != null && !services.isEmpty()) {
 				List<ServiceDto> servicesDto = services.stream()

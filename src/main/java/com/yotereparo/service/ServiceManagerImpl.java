@@ -65,18 +65,28 @@ public class ServiceManagerImpl implements ServiceManager {
 				// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
 				service.setImagen(null);
 				service.setThumbnail(null);
-				service.setEstado("ACTIVO");
+				service.setEstado(Service.ACTIVE);
 				
 				logger.info(String.format("Commiting creation of service <%s>", service.getTitulo()));
 				dao.persist(service);
 			}
 			else {
-				logger.debug(String.format("Service <%s> can't be created. User <%s> has no registered address", service.getTitulo(), service.getUsuarioPrestador().getId()));
-				throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.addresses.is.empty", new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
+				logger.debug(String.format(
+						"Service <%s> can't be created. User <%s> has no registered address", 
+						service.getTitulo(), service.getUsuarioPrestador().getId()));
+				throw new CustomResponseError(
+						"Service","usuarioPrestador",messageSource.getMessage(
+								"service.usuarioPrestador.addresses.is.empty", 
+								new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
 			}
 		else {
-			logger.debug(String.format("Service <%s> can't be created. User <%s> is not of type Prestador", service.getTitulo(), service.getUsuarioPrestador().getId()));
-			throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.unauthorized", new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
+			logger.debug(String.format(
+					"Service <%s> can't be created. User <%s> is not of type Prestador", 
+					service.getTitulo(), service.getUsuarioPrestador().getId()));
+			throw new CustomResponseError(
+					"Service","usuarioPrestador",messageSource.getMessage(
+							"service.usuarioPrestador.unauthorized", 
+							new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
 		}
 			
 	}
@@ -87,8 +97,11 @@ public class ServiceManagerImpl implements ServiceManager {
 		
 		if (!service.getUsuarioPrestador().getId().equals(entity.getUsuarioPrestador().getId())) {
 			// Illegal
-			logger.debug(String.format("Service <%s> owner: <%s> can't be modified!", service.getId(), entity.getUsuarioPrestador().getId()));
-			throw new CustomResponseError("Service","usuarioPrestador",messageSource.getMessage("service.usuarioPrestador.cant.change", null, Locale.getDefault()));
+			logger.debug(String.format(
+					"Service <%s> owner: <%s> can't be modified!", service.getId(), entity.getUsuarioPrestador().getId()));
+			throw new CustomResponseError(
+					"Service","usuarioPrestador",messageSource.getMessage(
+							"service.usuarioPrestador.cant.change", null, Locale.getDefault()));
 		}
 		
 		if (!service.getTitulo().equals(entity.getTitulo())) {
@@ -209,18 +222,18 @@ public class ServiceManagerImpl implements ServiceManager {
 	@Override
 	public void enableServiceById(Integer id) {
 		Service service = getServiceById(id);
-		if (service != null && service.getEstado() != "ACTIVO") {
+		if (service != null && service.getEstado() != Service.ACTIVE) {
 			logger.info(String.format("Enabling service <%s>", service.getId()));
-			service.setEstado("ACTIVO");
+			service.setEstado(Service.ACTIVE);
 		}
 	}
 	
 	@Override
 	public void disableServiceById(Integer id) {
 		Service service = getServiceById(id);
-		if (service != null && service.getEstado() != "INACTIVO") {
+		if (service != null && service.getEstado() != Service.INACTIVE) {
 			logger.info(String.format("Disabling service <%s>", service.getId()));
-			service.setEstado("INACTIVO");
+			service.setEstado(Service.INACTIVE);
 		}
 	}
 	
@@ -292,7 +305,9 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public boolean similarExist(Service service) {
-		logger.debug(String.format("Verifying that service with title <%s> is not similar to already registered services", service.getTitulo()));
+		logger.debug(String.format(
+				"Verifying that service with title <%s> is not similar to already registered services", 
+				service.getTitulo()));
 		User relatedUser = service.getUsuarioPrestador();
 		for (Service s : relatedUser.getServicios())
 			if (service.equals(s) || service.similarTo(s)) 
@@ -310,7 +325,6 @@ public class ServiceManagerImpl implements ServiceManager {
 	public List<Service> getAllServices(Map<String,String> filters) {
 		List<Service> filteredServices = new ArrayList<Service>();
 		List<Service> serviceListAfterFilters = new ArrayList<Service>();
-		//Entry <String, String> filter = filters.entrySet().iterator().next();
 		if (filters != null && !filters.isEmpty()) {
 			String filterKey = null;
 			String filterValue = null;
@@ -322,14 +336,14 @@ public class ServiceManagerImpl implements ServiceManager {
 				switch (filterKey) {
 					case "user":
 						User user = userService.getUserById(filterValue);
-						logger.debug("Fetching all services by user: <"+filterValue+">");
+						logger.debug("Fetching all services - filtering by user: <"+filterValue+">");
 						if (user != null)
 							filteredServices = dao.getAllServices(user);
 						break;
 					case "district":
 						try {
 							District district = districtService.getDistrictById(Integer.parseInt(filterValue));
-							logger.debug("Fetching all services by district: <"+filterValue+">");
+							logger.debug("Fetching all services - filtering by district: <"+filterValue+">");
 							if (district != null)
 								filteredServices = dao.getAllServices(district);
 						}
@@ -337,17 +351,17 @@ public class ServiceManagerImpl implements ServiceManager {
 						break;
 					case "city":
 						City city = cityService.getCityById(filterValue);
-						logger.debug("Fetching all services by city: <"+filterValue+">");
+						logger.debug("Fetching all services - filtering by city: <"+filterValue+">");
 						if (city != null)
 							filteredServices = dao.getAllServices(city);
 						break;
 					case "title":
-						logger.debug("Fetching all services by title: <"+filterValue+">");
+						logger.debug("Fetching all services - filtering by title: <"+filterValue+">");
 						if (filterValue != null && !filterValue.isEmpty())
 							filteredServices = dao.getAllServices(filterKey, filterValue);
 						break;
 					case "description":
-						logger.debug("Fetching all services by description: <"+filterValue+">");
+						logger.debug("Fetching all services - filtering by description: <"+filterValue+">");
 						if (filterValue != null && !filterValue.isEmpty())
 							filteredServices = dao.getAllServices(filterKey, filterValue);
 						break;

@@ -8,6 +8,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name="rol") 
 public class Role {
+	// Constantes de estado
+	public static final String ACTIVE = "ACTIVO";
+	public static final String INACTIVE = "INACTIVO";
+	public static final String PROTECTED = "PROTEGIDO";
+	
+	public static final String STATUS_LIST_REGEXP =
+			ACTIVE + "|" +
+			INACTIVE + "|" +
+			PROTECTED;
 	
 	@Id
 	@Column(name = "id_rol", nullable = false)
