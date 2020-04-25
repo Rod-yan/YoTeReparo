@@ -64,7 +64,7 @@ function TableServicios(props) {
                   <th>Servicio</th>
                   <th>Descripcion</th>
                   <th>Disponibilidad</th>
-                  <th>Presupuestos</th>
+                  <th>Visitar</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,9 +75,12 @@ function TableServicios(props) {
                       <td>{item.descripcion}</td>
                       <td>{item.disponibilidad}</td>
                       <td>
-                        <button className="btn btn-danger btn-block">
+                        <a
+                          className="btn btn-danger btn-block"
+                          href={`/servicio/${item.id}`}
+                        >
                           <i className="fas fa-chevron-right fa-1x"></i>
-                        </button>
+                        </a>
                       </td>
                     </tr>
                   );

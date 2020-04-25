@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 
 function StatusFooter(props) {
   const history = useHistory();
-  console.log(props);
 
   return (
     <>
@@ -20,6 +19,7 @@ function StatusFooter(props) {
               props.nextStep();
             }
           }}
+          disabled={!props.validateSubmit || false}
         >
           <i className="fas fa-chevron-circle-right fa-2x"></i>
         </Button>

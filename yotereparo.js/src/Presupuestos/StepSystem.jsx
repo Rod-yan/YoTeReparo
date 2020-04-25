@@ -4,7 +4,7 @@ import StepWizard from "react-step-wizard";
 
 function StepSystem() {
   return (
-    <StepWizard initialStep={3}>
+    <StepWizard initialStep={1}>
       <Introduction />
       <Discussion />
       <Acceptance />

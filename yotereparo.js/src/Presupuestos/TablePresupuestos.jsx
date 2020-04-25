@@ -5,10 +5,15 @@ import { SessionContext } from "../Utils/SessionManage";
 import { Table } from "reactstrap";
 import { useEffect } from "react";
 import Axios from "axios";
+import Provider from "./Provider";
+import Customer from "./Customer";
+import { useLocation } from "react-router-dom";
 
 function TablePresupuestos(props) {
   const { session } = useContext(SessionContext);
-  const [tableData, setTableData] = useState([]);
+  const location = useLocation();
+  const [tableDataCustomer, setTableDataCustomer] = useState([]);
+  const [tableDataProvider, setTableDataProvider] = useState([]);
 
   let requestConfig = {
     headers: {
@@ -18,21 +23,27 @@ function TablePresupuestos(props) {
   };
 
   useEffect(() => {
-    const fetchData = async (urlToFetch) => {
+    const fetchData = async (urlToFetch, callback) => {
       await Axios(urlToFetch, requestConfig)
         .then((resp) => {
-          setTableData([resp.data]);
+          callback(resp.data);
         })
         .catch((error) => {
           return error;
         });
     };
+
     try {
-      props.prestador === true
-        ? fetchData(`http://localhost:8080/YoTeReparo/quotes?userRole=provider`)
-        : fetchData(
-            `http://localhost:8080/YoTeReparo/quotes?userRole=customer`
-          );
+      if (props.prestador === true || location.state?.prestador === true) {
+        fetchData(
+          `http://localhost:8080/YoTeReparo/quotes?userRole=provider`,
+          setTableDataProvider
+        );
+      }
+      fetchData(
+        `http://localhost:8080/YoTeReparo/quotes?userRole=customer`,
+        setTableDataCustomer
+      );
     } catch (error) {
       console.log(error.response);
     }
@@ -40,34 +51,12 @@ function TablePresupuestos(props) {
 
   return (
     <>
-      <ElementContainer>
-        <div className="display-4">Mis Presupuestos</div>
-        <hr className="my-4"></hr>
-        <div className="table table-striped table-responsive">
-          <Table>
-            <thead className="text-left thead-dark">
-              <tr>
-                <th>Servicio</th>
-                <th>Usuario Final</th>
-                <th>Descripcion</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((item, idx) => {
-                return (
-                  <tr key={idx}>
-                    <td>{item.servicio}</td>
-                    <td>{item.usuarioFinal}</td>
-                    <td>{item.descripcionSolicitud}</td>
-                    <td>{item.estado}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </div>
-      </ElementContainer>
+      <Customer tableDataCustomer={tableDataCustomer}></Customer>
+      {props.prestador === true || location.state?.prestador === true ? (
+        <Provider tableDataProvider={tableDataProvider}></Provider>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

@@ -101,8 +101,9 @@ export const LoginHandler = ({ history }) => {
                   </div>
                 </h1>
                 <div className="lead text-center">
-				  Contratá o registrá nuevos servicios para tu hogar<br/>
-				  Rápido, seguro, y gratuito :) 
+                  Contratá o registrá nuevos servicios para tu hogar
+                  <br />
+                  Rápido, seguro, y gratuito :)
                 </div>
                 <div className="mt-4">
                   <form onSubmit={handleSubmit}>

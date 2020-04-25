@@ -1,5 +1,5 @@
 import React from "react";
-import { Jumbotron, CardSubtitle, CardTitle, CardText } from "reactstrap";
+import { Jumbotron, CardSubtitle, CardTitle, CardText, Form } from "reactstrap";
 import { useContext } from "react";
 import { PresupuestoContext } from "./Presupuestos";
 import { SessionContext } from "../Utils/SessionManage";
@@ -8,6 +8,12 @@ import ElementContainer from "../Container/ElementContainer";
 import SummaryPresupuesto from "./SummaryPresupuesto";
 import AdditionalNotes from "./AdditionalNotes";
 import { useState } from "react";
+import { useEffect } from "react";
+import { fetchData } from "../Utils/SessionHandlers";
+import Axios from "axios";
+import { useHistory } from "react-router-dom";
+import Errors from "../Errors/Errors";
+import { processErrors } from "../Utils/Errors";
 
 export function Introduction(props) {
   const { presupuestosContextGet, presupuestosContextUpdate } = useContext(
@@ -26,7 +32,7 @@ export function Introduction(props) {
         </div>
         <hr className="my-2" />
         <p className="text-center">¿Estas seguro que deseas continuar?</p>
-        <StatusFooter {...props} />
+        <StatusFooter validateSubmit={true} {...props} />
       </Jumbotron>
     </>
   );
@@ -60,7 +66,7 @@ export function Discussion(props) {
           ></SummaryPresupuesto>
         </ElementContainer>
         <hr className="my-4" />
-        <StatusFooter {...props} />
+        <StatusFooter validateSubmit={true} {...props} />
       </Jumbotron>
     </>
   );
@@ -71,46 +77,120 @@ export function Acceptance(props) {
     PresupuestoContext
   );
 
+  const history = useHistory();
+
   const { session } = useContext(SessionContext);
 
   const [additionalNotes, setAdditionalNotes] = useState({});
   const [adicionalesCheckBox, setAdicionalesCheckBox] = useState(false);
   const [insumosCheckBox, setInsumosCheckBox] = useState(false);
+  const [readyToSubmit, setReadyToSubmit] = useState(false);
+  const [serviceFromData, setServiceFromData] = useState({});
+  const [userFromData, setUserFromData] = useState({});
+  const [formErrors, setErrors] = useState({ errors: [] });
+  const [validateState, setValidateState] = useState(false);
 
   const handleChanges = (event) => {
-    console.log(event.target.name);
-    console.log(event.target.value);
     additionalNotes[event.target.name] = event.target.value;
 
     setAdditionalNotes({
       ...additionalNotes,
       [event.target.name]: event.target.value,
     });
+
+    if (
+      additionalNotes.fechaInicioEjecucionPropuesta &&
+      additionalNotes.horaInicioEjecucionPropuesta
+    ) {
+      setReadyToSubmit(true);
+      setValidateState(true);
+    }
   };
 
-  const handleSubmit = () => {
-    let requestObject = {
-      servicio: presupuestosContextGet.id,
-      usuarioFinal: session.username,
-      descripcionSolicitud: additionalNotes.descripcionSolicitud,
-      incluyeInsumos: insumosCheckBox,
-      incluyeAdicionales: adicionalesCheckBox,
-      fechaInicioEjecucionPropuesta:
-        additionalNotes.fechaInicioEjecucionPropuesta +
-        "T" +
-        additionalNotes.horaInicioEjecucionPropuesta,
-      estado: "ESPERANDO_USUARIO_PRESTADOR",
-    };
+  useEffect(() => {
+    fetchData(
+      `http://localhost:8080/YoTeReparo/services/${presupuestosContextGet.id}`,
+      setServiceFromData
+    );
+  }, []);
 
-    //TODO: Submit Presupuesto
-    //TODO: Presupuestos Listados por Usuarios Finales
-    //TODO: Servicios Listados por Usuarios Prestadores
-    console.log(requestObject);
+  let requestConfig = {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      Authorization: "Bearer " + session.security?.accessToken,
+    },
+  };
+
+  useEffect(() => {
+    async function result(urlToFetch, requestConfig) {
+      await Axios(urlToFetch, requestConfig)
+        .then((resp) => {
+          setUserFromData(resp.data);
+        })
+        .catch((error) => {
+          return error;
+        });
+    }
+
+    result(
+      `http://localhost:8080/YoTeReparo/users/${session.username}`,
+      requestConfig
+    );
+  }, []);
+
+  const handleSubmit = () => {
+    if (validateState === true) {
+      let requestObject = {
+        servicio: presupuestosContextGet.id,
+        usuarioFinal: session.username,
+        descripcionSolicitud: additionalNotes.descripcionSolicitud,
+        incluyeInsumos: !insumosCheckBox,
+        incluyeAdicionales: !adicionalesCheckBox,
+        fechaInicioEjecucionPropuesta:
+          additionalNotes.fechaInicioEjecucionPropuesta +
+          "T" +
+          additionalNotes.horaInicioEjecucionPropuesta,
+        estado: "ESPERANDO_USUARIO_PRESTADOR",
+      };
+
+      if (serviceFromData.insitu == true && userFromData.direcciones != null) {
+        requestObject = {
+          ...requestObject,
+          direccionUsuarioFinal: userFromData.direcciones[0],
+        };
+      }
+      sendQuote(requestObject, requestConfig);
+    } else {
+      setReadyToSubmit(false);
+    }
+  };
+
+  const sendQuote = (object, config) => {
+    Axios.post("http://localhost:8080/YoTeReparo/quotes/", object, config)
+      .then((response) => {
+        if (response.status === 400) {
+          console.log(response.data);
+        } else {
+          let urlTo =
+            session.security.roles.length > 1
+              ? "/prestador/presupuestos"
+              : "/presupuestos";
+          history.push(urlTo, {
+            prestador: session.security.roles.length > 1 ? true : false,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error.response);
+        let errors = processErrors(error.response.data);
+        setErrors({ ...formErrors, errors });
+      });
   };
 
   return (
     <>
       <Jumbotron>
+        <Errors formErrors={formErrors}></Errors>
         <div className="display-4 mb-4">Datos Adicionales</div>
         <AdditionalNotes
           onHandleChange={handleChanges}
@@ -119,7 +199,11 @@ export function Acceptance(props) {
           insumos={insumosCheckBox}
           setInsumos={setInsumosCheckBox}
         />
-        <StatusFooter {...props} onSubmit={handleSubmit} />
+        <StatusFooter
+          {...props}
+          validateSubmit={readyToSubmit}
+          onSubmit={handleSubmit}
+        />
       </Jumbotron>
     </>
   );

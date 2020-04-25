@@ -50,6 +50,7 @@ function AdditionalNotes(props) {
               <Input
                 type="time"
                 step="2"
+                defaultValue="00:00:00"
                 name="horaInicioEjecucionPropuesta"
                 id="horaInicioEjecucionPropuesta"
                 onChange={(e) => {
