@@ -66,9 +66,9 @@ public class QuoteServiceImpl implements QuoteService {
 		Quote entity = getQuoteById(quote.getId());
 		
 		if (!entity.getEstado().equals(Quote.ARCHIVED) && 
-				!entity.getEstado().equals(Quote.ACCEPTED_BY_CUSTOMER) &&
-				!entity.getEstado().equals(Quote.REJECTED_BY_CUSTOMER) &&
-				!entity.getEstado().equals(Quote.REJECTED_BY_PROVIDER)) {
+			!entity.getEstado().equals(Quote.ACCEPTED_BY_CUSTOMER) &&
+			!entity.getEstado().equals(Quote.REJECTED_BY_CUSTOMER) &&
+			!entity.getEstado().equals(Quote.REJECTED_BY_PROVIDER)) {
 			if (!quote.getUsuarioFinal().getId().equals(entity.getUsuarioFinal().getId())) {
 				// Illegal
 				logger.debug(String.format(
@@ -136,7 +136,7 @@ public class QuoteServiceImpl implements QuoteService {
 				if (quote.getPrecioPresupuestado() != null) {
 					if (quote.getPrecioPresupuestado() - entity.getPrecioPresupuestado() != 0) {
 						if (quote.getPrecioPresupuestado() <= entity.getServicio().getPrecioMaximo() &&
-								quote.getPrecioPresupuestado() >= entity.getServicio().getPrecioMinimo()) {
+							quote.getPrecioPresupuestado() >= entity.getServicio().getPrecioMinimo()) {
 							logger.debug(String.format(
 									"Updating attribute 'PrecioPresupuestado' from quote <%s>", quote.getId()));
 							totalPriceIsChanging = true;
@@ -152,7 +152,7 @@ public class QuoteServiceImpl implements QuoteService {
 									"Quote","precioPresupuestado",
 									messageSource.getMessage("quote.precioPresupuestado.out.of.service.boundaries", 
 											new Float[] {entity.getServicio().getPrecioMinimo(),
-													entity.getServicio().getPrecioMaximo()}, 
+														 entity.getServicio().getPrecioMaximo()}, 
 											Locale.getDefault()));
 						}
 					}
