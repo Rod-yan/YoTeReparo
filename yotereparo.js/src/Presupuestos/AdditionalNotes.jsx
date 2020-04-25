@@ -78,7 +78,7 @@ function AdditionalNotes(props) {
                   defaultChecked={props.adicionales}
                   placeholder="Incluye Adicionales"
                   onChange={(e) => {
-                    props.setAdicionales(!e.target.checked);
+                    props.setAdicionales(e.target.checked);
                   }}
                 />
               </div>
@@ -100,7 +100,7 @@ function AdditionalNotes(props) {
                   defaultChecked={props.insumos}
                   placeholder="Incluye Insumos"
                   onChange={(e) => {
-                    props.setInsumos(!e.target.checked);
+                    props.setInsumos(e.target.checked);
                   }}
                 />
               </div>

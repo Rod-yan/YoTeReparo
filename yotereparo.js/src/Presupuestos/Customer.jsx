@@ -2,7 +2,6 @@ import React from "react";
 import ElementContainer from "../Container/ElementContainer";
 import { Table } from "reactstrap";
 import { renderQuoteState } from "./TablePresupuestos";
-import Axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { fetchData } from "../Utils/SessionHandlers";
@@ -48,6 +47,11 @@ function Customer(props) {
               {[...props.tableDataCustomer]
                 .sort((a, b) => a.servicio >= b.servicio)
                 .map((item, idx) => {
+                  let rejectedQuote =
+                    item.estado === "RECHAZADO_USUARIO_FINAL" ||
+                    item.estado === "RECHAZADO_USUARIO_PRESTADOR"
+                      ? true
+                      : false;
                   return (
                     <tr key={idx}>
                       <td className="text-center">{item.servicio}</td>
@@ -62,20 +66,22 @@ function Customer(props) {
                         {renderQuoteState(item.estado)}
                       </td>
                       <td className="text-center">
-                        <div
+                        <button
                           onClick={() => props.acceptQuote(item.id)}
                           className="btn btn-success btn-block"
+                          disabled={rejectedQuote}
                         >
                           <i className="fas fa-thumbs-up fa-1x"></i>
-                        </div>
+                        </button>
                       </td>
                       <td>
-                        <div
+                        <button
                           onClick={() => props.rejectQuote(item.id)}
                           className="btn btn-danger btn-block"
+                          disabled={rejectedQuote}
                         >
                           <i className="fas fa-thumbs-down fa-1x"></i>
-                        </div>
+                        </button>
                       </td>
                     </tr>
                   );

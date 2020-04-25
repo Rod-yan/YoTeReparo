@@ -13,7 +13,7 @@ function StatusFooter(props) {
           block={true}
           className="my-auto pb-4 pt-4"
           onClick={() => {
-            if (props.currentStep == 3) {
+            if (props.currentStep === 3) {
               props.onSubmit();
             } else {
               props.nextStep();
@@ -28,7 +28,7 @@ function StatusFooter(props) {
           block={true}
           className="mt-2"
           onClick={() => {
-            if (props.currentStep == 1) {
+            if (props.currentStep === 1) {
               history.go(-1);
             } else {
               props.previousStep();

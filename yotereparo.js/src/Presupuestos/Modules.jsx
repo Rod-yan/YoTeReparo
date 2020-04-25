@@ -1,5 +1,5 @@
 import React from "react";
-import { Jumbotron, CardSubtitle, CardTitle, CardText, Form } from "reactstrap";
+import { Jumbotron, CardSubtitle, CardTitle } from "reactstrap";
 import { useContext } from "react";
 import { PresupuestoContext } from "./Presupuestos";
 import { SessionContext } from "../Utils/SessionManage";
@@ -16,9 +16,7 @@ import Errors from "../Errors/Errors";
 import { processErrors } from "../Utils/Errors";
 
 export function Introduction(props) {
-  const { presupuestosContextGet, presupuestosContextUpdate } = useContext(
-    PresupuestoContext
-  );
+  const { presupuestosContextGet } = useContext(PresupuestoContext);
 
   return (
     <>
@@ -39,9 +37,7 @@ export function Introduction(props) {
 }
 
 export function Discussion(props) {
-  const { presupuestosContextGet, presupuestosContextUpdate } = useContext(
-    PresupuestoContext
-  );
+  const { presupuestosContextGet } = useContext(PresupuestoContext);
 
   const { session } = useContext(SessionContext);
 
@@ -73,9 +69,7 @@ export function Discussion(props) {
 }
 
 export function Acceptance(props) {
-  const { presupuestosContextGet, presupuestosContextUpdate } = useContext(
-    PresupuestoContext
-  );
+  const { presupuestosContextGet } = useContext(PresupuestoContext);
 
   const history = useHistory();
 
@@ -144,8 +138,8 @@ export function Acceptance(props) {
         servicio: presupuestosContextGet.id,
         usuarioFinal: session.username,
         descripcionSolicitud: additionalNotes.descripcionSolicitud,
-        incluyeInsumos: !insumosCheckBox,
-        incluyeAdicionales: !adicionalesCheckBox,
+        incluyeInsumos: insumosCheckBox,
+        incluyeAdicionales: adicionalesCheckBox,
         fechaInicioEjecucionPropuesta:
           additionalNotes.fechaInicioEjecucionPropuesta +
           "T" +
@@ -153,7 +147,12 @@ export function Acceptance(props) {
         estado: "ESPERANDO_USUARIO_PRESTADOR",
       };
 
-      if (serviceFromData.insitu == true && userFromData.direcciones != null) {
+      console.log(requestObject);
+
+      if (
+        serviceFromData.insitu === true &&
+        userFromData.direcciones !== null
+      ) {
         requestObject = {
           ...requestObject,
           direccionUsuarioFinal: userFromData.direcciones[0],

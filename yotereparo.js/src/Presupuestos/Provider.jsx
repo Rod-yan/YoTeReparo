@@ -24,7 +24,7 @@ function Provider(props) {
                 <th className="text-center">Usuario Final</th>
                 <th className="text-center">Descripcion</th>
                 <th className="text-center">Estado</th>
-                <th className="text-center">Aceptar</th>
+                <th className="text-center">Responder</th>
                 <th className="text-center">Rechazar</th>
               </tr>
             </thead>
@@ -32,6 +32,11 @@ function Provider(props) {
               {[...props.tableDataProvider]
                 .sort((a, b) => a.servicio >= b.servicio)
                 .map((item, idx) => {
+                  let rejectedQuote =
+                    item.estado === "RECHAZADO_USUARIO_FINAL" ||
+                    item.estado === "RECHAZADO_USUARIO_PRESTADOR"
+                      ? true
+                      : false;
                   return (
                     <tr key={idx}>
                       <td className="text-center">{item.servicio}</td>
@@ -43,20 +48,24 @@ function Provider(props) {
                         {renderQuoteState(item.estado)}
                       </td>
                       <td className="text-center">
-                        <div
-                          onClick={() => props.acceptQuote(item.id)}
+                        <button
+                          onClick={() =>
+                            props.responseQuote(item.id, item.servicio)
+                          }
                           className="btn btn-success btn-block"
+                          disabled={rejectedQuote}
                         >
-                          <i className="fas fa-thumbs-up fa-1x"></i>
-                        </div>
+                          <i className="fas fa-reply fa-1x"></i>
+                        </button>
                       </td>
                       <td>
-                        <div
+                        <button
                           onClick={() => props.rejectQuote(item.id)}
                           className="btn btn-danger btn-block"
+                          disabled={rejectedQuote}
                         >
                           <i className="fas fa-thumbs-down fa-1x"></i>
-                        </div>
+                        </button>
                       </td>
                     </tr>
                   );

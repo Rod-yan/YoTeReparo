@@ -41,6 +41,8 @@ export const renderQuoteState = (state) => {
           <i className="fas fa-pause-circle fa-2x"></i>
         </>
       );
+    default:
+      break;
   }
 };
 
@@ -64,7 +66,6 @@ function TablePresupuestos(props) {
   };
 
   const rejectQuote = (idQuote) => {
-    setLoading(!loading);
     let rejectFor =
       props.prestador === true || location.state?.prestador === true
         ? "provider"
@@ -78,12 +79,16 @@ function TablePresupuestos(props) {
 
   //From the customer
   const acceptQuote = (idQuote) => {
-    setLoading(!loading);
     putData(
       `http://localhost:8080/YoTeReparo/quotes/${idQuote}/accept`,
       requestConfig,
       callbackToRender
     );
+  };
+
+  //Response from the provider to the customer
+  const responseQuote = (idQuote, idServicio) => {
+    console.log(idQuote, idServicio);
   };
 
   //From the provider
@@ -134,7 +139,7 @@ function TablePresupuestos(props) {
       ></Customer>
       {props.prestador === true || location.state?.prestador === true ? (
         <Provider
-          acceptQuote={acceptQuote}
+          responseQuote={responseQuote}
           archiveQuote={archiveQuote}
           rejectQuote={rejectQuote}
           tableDataProvider={tableDataProvider}
