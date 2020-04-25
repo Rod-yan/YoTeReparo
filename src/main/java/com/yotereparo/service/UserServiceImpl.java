@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -268,9 +270,13 @@ public class UserServiceImpl implements UserService {
 		newPassword = SecurityUtils.encryptPassword(newPassword.concat(user.getSalt()));
 		String trueCurrentPassword = user.getContrasena();
 		
-		// Si el usuario autenticado es administrador o cuenta de servicio, ignoramos la validación de la contraseña actual
-		String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-		boolean isServiceAccountOrAdministrator = isServiceAccountOrAdministrator(getUserById(authenticatedUsername));
+		// Si el usuario está autenticado y es administrador o cuenta de servicio, ignoramos la validación de la contraseña actual
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		boolean isServiceAccountOrAdministrator = false;
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			String authenticatedUsername = ((UserDetails)authentication.getPrincipal()).getUsername();
+			isServiceAccountOrAdministrator = isServiceAccountOrAdministrator(getUserById(authenticatedUsername));
+		}
 		
 		// La verdadera contraseña actual debe ser igual a la contraseña actual ingresada por el usuario
 		if (currentPassword.equals(trueCurrentPassword) || isServiceAccountOrAdministrator) {
