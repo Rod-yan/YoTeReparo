@@ -75,8 +75,10 @@ public class QuoteController {
 		try {
 			Set<Quote> quotes = new HashSet<Quote>(0);
 			
-			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+			String authenticatedUsername = 
+					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 			User authenticatedUser = userService.getUserById(authenticatedUsername);
+			
 			if (userRole == null || userRole.isEmpty()) {
 				if (userService.isServiceAccountOrAdministrator(authenticatedUser))
 					quotes = new HashSet<Quote>(quoteService.getAllQuotes());
@@ -102,7 +104,8 @@ public class QuoteController {
 		}
 		catch (Exception e) {
 			logger.error("ListQuotes - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("Quote","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError(
+					"Quote","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
     }
@@ -120,18 +123,27 @@ public class QuoteController {
         try {
         	Quote quote = quoteService.getQuoteById(id);
     		if (quote != null) {
-    			// Validamos si el presupuesto siendo procesado le pertenezca al usuario autenticado (como usuario prestador, o como usuario final)
-    			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-    			boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+    			/* 
+    			 * Validamos si el presupuesto siendo procesado le pertenezca 
+    			 * al usuario autenticado (como usuario prestador, o como usuario final)
+    			 */
+    			String authenticatedUsername = 
+    					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    			boolean isServiceAccountOrAdministrator = 
+    					userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
     			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
-    			boolean isOwnerAndProvider = quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
+    			boolean isOwnerAndProvider = 
+    					quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
+    			
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer || isOwnerAndProvider) {
             		logger.info("GetQuote - GET - Exiting method, providing response resource to client.");
                     return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quote), HttpStatus.OK);
             	}
     			else {
     				logger.warn(
-    						String.format("GetQuote - GET - Request failed - Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
+    						String.format(
+    								"GetQuote - GET - Request failed - Quote <%s> doesn't belong to user <%s>.", 
+    								id, authenticatedUsername));
 					FieldError error = new FieldError(
 							"Quote","error",messageSource.getMessage(
 									"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
@@ -164,7 +176,8 @@ public class QuoteController {
     public ResponseEntity<?> createQuote(@RequestBody QuoteDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {	
 		logger.info("CreateQuote - POST - Processing request for new quote.");
 		try {
-			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+			String authenticatedUsername = 
+					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 			
 			// Setteamos el usuario final de acuerdo al usuario autenticado que está registrando el request.
 			clientInput.setUsuarioFinal(authenticatedUsername);
@@ -180,7 +193,8 @@ public class QuoteController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 				}
 				else {
-					logger.warn(String.format("CreateQuote - POST - Request failed - Unable to create quote. An active quote already exist between "
+					logger.warn(
+							String.format("CreateQuote - POST - Request failed - Unable to create quote. An active quote already exist between "
 							+ "service <%s> and"
 							+ "user <%s>.", quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()));
 		            FieldError error = new FieldError(
@@ -223,11 +237,18 @@ public class QuoteController {
 			clientInput.setId(id);
 			Quote quote = quoteService.getQuoteById(id);
 			if (quote != null) {
-				// Validamos si el presupuesto siendo procesado le pertenezca al usuario autenticado (como usuario prestador, o como usuario final)
-    			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-    			boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				/* 
+    			 * Validamos si el presupuesto siendo procesado le pertenezca 
+    			 * al usuario autenticado (como usuario prestador, o como usuario final)
+    			 */
+    			String authenticatedUsername = 
+    					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    			boolean isServiceAccountOrAdministrator = 
+    					userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
     			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
-    			boolean isOwnerAndProvider = quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
+    			boolean isOwnerAndProvider = 
+    					quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
+    			
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer || isOwnerAndProvider) {
     				clientInput.setUsuarioFinal(quote.getUsuarioFinal().getId());
     				if (!validationUtils.quoteInputValidation(clientInput, result).hasErrors()) {
@@ -252,7 +273,8 @@ public class QuoteController {
 	        }
 			else {
 				logger.warn(String.format("UpdateQuote - PUT - Request failed - Unable to update quote. Quote <%s> doesn't exist.", id));
-	            FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	            FieldError error = new FieldError(
+	            		"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -280,10 +302,16 @@ public class QuoteController {
 		try {
 			Quote quote = quoteService.getQuoteById(id);
 			if (quote != null) {
-				// Validamos si el presupuesto siendo procesado le pertenezca al usuario autenticado (como usuario prestador, o como usuario final)
-    			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-    			boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+				/* 
+    			 * Validamos si el presupuesto siendo procesado le pertenezca 
+    			 * al usuario autenticado (como usuario prestador, o como usuario final)
+    			 */
+    			String authenticatedUsername = 
+    					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    			boolean isServiceAccountOrAdministrator = 
+    					userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
     			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
+    			
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer) {
     				quoteService.customerAcceptsQuote(id);
     	        	
@@ -301,7 +329,8 @@ public class QuoteController {
 	        }
 	        else {
 	        	logger.warn(String.format("AcceptQuote - PUT - Request failed - Unable to accept quote. Quote <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	FieldError error = new FieldError(
+	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -331,11 +360,17 @@ public class QuoteController {
 			if (userRole != null && !userRole.isEmpty() && ("customer".equalsIgnoreCase(userRole) || "provider".equalsIgnoreCase(userRole))) {
 				Quote quote = quoteService.getQuoteById(id);
 				if (quote != null) {
-					// Validamos si el presupuesto siendo procesado le pertenezca al usuario autenticado (como usuario prestador, o como usuario final)
-	    			String authenticatedUsername = ((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-	    			boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+					/* 
+	    			 * Validamos si el presupuesto siendo procesado le pertenezca 
+	    			 * al usuario autenticado (como usuario prestador, o como usuario final)
+	    			 */
+	    			String authenticatedUsername = 
+	    					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+	    			boolean isServiceAccountOrAdministrator = 
+	    					userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
 	    			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
 	    			boolean isOwnerAndProvider = quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
+	    			
 	    			if ((isServiceAccountOrAdministrator || isOwnerAndCustomer) && "customer".equalsIgnoreCase(userRole))
 	    				quoteService.customerRejectsQuote(id);
 	    			else if ((isServiceAccountOrAdministrator || isOwnerAndProvider) && "provider".equalsIgnoreCase(userRole))
@@ -363,7 +398,8 @@ public class QuoteController {
 				logger.warn(String.format("RejectQuote - PUT - Request failed - "
 						+ "Incorrect URI path argument <%s> (must be customer | provider).", userRole));
 	        	FieldError error = new FieldError(
-	        			"Quote","error",messageSource.getMessage("quote.incorrect.rejection.uri.argument", new Integer[]{id}, Locale.getDefault()));
+	        			"Quote","error",messageSource.getMessage(
+	        					"quote.incorrect.rejection.uri.argument", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.METHOD_NOT_ALLOWED);
 			}
 		}
@@ -397,7 +433,8 @@ public class QuoteController {
 	        }
 	        else {
 	        	logger.warn(String.format("ArchiveQuote - POST - Request failed - Unable to archive quote. Quote <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	FieldError error = new FieldError(
+	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -430,8 +467,10 @@ public class QuoteController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format("DeleteQuote - DELETE - Request failed - Unable to delete quote. Quote <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError("Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn(
+	        			String.format("DeleteQuote - DELETE - Request failed - Unable to delete quote. Quote <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError(
+	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
