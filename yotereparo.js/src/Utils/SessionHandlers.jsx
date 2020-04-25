@@ -153,6 +153,16 @@ export const LogOutHandler = ({ history }) => {
   return <></>;
 };
 
+export const putData = async (urlToFetch, requestConfig, callback) => {
+  await Axios.put(urlToFetch, {}, requestConfig)
+    .then((resp) => {
+      callback(resp.data);
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
 export const fetchData = async (urlToFetch, callback) => {
   const result = await Axios(urlToFetch)
     .then((resp) => {
