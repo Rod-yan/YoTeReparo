@@ -43,13 +43,15 @@ public class QuoteServiceImpl implements QuoteService {
 			// Illegal
 			logger.debug("Quote's quoted price: setting a quoted price during creation is now allowed");
 			throw new CustomResponseError(
-					"Quote","precioPresupuestado",messageSource.getMessage("quote.precioPresupuestado.not.allowed", null, Locale.getDefault()));
+					"Quote","precioPresupuestado",messageSource.getMessage(
+							"quote.precioPresupuestado.not.allowed", null, Locale.getDefault()));
 		}
 		if (quote.getDescripcionRespuesta() != null) {
 			// Illegal
 			logger.debug("Quote's response description: setting a response description during creation is now allowed");
 			throw new CustomResponseError(
-					"Quote","descripcionRespuesta",messageSource.getMessage("quote.descripcionRespuesta.not.allowed", null, Locale.getDefault()));
+					"Quote","descripcionRespuesta",messageSource.getMessage(
+							"quote.descripcionRespuesta.not.allowed", null, Locale.getDefault()));
 		}
 		quote.setPrecioTotal();
 		quote.setFechaSolicitud(new DateTime());
@@ -63,40 +65,53 @@ public class QuoteServiceImpl implements QuoteService {
 	public void updateQuote(Quote quote) {
 		Quote entity = getQuoteById(quote.getId());
 		
-		if (!entity.getEstado().equals(Quote.ARCHIVED) && !entity.getEstado().equals(Quote.ACCEPTED_BY_CUSTOMER) && !entity.getEstado().equals(Quote.REJECTED_BY_CUSTOMER) && !entity.getEstado().equals(Quote.REJECTED_BY_PROVIDER)) {
+		if (!entity.getEstado().equals(Quote.ARCHIVED) && 
+			!entity.getEstado().equals(Quote.ACCEPTED_BY_CUSTOMER) &&
+			!entity.getEstado().equals(Quote.REJECTED_BY_CUSTOMER) &&
+			!entity.getEstado().equals(Quote.REJECTED_BY_PROVIDER)) {
 			if (!quote.getUsuarioFinal().getId().equals(entity.getUsuarioFinal().getId())) {
 				// Illegal
-				logger.debug(String.format("Quote <%s> customer: <%s> can't be modified!", quote.getId(), entity.getUsuarioFinal().getId()));
-				throw new CustomResponseError("Quote","usuarioFinal",messageSource.getMessage("quote.usuarioFinal.cant.change", null, Locale.getDefault()));
+				logger.debug(
+						String.format("Quote <%s> customer: <%s> can't be modified!", quote.getId(), entity.getUsuarioFinal().getId()));
+				throw new CustomResponseError(
+						"Quote","usuarioFinal",messageSource.getMessage(
+								"quote.usuarioFinal.cant.change", null, Locale.getDefault()));
 			}
 			
 			if (!quote.getServicio().getId().equals(entity.getServicio().getId())) {
 				// Illegal
-				logger.debug(String.format("Quote <%s> service: <%s> can't be modified!", quote.getId(), entity.getServicio().getId()));
-				throw new CustomResponseError("Quote","servicio",messageSource.getMessage("quote.servicio.cant.change", null, Locale.getDefault()));
+				logger.debug(
+						String.format("Quote <%s> service: <%s> can't be modified!", quote.getId(), entity.getServicio().getId()));
+				throw new CustomResponseError(
+						"Quote","servicio",messageSource.getMessage(
+								"quote.servicio.cant.change", null, Locale.getDefault()));
 			}
 			
 			if (quote.getEstado().equals(Quote.AWAITING_PROVIDER)) {
 				if (quote.getDescripcionSolicitud() != null) {
 					if (!quote.getDescripcionSolicitud().equals(entity.getDescripcionSolicitud())) {
-						logger.debug(String.format("Updating attribute 'DescripcionSolicitud' from quote <%s>", quote.getId()));
+						logger.debug(
+								String.format("Updating attribute 'DescripcionSolicitud' from quote <%s>", quote.getId()));
 						entity.setDescripcionSolicitud(quote.getDescripcionSolicitud());
 					}
 				}
 				else
 					if (entity.getDescripcionSolicitud() != null) {
-						logger.debug(String.format("Updating attribute 'DescripcionSolicitud' from quote <%s>", quote.getId()));
+						logger.debug(
+								String.format("Updating attribute 'DescripcionSolicitud' from quote <%s>", quote.getId()));
 						entity.setDescripcionSolicitud(null);
 					}
 				if (quote.getDireccionUsuarioFinal() != null) {
 					if (!quote.getDireccionUsuarioFinal().equals(entity.getDireccionUsuarioFinal())) {
-						logger.debug(String.format("Updating attribute 'DireccionUsuarioFinal' from quote <%s>", quote.getId()));
+						logger.debug(
+								String.format("Updating attribute 'DireccionUsuarioFinal' from quote <%s>", quote.getId()));
 						entity.setDireccionUsuarioFinal(quote.getDireccionUsuarioFinal());
 					}
 				}
 				else
 					if (entity.getDireccionUsuarioFinal() != null) {
-						logger.debug(String.format("Updating attribute 'DireccionUsuarioFinal' from quote <%s>", quote.getId()));
+						logger.debug(
+								String.format("Updating attribute 'DireccionUsuarioFinal' from quote <%s>", quote.getId()));
 						entity.setDireccionUsuarioFinal(null);
 					}
 			}
@@ -104,13 +119,15 @@ public class QuoteServiceImpl implements QuoteService {
 			if (quote.getEstado().equals(Quote.AWAITING_CUSTOMER))
 				if (quote.getDescripcionRespuesta() != null) {
 					if (!quote.getDescripcionRespuesta().equals(entity.getDescripcionRespuesta())) {
-						logger.debug(String.format("Updating attribute 'DescripcionRespuesta' from quote <%s>", quote.getId()));
+						logger.debug(
+								String.format("Updating attribute 'DescripcionRespuesta' from quote <%s>", quote.getId()));
 						entity.setDescripcionRespuesta(quote.getDescripcionRespuesta());
 					}
 				}
 				else
 					if (entity.getDescripcionRespuesta() != null) {
-						logger.debug(String.format("Updating attribute 'DescripcionRespuesta' from quote <%s>", quote.getId()));
+						logger.debug(
+								String.format("Updating attribute 'DescripcionRespuesta' from quote <%s>", quote.getId()));
 						entity.setDescripcionRespuesta(null);
 					}
 			
@@ -118,38 +135,59 @@ public class QuoteServiceImpl implements QuoteService {
 			if (quote.getEstado().equals(Quote.AWAITING_CUSTOMER))
 				if (quote.getPrecioPresupuestado() != null) {
 					if (quote.getPrecioPresupuestado() - entity.getPrecioPresupuestado() != 0) {
-						if (quote.getPrecioPresupuestado() <= entity.getServicio().getPrecioMaximo() && quote.getPrecioPresupuestado() >= entity.getServicio().getPrecioMinimo()) {
-							logger.debug(String.format("Updating attribute 'PrecioPresupuestado' from quote <%s>", quote.getId()));
+						if (quote.getPrecioPresupuestado() <= entity.getServicio().getPrecioMaximo() &&
+							quote.getPrecioPresupuestado() >= entity.getServicio().getPrecioMinimo()) {
+							logger.debug(
+									String.format("Updating attribute 'PrecioPresupuestado' from quote <%s>", quote.getId()));
 							totalPriceIsChanging = true;
 							entity.setPrecioPresupuestado(quote.getPrecioPresupuestado());
 						}
 						else {
-							logger.debug(String.format("Quote <%s> quoted price: <%s> must be between <%s> (MIN) and <%s> (MAX)", quote.getId(), entity.getPrecioPresupuestado(), entity.getServicio().getPrecioMinimo(),entity.getServicio().getPrecioMaximo()));
-							throw new CustomResponseError("Quote","precioPresupuestado",messageSource.getMessage("quote.precioPresupuestado.out.of.service.boundaries", new Float[] {entity.getServicio().getPrecioMinimo(),entity.getServicio().getPrecioMaximo()}, Locale.getDefault()));
+							logger.debug(
+									String.format("Quote <%s> quoted price: <%s> must be between <%s> (MIN) and <%s> (MAX)",
+									quote.getId(),
+									entity.getPrecioPresupuestado(),
+									entity.getServicio().getPrecioMinimo(),entity.getServicio().getPrecioMaximo()));
+							throw new CustomResponseError(
+									"Quote","precioPresupuestado",messageSource.getMessage(
+											"quote.precioPresupuestado.out.of.service.boundaries", 
+											new Float[] {entity.getServicio().getPrecioMinimo(),
+														 entity.getServicio().getPrecioMaximo()}, 
+											Locale.getDefault()));
 						}
 					}
 				}
 				else 
 					if (entity.getPrecioPresupuestado() != null) {
 						// Illegal
-						logger.debug(String.format("Quote <%s> quoted price: <%s> can't be erased!", quote.getId(), entity.getPrecioPresupuestado()));
-						throw new CustomResponseError("Quote","precioPresupuestado",messageSource.getMessage("quote.precioPresupuestado.cant.be.deleted", null, Locale.getDefault()));
+						logger.debug(
+								String.format("Quote <%s> quoted price: <%s> can't be erased!", 
+								quote.getId(), entity.getPrecioPresupuestado()));
+						throw new CustomResponseError(
+								"Quote","precioPresupuestado",messageSource.getMessage(
+										"quote.precioPresupuestado.cant.be.deleted", null, Locale.getDefault()));
 					}
 					else {
 						// Illegal
-						logger.debug(String.format("Quote <%s> quoted price: <%s> must provide a value!", quote.getId(), entity.getPrecioPresupuestado()));
-						throw new CustomResponseError("Quote","precioPresupuestado",messageSource.getMessage("quote.precioPresupuestado.not.null", null, Locale.getDefault()));
+						logger.debug(
+								String.format("Quote <%s> quoted price: <%s> must provide a value!", 
+								quote.getId(), entity.getPrecioPresupuestado()));
+						throw new CustomResponseError(
+								"Quote","precioPresupuestado",messageSource.getMessage(
+										"quote.precioPresupuestado.not.null", null, Locale.getDefault()));
 					}
 			
 			if (quote.getFechaInicioEjecucionPropuesta() != null) {
 				if (!quote.getFechaInicioEjecucionPropuesta().equals(entity.getFechaInicioEjecucionPropuesta())) {
-					logger.debug(String.format("Updating attribute 'FechaInicioEjecucionPropuesta' from quote <%s>", quote.getId()));
+					logger.debug(
+							String.format("Updating attribute 'FechaInicioEjecucionPropuesta' from quote <%s>", quote.getId()));
 					entity.setFechaInicioEjecucionPropuesta(quote.getFechaInicioEjecucionPropuesta());
 				}
 			}
 			else 
 				if (entity.getFechaInicioEjecucionPropuesta() != null) {
-					logger.debug(String.format("Updating attribute 'FechaInicioEjecucionPropuesta' from quote <%s>", quote.getId()));
+					logger.debug(
+							String.format("Updating attribute 'FechaInicioEjecucionPropuesta' from quote <%s>", quote.getId()));
 					entity.setFechaInicioEjecucionPropuesta(null);
 				}
 			
@@ -173,7 +211,8 @@ public class QuoteServiceImpl implements QuoteService {
 			if (quote.getEstado() == null || quote.getEstado().equals(entity.getEstado())) {
 				// Illegal
 				logger.debug(String.format("Quote <%s> state <%s> must change!", quote.getId(), entity.getEstado()));
-				throw new CustomResponseError("Quote","estado",messageSource.getMessage("quote.estado.must.change", null, Locale.getDefault()));
+				throw new CustomResponseError(
+						"Quote","estado",messageSource.getMessage("quote.estado.must.change", null, Locale.getDefault()));
 			}
 			if (quote.getEstado() != null) {
 				if (!quote.getEstado().equals(entity.getEstado())) {
@@ -192,16 +231,20 @@ public class QuoteServiceImpl implements QuoteService {
 			else
 				if (entity.getEstado() != null) {
 					// Illegal
-					logger.debug(String.format("Quote <%s> state: <%s> can't be erased!", quote.getId(), entity.getEstado()));
-					throw new CustomResponseError("Quote","estado",messageSource.getMessage("quote.estado.cant.be.deleted", null, Locale.getDefault()));
+					logger.debug(
+							String.format("Quote <%s> state: <%s> can't be erased!", quote.getId(), entity.getEstado()));
+					throw new CustomResponseError(
+							"Quote","estado",messageSource.getMessage("quote.estado.cant.be.deleted", null, Locale.getDefault()));
 				}
 			
 			logger.info(String.format("Commiting update for quote <%s>", quote.getId()));
 		}
 		else {
 			// Illegal
-			logger.debug(String.format("Quote <%s> can't me modified - object is in a final state", quote.getId()));
-			throw new CustomResponseError("Quote","estado",messageSource.getMessage("quote.illegal.modification", null, Locale.getDefault()));
+			logger.debug(
+					String.format("Quote <%s> can't me modified - object is in a final state", quote.getId()));
+			throw new CustomResponseError(
+					"Quote","estado",messageSource.getMessage("quote.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 	
@@ -215,8 +258,12 @@ public class QuoteServiceImpl implements QuoteService {
 		}
 		else {
 			// Illegal
-			logger.debug(String.format("Quote <%s> can't be accepted by customer - incompatible Quote status: <%s>", quote.getId(), quote.getEstado()));
-			throw new CustomResponseError("Quote","estado",messageSource.getMessage("quote.illegal.modification", null, Locale.getDefault()));
+			logger.debug(
+					String.format("Quote <%s> can't be accepted by customer - incompatible Quote status: <%s>", 
+					quote.getId(), quote.getEstado()));
+			throw new CustomResponseError(
+					"Quote","estado",messageSource.getMessage(
+							"quote.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
@@ -229,36 +276,52 @@ public class QuoteServiceImpl implements QuoteService {
 		}
 		else {
 			// Illegal
-			logger.debug(String.format("Quote <%s> can't be rejected by customer - incompatible Quote status: <%s>", quote.getId(), quote.getEstado()));
-			throw new CustomResponseError("Quote","estado",messageSource.getMessage("quote.illegal.modification", null, Locale.getDefault()));
+			logger.debug(
+					String.format("Quote <%s> can't be rejected by customer - incompatible Quote status: <%s>", 
+					quote.getId(), quote.getEstado()));
+			throw new CustomResponseError(
+					"Quote","estado",messageSource.getMessage(
+							"quote.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 	
 	@Override
 	public void providerRejectsQuote(Integer id) {
 		Quote quote = getQuoteById(id);
-		if (quote != null && (quote.getEstado().equals(Quote.AWAITING_CUSTOMER) || quote.getEstado().equals(Quote.AWAITING_PROVIDER))) {
+		if (quote != null && 
+				(quote.getEstado().equals(Quote.AWAITING_CUSTOMER) || 
+				 quote.getEstado().equals(Quote.AWAITING_PROVIDER))) {
 			logger.info(String.format("Provider rejected quote <%s>", quote.getId()));
 			quote.setEstado(Quote.REJECTED_BY_PROVIDER);
 		}
 		else {
 			// Illegal
-			logger.debug(String.format("Quote <%s> can't be rejected by provider - incompatible Quote status: <%s>", quote.getId(), quote.getEstado()));
-			throw new CustomResponseError("Quote","estado",messageSource.getMessage("quote.illegal.modification", null, Locale.getDefault()));
+			logger.debug(
+					String.format("Quote <%s> can't be rejected by provider - incompatible Quote status: <%s>", 
+					quote.getId(), quote.getEstado()));
+			throw new CustomResponseError(
+					"Quote","estado",messageSource.getMessage(
+							"quote.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
 	@Override
 	public void archiveQuoteById(Integer id) {
 		Quote quote = getQuoteById(id);
-		if (quote != null && (quote.getEstado().equals(Quote.ACCEPTED_BY_CUSTOMER) || quote.getEstado().equals(Quote.REJECTED_BY_CUSTOMER) || quote.getEstado().equals(Quote.REJECTED_BY_PROVIDER))) {
+		if (quote != null && 
+				(quote.getEstado().equals(Quote.ACCEPTED_BY_CUSTOMER) || 
+				 quote.getEstado().equals(Quote.REJECTED_BY_CUSTOMER) || 
+				 quote.getEstado().equals(Quote.REJECTED_BY_PROVIDER))) {
 			logger.info(String.format("Archiving quote <%s>", quote.getId()));
 			quote.setEstado(Quote.ARCHIVED);
 		}
 		else {
 			// Illegal
-			logger.debug(String.format("Quote <%s> can't be archived - incompatible Quote status: <%s>", quote.getId(), quote.getEstado()));
-			throw new CustomResponseError("Quote","estado",messageSource.getMessage("quote.illegal.modification", null, Locale.getDefault()));
+			logger.debug(String.format("Quote <%s> can't be archived - incompatible Quote status: <%s>", 
+					quote.getId(), quote.getEstado()));
+			throw new CustomResponseError(
+					"Quote","estado",messageSource.getMessage(
+							"quote.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
@@ -276,18 +339,23 @@ public class QuoteServiceImpl implements QuoteService {
 	
 	@Override
 	public Boolean activeQuoteExistBetween(User user, Service service) {
-		logger.debug(String.format("Validating existance of an active quotation process between user <%s> and service <%s>", user.getId(), service.getId()));
+		logger.debug(
+				String.format("Validating existance of an active quotation process between user <%s> and service <%s>", 
+				user.getId(), service.getId()));
 		if (user != null && service != null)
 			for (Quote presupuesto : user.getPresupuestos())
 				if (presupuesto.getServicio().getId() == service.getId())
-					if (presupuesto.getEstado().equals(Quote.AWAITING_CUSTOMER) || presupuesto.getEstado().equals(Quote.AWAITING_PROVIDER))
+					if (presupuesto.getEstado().equals(Quote.AWAITING_CUSTOMER) || 
+						presupuesto.getEstado().equals(Quote.AWAITING_PROVIDER))
 						return true;
 		return false;
 	}
 	
 	@Override
 	public Boolean quoteExistBetween(User user, Service service) {
-		logger.debug(String.format("Validating existance of an active quotation process between user <%s> and service <%s>", user.getId(), service.getId()));
+		logger.debug(
+				String.format("Validating existance of an active quotation process between user <%s> and service <%s>", 
+				user.getId(), service.getId()));
 		if (user != null && service != null)
 			for (Quote presupuesto : user.getPresupuestos())
 				if (presupuesto.getServicio().getId() == service.getId())
