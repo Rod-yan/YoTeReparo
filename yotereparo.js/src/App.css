@@ -77,6 +77,37 @@ body {
   overflow-y: hidden;
 }
 
+.yotereparoGrid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -15px; /* gutter size offset */
+  width: auto;
+}
+.yotereparoGrid_column {
+  padding-left: 15px; /* gutter size */
+  background-clip: padding-box;
+}
+
+/* Style your items */
+.yotereparoGrid_column > div {
+  /* change div to reference your elements you put in <Masonry> */
+  background: grey;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 596px) {
+  .yotereparoGrid {
+    margin-left: -15px; /* gutter size offset */
+  }
+  .yotereparoGrid_column {
+    padding-left: 15px; /* gutter size offset */
+  }
+  .yotereparoGrid_column > div {
+    margin-bottom: 15px; /* space between items */
+  }
+}
+
 @media screen and (max-width: 596px) {
   .centered {
     position: auto;

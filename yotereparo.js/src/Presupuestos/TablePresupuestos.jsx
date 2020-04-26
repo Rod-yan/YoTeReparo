@@ -7,12 +7,15 @@ import Provider from "./Provider";
 import Customer from "./Customer";
 import { useLocation } from "react-router-dom";
 import { putData } from "../Utils/SessionHandlers";
+import ModalRespuesta from "./ModalRespuesta";
 
 export const ESTADOS = {
   RECHAZADO_USUARIO_PRESTADOR: "rejectprovider",
   RECHAZADO_USUARIO_FINAL: "rejectcustomer",
   ESPERANDO_USUARIO_PRESTADOR: "waitingprovider",
   ESPERANDO_USUARIO_FINAL: "waitingcustomer",
+  ACEPTADO_USUARIO_FINAL: "acceptedcustomer",
+  ACEPTADO_USUARIO_PRESTADOR: "acceptedprovider",
 };
 
 export const renderQuoteState = (state) => {
@@ -41,6 +44,13 @@ export const renderQuoteState = (state) => {
           <i className="fas fa-pause-circle fa-2x"></i>
         </>
       );
+    case "acceptedcustomer":
+    case "acceptedprovider":
+      return (
+        <>
+          <i className="fas fa-check-circle fa-2x"></i>
+        </>
+      );
     default:
       break;
   }
@@ -52,6 +62,9 @@ function TablePresupuestos(props) {
   const [tableDataCustomer, setTableDataCustomer] = useState([]);
   const [tableDataProvider, setTableDataProvider] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [quoteModal, setQuoteModal] = useState(false);
+  const [quote, setQuote] = useState({});
+  const [modelResponseQuote, setModelResponseQuote] = useState({});
 
   let requestConfig = {
     headers: {
@@ -60,11 +73,11 @@ function TablePresupuestos(props) {
     },
   };
 
-  const callbackToRender = (response) => {
+  const callbackToRender = () => {
     setLoading(!loading);
-    console.log(response);
   };
 
+  //From the customer
   const rejectQuote = (idQuote) => {
     let rejectFor =
       props.prestador === true || location.state?.prestador === true
@@ -86,9 +99,69 @@ function TablePresupuestos(props) {
     );
   };
 
-  //Response from the provider to the customer
+  const getFecha = (dateObject) => {
+    return (
+      dateObject.year +
+      "-" +
+      dateObject.monthOfYear +
+      "-" +
+      dateObject.dayOfMonth +
+      "T" +
+      dateObject.hourOfDay +
+      ":" +
+      dateObject.minuteOfHour +
+      ":" +
+      dateObject.secondOfMinute
+    );
+  };
+
+  //Generate Response from the provider to the customer
   const responseQuote = (idQuote, idServicio) => {
     console.log(idQuote, idServicio);
+    toggleQuoteModal();
+    let quoteProvider = tableDataProvider
+      .filter((x) => x.id === idQuote && x.servicio === idServicio)
+      .shift();
+    console.log(quoteProvider);
+    setQuote(quoteProvider);
+  };
+
+  const sendResponseQuote = () => {
+    let requestObject = {
+      servicio: quote.servicio,
+      usuarioFinal: quote.usuarioFinal,
+      descripcionRespuesta: modelResponseQuote.descripcionRespuesta,
+      precioPresupuestado:
+        modelResponseQuote.precioPresupuestado || quote.precioTotal,
+      incluyeInsumos: quote.incluyeInsumos,
+      incluyeAdicionales: quote.incluyeAdicionales,
+      fechaInicioEjecucionPropuesta: getFecha(
+        quote.fechaInicioEjecucionPropuesta
+      ),
+      direccionUsuarioFinal: quote.direccionUsuarioFinal,
+      estado: "ESPERANDO_USUARIO_FINAL",
+    };
+
+    console.log(requestObject);
+
+    putData(
+      `http://localhost:8080/YoTeReparo/quotes/${quote.id}`,
+      requestConfig,
+      callbackToRender,
+      requestObject
+    );
+  };
+
+  const onQuoteChange = (event) => {
+    modelResponseQuote[event.target.name] = event.target.value;
+    setModelResponseQuote({
+      ...modelResponseQuote,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const toggleQuoteModal = () => {
+    setQuoteModal(!quoteModal);
   };
 
   //From the provider
@@ -127,11 +200,14 @@ function TablePresupuestos(props) {
     }
   }, [session.username, props.match.params.userId, loading]);
 
-  console.log(tableDataProvider);
-  console.log(tableDataCustomer);
-
   return (
     <>
+      <ModalRespuesta
+        responseQuoteModal={quoteModal}
+        openResponseModel={toggleQuoteModal}
+        sendResponseQuote={sendResponseQuote}
+        onQuoteChange={onQuoteChange}
+      />
       <Customer
         acceptQuote={acceptQuote}
         rejectQuote={rejectQuote}
