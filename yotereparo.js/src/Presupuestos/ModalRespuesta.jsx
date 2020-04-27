@@ -16,7 +16,7 @@ function ModalRespuesta(props) {
   return (
     <div>
       <Modal isOpen={props.responseQuoteModal} toggle={props.openResponseModel}>
-        <Form onClick={props.sendResponseQuote}>
+        <Form>
           <ModalHeader toggle={props.openResponseModel}>
             Enviar comentarios sobre el presupuesto
           </ModalHeader>
@@ -54,7 +54,9 @@ function ModalRespuesta(props) {
             </InputGroup>
           </ModalBody>
           <ModalFooter>
-            <Button color="danger">Enviar</Button>{" "}
+            <Button onClick={props.sendResponseQuote} color="danger">
+              Enviar
+            </Button>{" "}
             <Button color="secondary" onClick={props.openResponseModel}>
               Cancelar
             </Button>
