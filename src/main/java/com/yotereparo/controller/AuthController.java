@@ -67,8 +67,8 @@ public class AuthController {
 		logger.info(String.format("AuthenticateUser - POST - Processing request for user <%s>.", loginRequest.getUsername()));
 		try {
 			User user = userService.getUserById(loginRequest.getUsername());
-			boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(user);
 			if (user != null) {
+				boolean isServiceAccountOrAdministrator = userService.isServiceAccountOrAdministrator(user);
 				if (isServiceAccountOrAdministrator || user.getFechaExpiracionContrasena().isAfterNow()) {
 					if (!user.getEstado().equals(User.BLOCKED)) {
 						try {
