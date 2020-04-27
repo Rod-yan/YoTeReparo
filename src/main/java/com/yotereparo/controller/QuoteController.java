@@ -153,7 +153,7 @@ public class QuoteController {
 					FieldError error = new FieldError(
 							"Quote","error",messageSource.getMessage(
 									"client.error.unauthorized", null, Locale.getDefault()));
-					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
             }
             else {
@@ -277,7 +277,7 @@ public class QuoteController {
     					FieldError error = new FieldError(
     							"Quote","error",messageSource.getMessage(
     									"quote.estado.forbidden.value", null, Locale.getDefault()));
-    					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+    					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     				}
     			}
     			else {
@@ -286,7 +286,7 @@ public class QuoteController {
 					FieldError error = new FieldError(
 							"Quote","error",messageSource.getMessage(
 									"client.error.unauthorized", null, Locale.getDefault()));
-					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
 	        }
 			else {
@@ -342,7 +342,7 @@ public class QuoteController {
 					FieldError error = new FieldError(
 							"Quote","error",messageSource.getMessage(
 									"client.error.unauthorized", null, Locale.getDefault()));
-					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
 	        }
 	        else {
@@ -399,7 +399,7 @@ public class QuoteController {
 						FieldError error = new FieldError(
 								"Quote","error",messageSource.getMessage(
 										"client.error.unauthorized", null, Locale.getDefault()));
-						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
 	    			}
 	    			
 	    			logger.info("RejectQuote - PUT - Exiting method, providing response resource to client.");
