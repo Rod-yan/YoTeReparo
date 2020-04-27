@@ -82,6 +82,15 @@ public class QuoteController {
 			if (userRole == null || userRole.isEmpty()) {
 				if (userService.isServiceAccountOrAdministrator(authenticatedUser))
 					quotes = new HashSet<Quote>(quoteService.getAllQuotes());
+				else {
+					logger.warn(
+    						String.format("ListQuotes - GET - Request failed - "
+    								+ "User <%s> doesn't have access to all quotes.", authenticatedUsername));
+					FieldError error = new FieldError(
+							"Authorization","error",messageSource.getMessage(
+									"client.error.unauthorized", null, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
+				}
 			}
 			else if ("customer".equalsIgnoreCase(userRole)) {
 				logger.debug(String.format(
@@ -147,11 +156,10 @@ public class QuoteController {
             	}
     			else {
     				logger.warn(
-    						String.format(
-    								"GetQuote - GET - Request failed - Quote <%s> doesn't belong to user <%s>.", 
-    								id, authenticatedUsername));
-					FieldError error = new FieldError(
-							"Quote","error",messageSource.getMessage(
+    						String.format("GetQuote - GET - Request failed - "
+    								+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
+    				FieldError error = new FieldError(
+							"Authorization","error",messageSource.getMessage(
 									"client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
@@ -283,9 +291,9 @@ public class QuoteController {
     			}
     			else {
     				logger.warn(String.format("UpdateQuote - PUT - Request failed - "
-    						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError(
-							"Quote","error",messageSource.getMessage(
+    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
+    				FieldError error = new FieldError(
+							"Authorization","error",messageSource.getMessage(
 									"client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
@@ -339,9 +347,9 @@ public class QuoteController {
     			}
     			else {
     				logger.warn(String.format("AcceptQuote - PUT - Request failed - "
-    						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-					FieldError error = new FieldError(
-							"Quote","error",messageSource.getMessage(
+    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
+    				FieldError error = new FieldError(
+							"Authorization","error",messageSource.getMessage(
 									"client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
@@ -396,9 +404,9 @@ public class QuoteController {
 	    				quoteService.providerRejectsQuote(id);
 	    			else {
 	    				logger.warn(String.format("RejectQuote - PUT - Request failed - "
-	    						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
-						FieldError error = new FieldError(
-								"Quote","error",messageSource.getMessage(
+	    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
+	    				FieldError error = new FieldError(
+								"Authorization","error",messageSource.getMessage(
 										"client.error.unauthorized", null, Locale.getDefault()));
 						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
 	    			}

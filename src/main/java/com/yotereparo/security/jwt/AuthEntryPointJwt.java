@@ -32,9 +32,10 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
-		logger.error("Unauthorized error: {}", authException.getMessage());
+		logger.error("[401] Unauthorized error: {}", authException.getMessage());
 		ObjectMapper objectMapper = new ObjectMapper();
-		CustomResponseError error = new CustomResponseError("Auth","error",messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
+		CustomResponseError error = new CustomResponseError(
+				"Authentication","error",messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 		String jsonObject = objectMapper.writeValueAsString(miscUtils.getFormatedResponseError(error)); 
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
