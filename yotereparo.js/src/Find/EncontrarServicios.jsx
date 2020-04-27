@@ -45,10 +45,12 @@ function EncontrarServicios(props) {
   const Servicios = Hoc(ListaServicios, ServicesData);
 
   return (
-    <ElementContainer>
-      <Servicios></Servicios>
-      <FloatCreateButton></FloatCreateButton>
-    </ElementContainer>
+    <div className="mb-5">
+      <ElementContainer>
+        <Servicios></Servicios>
+        <FloatCreateButton></FloatCreateButton>
+      </ElementContainer>
+    </div>
   );
 }
 

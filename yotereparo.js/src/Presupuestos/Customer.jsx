@@ -52,6 +52,11 @@ function Customer(props) {
                     item.estado === "RECHAZADO_USUARIO_PRESTADOR"
                       ? true
                       : false;
+                  let acceptedQuote =
+                    item.estado === "ACEPTADO_USUARIO_FINAL" ||
+                    item.estado === "ACEPTADO_USUARIO_PRESTADOR"
+                      ? true
+                      : false;
                   return (
                     <tr key={idx}>
                       <td className="text-center">{item.servicio}</td>
@@ -69,7 +74,7 @@ function Customer(props) {
                         <button
                           onClick={() => props.acceptQuote(item.id)}
                           className="btn btn-success btn-block"
-                          disabled={rejectedQuote}
+                          disabled={rejectedQuote || acceptedQuote}
                         >
                           <i className="fas fa-thumbs-up fa-1x"></i>
                         </button>
@@ -78,7 +83,7 @@ function Customer(props) {
                         <button
                           onClick={() => props.rejectQuote(item.id)}
                           className="btn btn-danger btn-block"
-                          disabled={rejectedQuote}
+                          disabled={rejectedQuote || acceptedQuote}
                         >
                           <i className="fas fa-thumbs-down fa-1x"></i>
                         </button>

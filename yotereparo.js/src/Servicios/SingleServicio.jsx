@@ -21,13 +21,23 @@ const SingleServicio = (props) => {
     });
   };
 
+  function getRandomArbitrary(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+  }
+
   return (
     <div className="card mb-4">
       <div className="card card-element">
         <div className="row no-gutters">
           <div className="col-md-4">
             <img
-              src="https://via.placeholder.com/150/92c952"
+              src={`https://i.picsum.photos/id/${getRandomArbitrary(
+                100,
+                1000
+              )}/${getRandomArbitrary(300, 400)}/${getRandomArbitrary(
+                300,
+                500
+              )}.jpg`}
               className="card-img"
               alt="placeholder"
             ></img>
