@@ -1,4 +1,4 @@
-package com.yotereparo.security.jwt;
+package com.yotereparo.security;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -20,9 +20,9 @@ import com.yotereparo.util.MiscUtils;
 import com.yotereparo.util.error.CustomResponseError;
 
 @Component
-public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+public class CustomUnauthorizedHandler implements AuthenticationEntryPoint {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+	private static final Logger logger = LoggerFactory.getLogger(CustomUnauthorizedHandler.class);
 	
 	@Autowired
     private MessageSource messageSource;

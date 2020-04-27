@@ -16,9 +16,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.yotereparo.security.jwt.AuthEntryPointJwt;
 import com.yotereparo.security.jwt.AuthTokenFilter;
-import com.yotereparo.security.jwt.CustomAccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -31,9 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private UserDetailsService userDetailsService;
 	@Autowired
 	private CustomAccessDeniedHandler accessDeniedHandler;
-
 	@Autowired
-	private AuthEntryPointJwt unauthorizedHandler;
+	private CustomUnauthorizedHandler unauthorizedHandler;
 
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {

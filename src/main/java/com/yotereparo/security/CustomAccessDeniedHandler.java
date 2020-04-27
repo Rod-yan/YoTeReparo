@@ -1,4 +1,4 @@
-package com.yotereparo.security.jwt;
+package com.yotereparo.security;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -22,7 +22,7 @@ import com.yotereparo.util.error.CustomResponseError;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
  
-	private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+	private static final Logger logger = LoggerFactory.getLogger(CustomUnauthorizedHandler.class);
 	
 	@Autowired
     private MessageSource messageSource;
