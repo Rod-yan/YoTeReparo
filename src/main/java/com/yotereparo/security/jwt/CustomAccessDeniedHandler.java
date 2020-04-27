@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,26 +20,26 @@ import com.yotereparo.util.MiscUtils;
 import com.yotereparo.util.error.CustomResponseError;
 
 @Component
-public class AuthEntryPointJwt implements AuthenticationEntryPoint {
-
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+ 
 	private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
 	
 	@Autowired
     private MessageSource messageSource;
 	@Autowired
 	private MiscUtils miscUtils;
-
-	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
-		logger.error("[401] Unauthorized error: {}", authException.getMessage());
-		ObjectMapper objectMapper = new ObjectMapper();
+	
+    @Override
+    public void handle
+      (HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex) 
+      throws IOException, ServletException {
+    	logger.error("[403] Forbidden error: {}", ex.getMessage()+" to resource "+request.getServletPath());
+    	ObjectMapper objectMapper = new ObjectMapper();
 		CustomResponseError error = new CustomResponseError(
-				"Authentication","error",messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
+				"Authorization","error",messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 		String jsonObject = objectMapper.writeValueAsString(miscUtils.getFormatedResponseError(error)); 
 		response.setContentType("application/json; charset=UTF-8");
-		response.setStatus(401);
 		response.getWriter().write(jsonObject);
-	}
-
+    	response.setStatus(403);
+    }
 }

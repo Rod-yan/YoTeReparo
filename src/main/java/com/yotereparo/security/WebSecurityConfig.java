@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.yotereparo.security.jwt.AuthEntryPointJwt;
 import com.yotereparo.security.jwt.AuthTokenFilter;
+import com.yotereparo.security.jwt.CustomAccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +28,9 @@ import com.yotereparo.security.jwt.AuthTokenFilter;
 		prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
-	UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService;
+	@Autowired
+	private CustomAccessDeniedHandler accessDeniedHandler;
 
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
@@ -57,6 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable()
 				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+									.accessDeniedHandler(accessDeniedHandler)
 			.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
