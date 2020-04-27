@@ -152,7 +152,7 @@ public class QuoteController {
     								id, authenticatedUsername));
 					FieldError error = new FieldError(
 							"Quote","error",messageSource.getMessage(
-									"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+									"client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
     			}
             }
@@ -285,7 +285,7 @@ public class QuoteController {
     						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
 					FieldError error = new FieldError(
 							"Quote","error",messageSource.getMessage(
-									"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+									"client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
     			}
 	        }
@@ -341,7 +341,7 @@ public class QuoteController {
     						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
 					FieldError error = new FieldError(
 							"Quote","error",messageSource.getMessage(
-									"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+									"client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
     			}
 	        }
@@ -398,7 +398,7 @@ public class QuoteController {
 	    						+ "Quote <%s> doesn't belong to user <%s>.", id, authenticatedUsername));
 						FieldError error = new FieldError(
 								"Quote","error",messageSource.getMessage(
-										"quote.doesnt.belong.to.user", new String[]{id.toString(), authenticatedUsername}, Locale.getDefault()));
+										"client.error.unauthorized", null, Locale.getDefault()));
 						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 	    			}
 	    			
