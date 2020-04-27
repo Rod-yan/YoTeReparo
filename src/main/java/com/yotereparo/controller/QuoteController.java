@@ -257,27 +257,28 @@ public class QuoteController {
     			
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer || isOwnerAndProvider) {
     				clientInput.setUsuarioFinal(quote.getUsuarioFinal().getId());
-    				if (isServiceAccountOrAdministrator || 
-    					(isOwnerAndCustomer && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_PROVIDER)) ||
-    					(isOwnerAndProvider && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_CUSTOMER))) {
-    					if (!validationUtils.quoteInputValidation(clientInput, result).hasErrors()) {
-        					quoteService.updateQuote(quoteConverter.convertToEntity(clientInput));
-    						
-    						logger.info("UpdateQuote - PUT - Exiting method, providing response resource to client.");
-    						return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quoteService.getQuoteById(id)), HttpStatus.OK);
-        				}
-        				else {
-        					logger.warn("UpdateQuote - PUT - Request failed - Input validation error(s) detected.");
-        					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
-        				}
+    				if (!validationUtils.quoteInputValidation(clientInput, result).hasErrors()) {
+	    				if (isServiceAccountOrAdministrator || 
+	    					(isOwnerAndCustomer && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_PROVIDER)) ||
+	    					(isOwnerAndProvider && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_CUSTOMER))) {
+	    					
+	        					quoteService.updateQuote(quoteConverter.convertToEntity(clientInput));
+	    						
+	    						logger.info("UpdateQuote - PUT - Exiting method, providing response resource to client.");
+	    						return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quoteService.getQuoteById(id)), HttpStatus.OK);
+	        				}
+	    				else {
+	    					logger.warn(String.format("UpdateQuote - PUT - Request failed - "
+	        						+ "Status <%s> forbidden for user <%s> for this opperation.", clientInput.getEstado(), authenticatedUsername));
+	    					FieldError error = new FieldError(
+	    							"Quote","error",messageSource.getMessage(
+	    									"quote.estado.forbidden.value", null, Locale.getDefault()));
+	    					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
+	    				}
     				}
     				else {
-    					logger.warn(String.format("UpdateQuote - PUT - Request failed - "
-        						+ "Status <%s> forbidden for user <%s> for this opperation.", clientInput.getEstado(), authenticatedUsername));
-    					FieldError error = new FieldError(
-    							"Quote","error",messageSource.getMessage(
-    									"quote.estado.forbidden.value", null, Locale.getDefault()));
-    					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
+    					logger.warn("UpdateQuote - PUT - Request failed - Input validation error(s) detected.");
+    					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
     				}
     			}
     			else {
