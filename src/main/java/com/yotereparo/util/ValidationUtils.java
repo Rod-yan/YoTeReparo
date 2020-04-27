@@ -282,14 +282,15 @@ public class ValidationUtils {
 			logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","User"));
 		}
 		
-		Service service = serviceManager.getServiceById(quoteDto.getServicio());
+		Service service = (quoteDto.getServicio() != null) ? serviceManager.getServiceById(quoteDto.getServicio()) : null;
 		// Validamos existencia del servicio
-		if (service == null) {
+		if (service == null && quoteDto.getServicio() != null) {
 			result.addError(new FieldError("Service","servicio",messageSource.getMessage("service.doesnt.exist", new Integer[]{quoteDto.getServicio()}, Locale.getDefault())));
 			logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","Service"));
 		}
 		
 		if (service != null && user != null) {
+			// El usuario prestador no puede solicitar presupuestos a servicios que son de su autoría
 			if (user.getId().equals(service.getUsuarioPrestador().getId())) {
 				result.addError(new FieldError("Quote","usuarioFinal",messageSource.getMessage("quote.user.owns.service", new String[]{user.getId()}, Locale.getDefault())));
 				logger.info(String.format("Validation error in entity <%s>, user owns the service for the processed quote.","Quote"));
