@@ -1,5 +1,4 @@
 import React from "react";
-import { Tooltip } from "reactstrap";
 
 export function getStates(item, prestador = false) {
   let rejectedQuote =
@@ -46,8 +45,6 @@ export const renderQuoteState = (state) => {
         </>
       );
     case "ESPERANDO_USUARIO_PRESTADOR":
-      const toggle = () => false;
-
       return (
         <>
           <i className="fas fa-pause-circle fa-2x"></i>

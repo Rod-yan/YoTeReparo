@@ -1,0 +1,10 @@
+.border-bar {
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  padding: 0 10px 0 10px;
+}
+
+.search-bar {
+  padding: 0px 0px 20px 0px;
+}

@@ -31,14 +31,11 @@ const SingleServicio = (props) => {
         <div className="row no-gutters">
           <div className="col-md-4">
             <img
-              src={`https://i.picsum.photos/id/${getRandomArbitrary(
+              src={`http://lorempixel.com/g/${getRandomArbitrary(
                 100,
                 1000
-              )}/${getRandomArbitrary(300, 400)}/${getRandomArbitrary(
-                300,
-                500
-              )}.jpg`}
-              className="card-img"
+              )}/${getRandomArbitrary(300, 400)}`}
+              className="card-img picture"
               alt="placeholder"
             ></img>
           </div>
