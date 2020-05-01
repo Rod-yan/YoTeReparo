@@ -28,14 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.controller.dto.QuoteDto;
-import com.yotereparo.controller.dto.converter.QuoteConverter;
+import com.yotereparo.controller.dto.mapping.QuoteMapper;
+import com.yotereparo.controller.dto.validation.QuoteValidation;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
 import com.yotereparo.service.QuoteService;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
-import com.yotereparo.util.ValidationUtils;
 import com.yotereparo.util.error.CustomResponseError;
 /**
  * Controlador REST SpringMVC que expone presupuestos básicos para la gestión de Presupuestos.
@@ -56,9 +56,9 @@ public class QuoteController {
 	@Autowired
     MessageSource messageSource;
 	@Autowired
-	ValidationUtils validationUtils;
+	QuoteValidation quoteValidation;
 	@Autowired
-	QuoteConverter quoteConverter;
+	QuoteMapper quoteConverter;
 	@Autowired
 	MiscUtils miscUtils;
 
@@ -195,7 +195,7 @@ public class QuoteController {
 			
 			// Setteamos el usuario final de acuerdo al usuario autenticado que está registrando el request.
 			clientInput.setUsuarioFinal(authenticatedUsername);
-			if (!validationUtils.quoteInputValidation(clientInput, result).hasErrors()) {
+			if (!quoteValidation.validateRequest(clientInput, result).hasErrors()) {
 				Quote quote = quoteConverter.convertToEntity(clientInput);
 				if (!quoteService.activeQuoteExistBetween(quote.getUsuarioFinal(), quote.getServicio())) {
 					quoteService.createQuote(quote);
@@ -265,7 +265,7 @@ public class QuoteController {
     			
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer || isOwnerAndProvider) {
     				clientInput.setUsuarioFinal(quote.getUsuarioFinal().getId());
-    				if (!validationUtils.quoteInputValidation(clientInput, result).hasErrors()) {
+    				if (!quoteValidation.validateRequest(clientInput, result).hasErrors()) {
 	    				if (isServiceAccountOrAdministrator || 
 	    					(isOwnerAndCustomer && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_PROVIDER)) ||
 	    					(isOwnerAndProvider && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_CUSTOMER))) {

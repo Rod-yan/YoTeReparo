@@ -1,4 +1,4 @@
-package com.yotereparo.controller.dto.converter;
+package com.yotereparo.controller.dto.mapping;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +24,7 @@ import com.yotereparo.service.ServiceManager;
  * 
  */
 @Component
-public class UserConverter implements Converter<User, UserDto> {
+public class UserMapper implements Mapper<User, UserDto> {
 	
 	@Autowired
     ModelMapper modelMapper;
@@ -35,9 +35,9 @@ public class UserConverter implements Converter<User, UserDto> {
 	@Autowired
     QuoteService quoteService;
 	@Autowired 
-	ServiceConverter serviceConverter;
+	ServiceMapper serviceConverter;
 	@Autowired 
-	QuoteConverter quoteConverter;
+	QuoteMapper quoteConverter;
 	
 	@Override
 	public UserDto convertToDto(User user) {

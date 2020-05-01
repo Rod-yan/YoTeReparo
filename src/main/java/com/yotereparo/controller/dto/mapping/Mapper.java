@@ -1,4 +1,4 @@
-package com.yotereparo.controller.dto.converter;
+package com.yotereparo.controller.dto.mapping;
 
 /**
  * Interfaz genérica para conversores entre entidades y sus respectivos DTOs.
@@ -6,7 +6,7 @@ package com.yotereparo.controller.dto.converter;
  * @author Rodrigo Yanis
  * 
  */
-public interface Converter<entityClazz, dtoClazz> {
+public interface Mapper<entityClazz, dtoClazz> {
 	
 	dtoClazz convertToDto(entityClazz entity);
 	

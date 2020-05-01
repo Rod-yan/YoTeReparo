@@ -39,13 +39,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yotereparo.controller.dto.ServiceDto;
-import com.yotereparo.controller.dto.converter.ServiceConverter;
+import com.yotereparo.controller.dto.mapping.ServiceMapper;
+import com.yotereparo.controller.dto.validation.ServiceValidation;
 import com.yotereparo.controller.filter.ServiceFilter;
 import com.yotereparo.model.Service;
 import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
-import com.yotereparo.util.ValidationUtils;
 import com.yotereparo.util.error.CustomResponseError;
 /**
  * Controlador REST SpringMVC que expone servicios básicos para la gestión de Servicios.
@@ -66,9 +66,9 @@ public class ServiceController {
 	@Autowired
     MessageSource messageSource;
 	@Autowired
-	ValidationUtils validationUtils;
+	ServiceValidation serviceValidation;
 	@Autowired
-	ServiceConverter serviceConverter;
+	ServiceMapper serviceConverter;
 	@Autowired
 	ServiceFilter supportedFilters;
 	@Autowired
@@ -166,7 +166,7 @@ public class ServiceController {
 			
 			// Setteamos el usuario prestador de acuerdo al usuario autenticado que está registrando el request.
 			clientInput.setUsuarioPrestador(authenticatedUsername);
-			if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
+			if (!serviceValidation.validateRequest(clientInput, result).hasErrors()) {
 				Service service = serviceConverter.convertToEntity(clientInput);
 				if (!serviceManager.similarExist(service)) {
 					serviceManager.createService(service);
@@ -231,7 +231,7 @@ public class ServiceController {
 					// Setteamos el usuario prestador del input del cliente (servicio actualizado) 
 					// como el usuario prestador que es dueño del servicio a actualizar
 					clientInput.setUsuarioPrestador(service.getUsuarioPrestador().getId());
-					if (!validationUtils.serviceInputValidation(clientInput, result).hasErrors()) {
+					if (!serviceValidation.validateRequest(clientInput, result).hasErrors()) {
 						Service updatedService = serviceConverter.convertToEntity(clientInput);
 						if (!serviceManager.similarExist(updatedService)) {
 							serviceManager.updateService(updatedService);
