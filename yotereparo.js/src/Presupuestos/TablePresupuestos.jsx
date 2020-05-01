@@ -9,53 +9,6 @@ import { useLocation } from "react-router-dom";
 import { putData } from "../Utils/SessionHandlers";
 import ModalRespuesta from "./ModalRespuesta";
 
-export const ESTADOS = {
-  RECHAZADO_USUARIO_PRESTADOR: "rejectprovider",
-  RECHAZADO_USUARIO_FINAL: "rejectcustomer",
-  ESPERANDO_USUARIO_PRESTADOR: "waitingprovider",
-  ESPERANDO_USUARIO_FINAL: "waitingcustomer",
-  ACEPTADO_USUARIO_FINAL: "acceptedcustomer",
-  ACEPTADO_USUARIO_PRESTADOR: "acceptedprovider",
-};
-
-export const renderQuoteState = (state) => {
-  switch (ESTADOS[state]) {
-    case "rejectprovider":
-      return (
-        <>
-          <i className="fas fa-ban fa-2x"></i>
-        </>
-      );
-    case "rejectcustomer":
-      return (
-        <>
-          <i className="fas fa-ban fa-2x"></i>
-        </>
-      );
-    case "waitingprovider":
-      return (
-        <>
-          <i className="fas fa-pause-circle fa-2x"></i>
-        </>
-      );
-    case "waitingcustomer":
-      return (
-        <>
-          <i className="fas fa-pause-circle fa-2x"></i>
-        </>
-      );
-    case "acceptedcustomer":
-    case "acceptedprovider":
-      return (
-        <>
-          <i className="fas fa-check-circle fa-2x"></i>
-        </>
-      );
-    default:
-      break;
-  }
-};
-
 function TablePresupuestos(props) {
   const { session } = useContext(SessionContext);
   const location = useLocation();

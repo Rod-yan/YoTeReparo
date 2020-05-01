@@ -11,17 +11,10 @@ export const PresupuestoContext = createContext();
 
 const PresupuestarServicio = () => {
   const location = useLocation();
-  const [loading, setLoading] = useState(false);
-  const [presupuestoValues, setPresupuestoValues] = useState(
-    location.state?.presupuesto
-  );
+  const [loading] = useState(false);
+  const [presupuestoValues] = useState(location.state?.presupuesto);
 
-  const updateContext = () => {
-    // setPresupuestoValues({
-    //   ...presupuestoValues,
-    //   body: "test to change context",
-    // });
-  };
+  const updateContext = () => {};
 
   if (loading) {
     return (

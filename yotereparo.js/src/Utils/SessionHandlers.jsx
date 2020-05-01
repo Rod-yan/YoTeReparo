@@ -15,7 +15,7 @@ export const LoginHandler = ({ history }) => {
   const [password, setPassword] = useState("");
   const [loadingUser, setLoadingUser] = useState(false);
   const [errors, setErrors] = useState(false);
-  const { session, setSession } = useContext(SessionContext);
+  const { setSession } = useContext(SessionContext);
 
   let requestConfig = {
     headers: {

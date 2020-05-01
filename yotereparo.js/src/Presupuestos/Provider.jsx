@@ -1,7 +1,7 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import { Table } from "reactstrap";
-import { renderQuoteState } from "./TablePresupuestos";
+import { Table, UncontrolledTooltip } from "reactstrap";
+import { renderQuoteState, getStates } from "../Utils/EstadosPresupuesto";
 
 function Provider(props) {
   return (
@@ -20,9 +20,10 @@ function Provider(props) {
           <Table>
             <thead className="text-left thead-dark">
               <tr>
-                <th className="text-center">Servicio</th>
                 <th className="text-center">Usuario Final</th>
                 <th className="text-center">Descripcion</th>
+                <th className="text-center">Respuesta</th>
+                <th className="text-center">Presupuesto</th>
                 <th className="text-center">Estado</th>
                 <th className="text-center">Responder</th>
                 <th className="text-center">Rechazar</th>
@@ -32,25 +33,37 @@ function Provider(props) {
               {[...props.tableDataProvider]
                 .sort((a, b) => a.servicio >= b.servicio)
                 .map((item, idx) => {
-                  let rejectedQuote =
-                    item.estado === "RECHAZADO_USUARIO_FINAL" ||
-                    item.estado === "RECHAZADO_USUARIO_PRESTADOR"
-                      ? true
-                      : false;
-                  let acceptedQuote =
-                    item.estado === "ACEPTADO_USUARIO_FINAL" ||
-                    item.estado === "ACEPTADO_USUARIO_PRESTADOR"
-                      ? true
-                      : false;
+                  let {
+                    rejectedQuote,
+                    acceptedQuote,
+                    waitingForCustomer,
+                  } = getStates(item, true);
+
                   return (
                     <tr key={idx}>
-                      <td className="text-center">{item.servicio}</td>
-                      <td className="text-center">{item.usuarioFinal}</td>
+                      <td className="text-center bg-info">
+                        {item.usuarioFinal}
+                      </td>
                       <td className="text-center">
                         {item.descripcionSolicitud}
                       </td>
                       <td className="text-center">
-                        {renderQuoteState(item.estado)}
+                        {item.descripcionRespuesta}
+                      </td>
+                      <td className="text-center">
+                        {item.precioPresupuestado}
+                      </td>
+                      <td className="text-center">
+                        <UncontrolledTooltip
+                          placement="right"
+                          delay={{ show: 50, hide: 0 }}
+                          target={"id" + idx + "presupuesto"}
+                        >
+                          {item.estado}
+                        </UncontrolledTooltip>
+                        <div id={"id" + idx + "presupuesto"}>
+                          {renderQuoteState(item.estado)}
+                        </div>
                       </td>
                       <td className="text-center">
                         <button
@@ -58,7 +71,9 @@ function Provider(props) {
                             props.responseQuote(item.id, item.servicio)
                           }
                           className="btn btn-success btn-block"
-                          disabled={rejectedQuote || acceptedQuote}
+                          disabled={
+                            rejectedQuote || acceptedQuote || waitingForCustomer
+                          }
                         >
                           <i className="fas fa-reply fa-1x"></i>
                         </button>
@@ -67,7 +82,9 @@ function Provider(props) {
                         <button
                           onClick={() => props.rejectQuote(item.id)}
                           className="btn btn-danger btn-block"
-                          disabled={rejectedQuote || acceptedQuote}
+                          disabled={
+                            rejectedQuote || acceptedQuote || waitingForCustomer
+                          }
                         >
                           <i className="fas fa-thumbs-down fa-1x"></i>
                         </button>

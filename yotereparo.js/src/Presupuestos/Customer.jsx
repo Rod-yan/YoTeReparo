@@ -1,22 +1,22 @@
 import React from "react";
 import ElementContainer from "../Container/ElementContainer";
-import { Table } from "reactstrap";
-import { renderQuoteState } from "./TablePresupuestos";
+import { Table, UncontrolledTooltip } from "reactstrap";
+import { renderQuoteState, getStates } from "../Utils/EstadosPresupuesto";
 import { useEffect } from "react";
 import { useState } from "react";
 import { fetchData } from "../Utils/SessionHandlers";
+import { getTitleService, getPrestador } from "../Utils/GetFromService";
 
 function Customer(props) {
   const [services, setServices] = useState([]);
 
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const toggle = () => setTooltipOpen(!tooltipOpen);
+
   useEffect(() => {
     fetchData("http://localhost:8080/YoTeReparo/services", setServices);
   }, []);
-
-  const getPrestador = (idServicio) => {
-    let service = services.filter((x) => x.id === idServicio).shift();
-    return <div>{service.usuarioPrestador}</div>;
-  };
 
   return (
     <div className="mt-4 mb-5">
@@ -30,14 +30,15 @@ function Customer(props) {
           </div>
         </div>
         <hr className="my-4"></hr>
-        <div className="table table-striped table-responsive">
+        <div className="table table-striped table-responsive table-hover">
           <Table>
             <thead className="text-left thead-dark">
               <tr>
                 <th className="text-center">Servicio</th>
-                <th className="text-center">Prestador</th>
-                <th className="text-center">Usuario Final</th>
                 <th className="text-center">Descripcion</th>
+                <th className="text-center">Prestador</th>
+                <th className="text-center">Respuesta</th>
+                <th className="text-center">Presupuesto</th>
                 <th className="text-center">Estado</th>
                 <th className="text-center">Aceptar</th>
                 <th className="text-center">Rechazar</th>
@@ -47,34 +48,47 @@ function Customer(props) {
               {[...props.tableDataCustomer]
                 .sort((a, b) => a.servicio >= b.servicio)
                 .map((item, idx) => {
-                  let rejectedQuote =
-                    item.estado === "RECHAZADO_USUARIO_FINAL" ||
-                    item.estado === "RECHAZADO_USUARIO_PRESTADOR"
-                      ? true
-                      : false;
-                  let acceptedQuote =
-                    item.estado === "ACEPTADO_USUARIO_FINAL" ||
-                    item.estado === "ACEPTADO_USUARIO_PRESTADOR"
-                      ? true
-                      : false;
+                  let {
+                    rejectedQuote,
+                    acceptedQuote,
+                    waitingForProvider,
+                  } = getStates(item);
                   return (
                     <tr key={idx}>
-                      <td className="text-center">{item.servicio}</td>
-                      <td className="text-center">
-                        {getPrestador(item.servicio)}
+                      <td className="text-center bg-info">
+                        {getTitleService(item.servicio, services)}
                       </td>
-                      <td className="text-center">{item.usuarioFinal}</td>
+                      <td className="text-center">
+                        {getPrestador(item.servicio, services)}
+                      </td>
                       <td className="text-center">
                         {item.descripcionSolicitud}
                       </td>
                       <td className="text-center">
-                        {renderQuoteState(item.estado)}
+                        {item.descripcionRespuesta}
+                      </td>
+                      <td className="text-center">
+                        {item.precioPresupuestado}
+                      </td>
+                      <td className="text-center">
+                        <UncontrolledTooltip
+                          placement="right"
+                          delay={{ show: 50, hide: 0 }}
+                          target={"id" + idx + "presupuesto"}
+                        >
+                          {item.estado}
+                        </UncontrolledTooltip>
+                        <div id={"id" + idx + "presupuesto"}>
+                          {renderQuoteState(item.estado)}
+                        </div>
                       </td>
                       <td className="text-center">
                         <button
                           onClick={() => props.acceptQuote(item.id)}
                           className="btn btn-success btn-block"
-                          disabled={rejectedQuote || acceptedQuote}
+                          disabled={
+                            rejectedQuote || acceptedQuote || waitingForProvider
+                          }
                         >
                           <i className="fas fa-thumbs-up fa-1x"></i>
                         </button>
@@ -83,7 +97,9 @@ function Customer(props) {
                         <button
                           onClick={() => props.rejectQuote(item.id)}
                           className="btn btn-danger btn-block"
-                          disabled={rejectedQuote || acceptedQuote}
+                          disabled={
+                            rejectedQuote || acceptedQuote || waitingForProvider
+                          }
                         >
                           <i className="fas fa-thumbs-down fa-1x"></i>
                         </button>
