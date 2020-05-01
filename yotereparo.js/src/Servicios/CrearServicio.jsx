@@ -80,7 +80,7 @@ const CrearServicio = (props) => {
       precioMinimo: preciosRange.min,
       precioInsumos: service.precioInsumos,
       precioAdicionales: service.precioAdicionales,
-      horasEstimadasEjecucion: horasEstimadasEjecucion,
+      horasEstimadasEjecucion: horasEstimadasEjecucion || null,
       cantidadTrabajadores: cantidadTrabajadores,
       insitu: requiereDomicilio,
       facturaEmitida: emitirFactura,
