@@ -35,8 +35,8 @@ function Customer(props) {
             <thead className="text-left thead-dark">
               <tr>
                 <th className="text-center">Servicio</th>
-                <th className="text-center">Descripcion</th>
                 <th className="text-center">Prestador</th>
+                <th className="text-center">Descripcion</th>
                 <th className="text-center">Respuesta</th>
                 <th className="text-center">Presupuesto</th>
                 <th className="text-center">Estado</th>

@@ -103,6 +103,8 @@ function TablePresupuestos(props) {
       callbackToRender,
       requestObject
     );
+
+    setQuoteModal(false);
   };
 
   const onQuoteChange = (event) => {

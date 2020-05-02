@@ -12,13 +12,15 @@ export function getStates(item, prestador = false) {
       ? true
       : false;
   let waitingForProvider =
-    item.estado ===
-    (prestador
-      ? ESTADOS.ESPERANDO_USUARIO_FINAL
-      : ESTADOS.ESPERANDO_USUARIO_PRESTADOR)
-      ? true
-      : false;
-  return { rejectedQuote, acceptedQuote, waitingForProvider };
+    item.estado === ESTADOS.ESPERANDO_USUARIO_PRESTADOR ? true : false;
+  let waitingForCustomer =
+    item.estado === ESTADOS.ESPERANDO_USUARIO_FINAL ? true : false;
+  return {
+    rejectedQuote,
+    acceptedQuote,
+    waitingForProvider,
+    waitingForCustomer,
+  };
 }
 
 export const ESTADOS = {
