@@ -12,7 +12,7 @@ import com.yotereparo.dao.ServiceTypeDaoImpl;
 import com.yotereparo.model.ServiceType;
 
 /**
- * Capa de servicio para Ciudades.
+ * Capa de servicio para Tipos de Servicio.
  * El objetivo de la misma es servir de interfaz entre el modelo y la capa de acceso a datos,
  * expone métodos para uso público en el contexto de la aplicación.
  * 

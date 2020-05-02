@@ -1,4 +1,4 @@
-package com.yotereparo.controller.dto.converter;
+package com.yotereparo.controller.dto.mapping;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import com.yotereparo.service.UserService;
  * 
  */
 @Component
-public class QuoteConverter implements Converter<Quote, QuoteDto> {
+public class QuoteMapper implements Mapper<Quote, QuoteDto> {
 	
 	@Autowired
     ModelMapper modelMapper;

@@ -1,4 +1,4 @@
-package com.yotereparo.util.customvalidator;
+package com.yotereparo.util.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

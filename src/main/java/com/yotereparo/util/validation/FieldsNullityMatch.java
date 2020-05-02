@@ -1,4 +1,4 @@
-package com.yotereparo.util.customvalidator;
+package com.yotereparo.util.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,23 +8,23 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = GreaterThanValidator.class)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
+@Constraint(validatedBy = FieldsNullityMatchValidator.class)
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GreaterThan {
+public @interface FieldsNullityMatch {
 	String message();
 	
 	Class<?>[] groups() default {};
 	
 	Class<? extends Payload>[] payload() default {};
 	 
-    String valueOf();
-    
-    String greaterThanValueOf();
+    String nullField();
  
-    @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
+    String fieldNullityMatch();
+ 
+    @Target({ ElementType.TYPE })
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
-        GreaterThan[] value();
+        FieldsNullityMatch[] value();
     }
 }

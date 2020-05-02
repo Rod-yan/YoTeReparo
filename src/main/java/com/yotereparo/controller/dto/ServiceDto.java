@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.yotereparo.model.PaymentMethod;
 import com.yotereparo.model.Requirement;
-import com.yotereparo.util.customvalidator.GreaterThan;
+import com.yotereparo.util.validation.GreaterThan;
 
 @GreaterThan(valueOf = "precioMaximo", greaterThanValueOf = "precioMinimo", message = "{service.precioMaximo.less.than.precioMinimo}")
 public class ServiceDto {
@@ -65,7 +65,6 @@ public class ServiceDto {
 	@Min(value = 0, message="{service.precioAdicionales.less.than.min}")
 	private Float precioAdicionales;
 
-	@NotNull(message = "{service.horasEstimadasEjecucion.not.null}")
 	@Digits(integer = 5, fraction = 2, message = "{service.horasEstimadasEjecucion.out.of.boundaries}")
 	@Min(value = 0, message="{service.horasEstimadasEjecucion.less.than.min}")
 	private Float horasEstimadasEjecucion;

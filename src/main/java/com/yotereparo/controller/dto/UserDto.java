@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
 import com.yotereparo.model.Role;
-import com.yotereparo.util.customvalidator.FieldsNullityMatch;
+import com.yotereparo.util.validation.FieldsNullityMatch;
 
 @FieldsNullityMatch.List({ 
     @FieldsNullityMatch(

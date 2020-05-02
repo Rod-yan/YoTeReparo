@@ -36,11 +36,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.controller.dto.UserPasswordChangeDto;
-import com.yotereparo.controller.dto.converter.UserConverter;
+import com.yotereparo.controller.dto.mapping.UserMapper;
+import com.yotereparo.controller.dto.validation.UserValidation;
 import com.yotereparo.model.User;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
-import com.yotereparo.util.ValidationUtils;
 import com.yotereparo.util.error.CustomResponseError;
 
 /**
@@ -60,9 +60,9 @@ public class UserController {
 	@Autowired
     MessageSource messageSource;
 	@Autowired
-	ValidationUtils validationUtils;
+	UserValidation userValidation;
 	@Autowired
-	UserConverter userConverter;
+	UserMapper userConverter;
 	@Autowired
 	MiscUtils miscUtils;
 
@@ -142,7 +142,7 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
 		logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId().toLowerCase()));
 		try {
-			if (!validationUtils.userInputValidation(clientInput, result).hasErrors()) {
+			if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
 				if (userService.getUserById(clientInput.getId()) == null) {
 					userService.createUser(userConverter.convertToEntity(clientInput));
 					
@@ -192,7 +192,7 @@ public class UserController {
 		try {
 			clientInput.setId(id);
 			if (userService.getUserById(id) != null) {
-				if (!validationUtils.userInputValidation(clientInput, result).hasErrors()) {
+				if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
 					userService.updateUser(userConverter.convertToEntity(clientInput));
 					
 					logger.info("UpdateUser - PUT - Exiting method, providing response resource to client.");
@@ -234,7 +234,7 @@ public class UserController {
 		try {
 			clientInput.setId(id);
 			if (userService.getUserById(id) != null) {
-				if (!validationUtils.userPasswordChangeInputValidation(clientInput, result).hasErrors()) {
+				if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
 					userService.changeUserPasswordById(id, clientInput.getContrasenaActual(), clientInput.getContrasenaNueva());
 					
 					logger.info("ChangeUserPassword - PUT - Exiting method, providing response resource to client.");
