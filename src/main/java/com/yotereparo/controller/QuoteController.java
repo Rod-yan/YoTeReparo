@@ -269,7 +269,7 @@ public class QuoteController {
 	    				if (isServiceAccountOrAdministrator || 
 	    					(isOwnerAndCustomer && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_PROVIDER)) ||
 	    					(isOwnerAndProvider && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_CUSTOMER))) {
-	    						logger.info("<%s>",clientInput);
+	    					
 	        					quoteService.updateQuote(quoteMapper.convertToEntity(clientInput));
 	    						
 	    						logger.info("UpdateQuote - PUT - Exiting method, providing response resource to client.");
