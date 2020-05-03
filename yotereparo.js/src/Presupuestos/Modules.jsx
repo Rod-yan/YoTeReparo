@@ -144,7 +144,10 @@ export function Acceptance(props) {
           additionalNotes.fechaInicioEjecucionPropuesta +
           "T" +
           additionalNotes.horaInicioEjecucionPropuesta,
-        fechaFinEjecucionPropuesta: null,
+        fechaFinEjecucionPropuesta:
+          additionalNotes.fechaFinEjecucionPropuesta +
+          "T" +
+          additionalNotes.horaInicioEjecucionPropuesta,
         estado: "ESPERANDO_USUARIO_PRESTADOR",
       };
 

@@ -32,12 +32,8 @@ function TablePresupuestos(props) {
 
   //From the customer
   const rejectQuote = (idQuote) => {
-    let rejectFor =
-      props.prestador === true || location.state?.prestador === true
-        ? "provider"
-        : "customer";
     putData(
-      `http://localhost:8080/YoTeReparo/quotes/${idQuote}/reject/${rejectFor}`,
+      `http://localhost:8080/YoTeReparo/quotes/${idQuote}/reject`,
       requestConfig,
       callbackToRender
     );
