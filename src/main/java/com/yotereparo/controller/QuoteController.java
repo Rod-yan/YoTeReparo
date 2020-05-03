@@ -248,6 +248,7 @@ public class QuoteController {
     public ResponseEntity<?> updateQuote(@PathVariable("id") Integer id, @RequestBody QuoteDto clientInput, BindingResult result) {	
 		logger.info(String.format("UpdateQuote - PUT - Processing request for quote <%s>.", id));
 		try {
+			clientInput.setId(id);
 			Quote quote = quoteService.getQuoteById(id);
 			if (quote != null) {
 				/* 
@@ -268,7 +269,7 @@ public class QuoteController {
 	    				if (isServiceAccountOrAdministrator || 
 	    					(isOwnerAndCustomer && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_PROVIDER)) ||
 	    					(isOwnerAndProvider && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_CUSTOMER))) {
-	    					
+	    						logger.info("<%s>",clientInput);
 	        					quoteService.updateQuote(quoteMapper.convertToEntity(clientInput));
 	    						
 	    						logger.info("UpdateQuote - PUT - Exiting method, providing response resource to client.");
