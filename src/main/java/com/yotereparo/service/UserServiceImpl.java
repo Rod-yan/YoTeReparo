@@ -68,9 +68,6 @@ public class UserServiceImpl implements UserService {
 		user.setContrasena(SecurityUtils.encryptPassword(user.getContrasena().concat(user.getSalt())));
 		user.setFechaExpiracionContrasena(new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days"))));
 		user.setFechaCreacion(new DateTime());
-		// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
-		user.setFoto(null);
-		user.setThumbnail(null);
 		user.setEstado(User.ACTIVE);
 		user.setIntentosIngreso(0);
 		

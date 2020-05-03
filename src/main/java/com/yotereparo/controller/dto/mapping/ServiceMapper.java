@@ -48,6 +48,7 @@ public class ServiceMapper implements Mapper<Service, ServiceDto> {
 	    }
 	    return serviceDto;
 	}
+	
 	@Override
 	public Service convertToEntity(ServiceDto serviceDto) {
 		Service service = modelMapper.map(serviceDto, Service.class);

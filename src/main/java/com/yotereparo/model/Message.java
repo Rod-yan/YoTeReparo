@@ -17,7 +17,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="mensaje")
 public class Message {
 	
-
 	@Id
 	@NotNull(message = "{Message.id.not.null}")
 	@Column(name = "id_mensaje", nullable = false)
@@ -148,6 +147,4 @@ public class Message {
 				+ fechaRespuesta + ", consulta=" + consulta 
 				+ ", respuesta=" + respuesta + "]";
 	}
-
-	
 }

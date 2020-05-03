@@ -12,11 +12,11 @@ public interface QuoteService {
      
     void updateQuote(Quote quote);
     
-    void customerAcceptsQuote(Integer id);
+    void customerAcceptsQuoteById(Integer id);
     
-    void customerRejectsQuote(Integer id);
+    void customerRejectsQuoteById(Integer id);
     
-    void providerRejectsQuote(Integer id);
+    void providerRejectsQuoteById(Integer id);
     
     void archiveQuoteById(Integer id);
     

@@ -1,5 +1,6 @@
 package com.yotereparo.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -17,50 +18,58 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name="contrato")
 public class Contract {
+	// Constantes de estado
+	public static final String PENDING_EXECUTION = "PENDIENTE";
+	public static final String ONGOING_EXECUTION = "EN_PROCESO";
+	public static final String ALREADY_EXECUTED = "FINALIZADO";
+	public static final String CANCELED_BY_CUSTOMER = "CANCELADO_USUARIO_FINAL";
+	public static final String CANCELED_BY_PROVIDER = "CANCELADO_USUARIO_PRESTADOR";
+	public static final String ARCHIVED = "ARCHIVADO";
+	
+	public static final String STATUS_LIST_REGEXP =
+			PENDING_EXECUTION + "|" +
+			ONGOING_EXECUTION + "|" +
+			ALREADY_EXECUTED + "|" +
+			CANCELED_BY_CUSTOMER + "|" +
+			CANCELED_BY_PROVIDER + "|" +
+			ARCHIVED;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_contrato", nullable = false)
 	private Integer id;
 		
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name="id_servicio", nullable=false, updatable = false, insertable = true)
-	private Service servicio;
-	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name="id_usuario_final", nullable=false, updatable = false, insertable = true)
-	private User usuarioFinal;
-		
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column(name = "fecha_contratacion", nullable = true)
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime fechaContratacion;
+	@OneToOne(cascade=CascadeType.MERGE, fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name="id_presupuesto", nullable=false)
+	private Quote presupuesto;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column(name = "fecha_inicio_ejecucion", nullable = true)
+	@Column(name = "fecha_inicio_ejecucion", nullable = false)
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime fechaInicioEjecucion;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column(name = "fecha_fin_ejecucion", nullable = true)
+	@Column(name = "fecha_fin_ejecucion", nullable = false)
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime fechaFinEjecucion;
-	
-	private String descripcion;
 	
 	@Column(name = "precio_final", columnDefinition = "NUMERIC", precision = 11, scale = 2, nullable = false)
 	private Float precioFinal;
 	
-	@Column(name = "incluye_insumos", nullable = false)
-	private Boolean incluyeInsumos;
-	
-	@Column(name = "incluye_adicionales", nullable = false)
-	private Boolean incluyeAdicionales;
-	
 	private Integer valoracion;
 	
-	@Column(name = "descripcion_valoracion", nullable = false)
+	@Column(name = "descripcion_valoracion", nullable = true)
 	private String descripcionValoracion;
+	
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@Column(name = "fecha_valoracion", nullable = true)
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime fechaValoracion;
+	
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	@Column(name = "fecha_creacion", nullable = false)
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime fechaCreacion;
 	
 	private String estado;
 	
@@ -75,28 +84,20 @@ public class Contract {
 		this.id = id;
 	}
 
-	public Service getServicio() {
-		return servicio;
+	public Quote getPresupuesto() {
+		return presupuesto;
 	}
 
-	public void setServicio(Service servicio) {
-		this.servicio = servicio;
+	public void setPresupuesto(Quote presupuesto) {
+		this.presupuesto = presupuesto;
 	}
 
-	public User getUsuarioFinal() {
-		return usuarioFinal;
+	public DateTime getFechaCreacion() {
+		return fechaCreacion;
 	}
 
-	public void setUsuarioFinal(User usuarioFinal) {
-		this.usuarioFinal = usuarioFinal;
-	}
-
-	public DateTime getFechaContratacion() {
-		return fechaContratacion;
-	}
-
-	public void setFechaContratacion(DateTime fechaContratacion) {
-		this.fechaContratacion = fechaContratacion;
+	public void setFechaCreacion(DateTime fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
 	}
 
 	public DateTime getFechaInicioEjecucion() {
@@ -115,36 +116,12 @@ public class Contract {
 		this.fechaFinEjecucion = fechaFinEjecucion;
 	}
 
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
 	public Float getPrecioFinal() {
 		return precioFinal;
 	}
 
 	public void setPrecioFinal(Float precioFinal) {
 		this.precioFinal = precioFinal;
-	}
-
-	public Boolean getIncluyeInsumos() {
-		return incluyeInsumos;
-	}
-
-	public void setIncluyeInsumos(Boolean incluyeInsumos) {
-		this.incluyeInsumos = incluyeInsumos;
-	}
-
-	public Boolean getIncluyeAdicionales() {
-		return incluyeAdicionales;
-	}
-
-	public void setIncluyeAdicionales(Boolean incluyeAdicionales) {
-		this.incluyeAdicionales = incluyeAdicionales;
 	}
 
 	public Integer getValoracion() {
@@ -161,6 +138,14 @@ public class Contract {
 
 	public void setDescripcionValoracion(String descripcionValoracion) {
 		this.descripcionValoracion = descripcionValoracion;
+	}
+
+	public DateTime getFechaValoracion() {
+		return fechaValoracion;
+	}
+
+	public void setFechaValoracion(DateTime fechaValoracion) {
+		this.fechaValoracion = fechaValoracion;
 	}
 
 	public String getEstado() {
@@ -180,67 +165,59 @@ public class Contract {
 		if (getClass() != obj.getClass())
 			return false;
 		Contract other = (Contract) obj;
-		if (servicio == null) {
-			if (other.servicio != null)
+		if (descripcionValoracion == null) {
+			if (other.descripcionValoracion != null)
 				return false;
-		} else if (!servicio.equals(other.servicio))
-			return false;
-		if (descripcion == null) {
-			if (other.descripcion != null)
-				return false;
-		} else if (!descripcion.equals(other.descripcion))
-			return false;
-		if (usuarioFinal == null) {
-			if (other.usuarioFinal != null)
-				return false;
-		} else if (!usuarioFinal.equals(other.usuarioFinal))
+		} else if (!descripcionValoracion.equals(other.descripcionValoracion))
 			return false;
 		if (estado == null) {
 			if (other.estado != null)
 				return false;
 		} else if (!estado.equals(other.estado))
 			return false;
-		if (valoracion != other.valoracion)
-			return false;
-		if (fechaContratacion == null) {
-			if (other.fechaContratacion != null)
+		if (fechaValoracion == null) {
+			if (other.fechaValoracion != null)
 				return false;
-		} else if (!fechaContratacion.equals(other.fechaContratacion))
+		} else if (!fechaValoracion.equals(other.fechaValoracion))
 			return false;
-		if (fechaInicioEjecucion == null) {
-			if (other.fechaInicioEjecucion != null)
+		if (fechaCreacion == null) {
+			if (other.fechaCreacion != null)
 				return false;
-		} else if (!fechaInicioEjecucion.equals(other.fechaInicioEjecucion))
+		} else if (!fechaCreacion.equals(other.fechaCreacion))
 			return false;
 		if (fechaFinEjecucion == null) {
 			if (other.fechaFinEjecucion != null)
 				return false;
 		} else if (!fechaFinEjecucion.equals(other.fechaFinEjecucion))
 			return false;
+		if (fechaInicioEjecucion == null) {
+			if (other.fechaInicioEjecucion != null)
+				return false;
+		} else if (!fechaInicioEjecucion.equals(other.fechaInicioEjecucion))
+			return false;
 		if (precioFinal == null) {
 			if (other.precioFinal != null)
 				return false;
 		} else if (!precioFinal.equals(other.precioFinal))
 			return false;
-		if (incluyeAdicionales != other.incluyeAdicionales)
-			return false;
-		if (incluyeInsumos != other.incluyeInsumos)
-			return false;
-		if (descripcionValoracion == null) {
-			if (other.descripcionValoracion != null)
+		if (presupuesto == null) {
+			if (other.presupuesto != null)
 				return false;
-		} else if (!descripcionValoracion.equals(other.descripcionValoracion))
+		} else if (!presupuesto.equals(other.presupuesto))
+			return false;
+		if (valoracion == null) {
+			if (other.valoracion != null)
+				return false;
+		} else if (!valoracion.equals(other.valoracion))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Contract [id=" + id + ", servicio=" + servicio.getId() + ", usuarioFinal=" + usuarioFinal.getId()
-				+ ", fechaContratacion=" + fechaContratacion + ", fechaInicioEjecucion=" + fechaInicioEjecucion
-				+ ", fechaFinEjecucion=" + fechaFinEjecucion + ", descripcion=" + descripcion + ", precioFinal="
-				+ precioFinal + ", incluyeInsumos=" + incluyeInsumos + ", incluyeAdicionales=" + incluyeAdicionales
-				+ ", valoracion=" + valoracion + ", descripcionValoracion=" + descripcionValoracion + ", estado="
-				+ estado + "]";
+		return "Contract [id=" + id + ", presupuesto=" + presupuesto.getId() + ", fechaInicioEjecucion=" + fechaInicioEjecucion
+				+ ", fechaFinEjecucion=" + fechaFinEjecucion + ", precioFinal=" + precioFinal + ", valoracion="
+				+ valoracion + ", descripcionValoracion=" + descripcionValoracion + ", fechaValoracion="
+				+ fechaValoracion + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + "]";
 	}
 }

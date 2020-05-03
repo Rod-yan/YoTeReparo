@@ -68,7 +68,7 @@ public class ServiceController {
 	@Autowired
 	ServiceValidation serviceValidation;
 	@Autowired
-	ServiceMapper serviceConverter;
+	ServiceMapper serviceMapper;
 	@Autowired
 	ServiceFilter supportedFilters;
 	@Autowired
@@ -99,7 +99,7 @@ public class ServiceController {
 			
 			if (services != null && !services.isEmpty()) {
 				List<ServiceDto> servicesDto = services.stream()
-		                .map(service -> serviceConverter.convertToDto(service))
+		                .map(service -> serviceMapper.convertToDto(service))
 		                .collect(Collectors.toList());
 				
 	        	logger.info("ListServices - GET - Exiting method, providing response resource to client.");
@@ -131,7 +131,7 @@ public class ServiceController {
             
     		if (service != null) {
             	logger.info("GetService - GET - Exiting method, providing response resource to client.");
-                return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(service), HttpStatus.OK);
+                return new ResponseEntity<ServiceDto>(serviceMapper.convertToDto(service), HttpStatus.OK);
             }
             else {
             	logger.warn(String.format("GetService - GET - Request failed - Service with id <%s> not found.", id));
@@ -167,7 +167,7 @@ public class ServiceController {
 			// Setteamos el usuario prestador de acuerdo al usuario autenticado que está registrando el request.
 			clientInput.setUsuarioPrestador(authenticatedUsername);
 			if (!serviceValidation.validateRequest(clientInput, result).hasErrors()) {
-				Service service = serviceConverter.convertToEntity(clientInput);
+				Service service = serviceMapper.convertToEntity(clientInput);
 				if (!serviceManager.similarExist(service)) {
 					serviceManager.createService(service);
 					
@@ -232,12 +232,12 @@ public class ServiceController {
 					// como el usuario prestador que es dueño del servicio a actualizar
 					clientInput.setUsuarioPrestador(service.getUsuarioPrestador().getId());
 					if (!serviceValidation.validateRequest(clientInput, result).hasErrors()) {
-						Service updatedService = serviceConverter.convertToEntity(clientInput);
+						Service updatedService = serviceMapper.convertToEntity(clientInput);
 						if (!serviceManager.similarExist(updatedService)) {
 							serviceManager.updateService(updatedService);
 							
 							logger.info("UpdateService - PUT - Exiting method, providing response resource to client.");
-							return new ResponseEntity<ServiceDto>(serviceConverter.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
+							return new ResponseEntity<ServiceDto>(serviceMapper.convertToDto(serviceManager.getServiceById(id)), HttpStatus.OK);
 						}
 						else {
 							logger.warn(

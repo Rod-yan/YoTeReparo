@@ -58,7 +58,7 @@ public class QuoteController {
 	@Autowired
 	QuoteValidation quoteValidation;
 	@Autowired
-	QuoteMapper quoteConverter;
+	QuoteMapper quoteMapper;
 	@Autowired
 	MiscUtils miscUtils;
 
@@ -94,19 +94,19 @@ public class QuoteController {
 			}
 			else if ("customer".equalsIgnoreCase(userRole)) {
 				logger.debug(String.format(
-						"Fetching all quotes made by user: <%s>", authenticatedUser));
+						"Fetching all quotes made by user: <%s>", authenticatedUsername));
 				quotes = authenticatedUser.getPresupuestos();
 			}
 			else if ("provider".equalsIgnoreCase(userRole)) {
 				logger.debug(String.format(
-						"Fetching all quotes directed to user: <%s>", authenticatedUser));
+						"Fetching all quotes directed to user: <%s>", authenticatedUsername));
 				for (Service service : authenticatedUser.getServicios())
 					quotes.addAll(service.getPresupuestos());
 			}
 			
 			if (quotes != null && !quotes.isEmpty()) {
 				List<QuoteDto> quotesDto = quotes.stream()
-		                .map(quote -> quoteConverter.convertToDto(quote))
+		                .map(quote -> quoteMapper.convertToDto(quote))
 		                .collect(Collectors.toList());
 				
 	        	logger.info("ListQuotes - GET - Exiting method, providing response resource to client.");
@@ -152,7 +152,7 @@ public class QuoteController {
     			
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer || isOwnerAndProvider) {
             		logger.info("GetQuote - GET - Exiting method, providing response resource to client.");
-                    return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quote), HttpStatus.OK);
+                    return new ResponseEntity<QuoteDto>(quoteMapper.convertToDto(quote), HttpStatus.OK);
             	}
     			else {
     				logger.warn(
@@ -196,7 +196,7 @@ public class QuoteController {
 			// Setteamos el usuario final de acuerdo al usuario autenticado que está registrando el request.
 			clientInput.setUsuarioFinal(authenticatedUsername);
 			if (!quoteValidation.validateRequest(clientInput, result).hasErrors()) {
-				Quote quote = quoteConverter.convertToEntity(clientInput);
+				Quote quote = quoteMapper.convertToEntity(clientInput);
 				if (!quoteService.activeQuoteExistBetween(quote.getUsuarioFinal(), quote.getServicio())) {
 					quoteService.createQuote(quote);
 					
@@ -248,7 +248,6 @@ public class QuoteController {
     public ResponseEntity<?> updateQuote(@PathVariable("id") Integer id, @RequestBody QuoteDto clientInput, BindingResult result) {	
 		logger.info(String.format("UpdateQuote - PUT - Processing request for quote <%s>.", id));
 		try {
-			clientInput.setId(id);
 			Quote quote = quoteService.getQuoteById(id);
 			if (quote != null) {
 				/* 
@@ -270,10 +269,10 @@ public class QuoteController {
 	    					(isOwnerAndCustomer && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_PROVIDER)) ||
 	    					(isOwnerAndProvider && clientInput.getEstado().equalsIgnoreCase(Quote.AWAITING_CUSTOMER))) {
 	    					
-	        					quoteService.updateQuote(quoteConverter.convertToEntity(clientInput));
+	        					quoteService.updateQuote(quoteMapper.convertToEntity(clientInput));
 	    						
 	    						logger.info("UpdateQuote - PUT - Exiting method, providing response resource to client.");
-	    						return new ResponseEntity<QuoteDto>(quoteConverter.convertToDto(quoteService.getQuoteById(id)), HttpStatus.OK);
+	    						return new ResponseEntity<QuoteDto>(quoteMapper.convertToDto(quoteService.getQuoteById(id)), HttpStatus.OK);
 	        				}
 	    				else {
 	    					logger.warn(String.format("UpdateQuote - PUT - Request failed - "
@@ -340,7 +339,7 @@ public class QuoteController {
     			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
     			
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer) {
-    				quoteService.customerAcceptsQuote(id);
+    				quoteService.customerAcceptsQuoteById(id);
     	        	
     	        	logger.info("AcceptQuote - PUT - Exiting method, providing response resource to client.");
     	            return new ResponseEntity<>(HttpStatus.OK);
@@ -373,62 +372,51 @@ public class QuoteController {
     }
 	
 	/*
-	 * Rechaza un presupuesto por parte del usuario final o usuario prestador,
-	 * de acuerdo a lo recibido en el URI path (customer/provider).
+	 * Rechaza un presupuesto por parte del usuario final o usuario prestador.
 	 */
 	@RequestMapping(
-			value = { "/quotes/{id}/reject/{userRole}" }, 
+			value = { "/quotes/{id}/reject" },
 			produces = "application/json; charset=UTF-8",			
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
-    public ResponseEntity<?> rejectQuote(@PathVariable("id") Integer id, @PathVariable("userRole") String userRole) {
-		logger.info(String.format("RejectQuote - PUT - Processing request for quote <%s> and entity <%s>.", id, userRole));
+    public ResponseEntity<?> rejectQuote(@PathVariable("id") Integer id) {
+		logger.info(String.format("RejectQuote - PUT - Processing request for quote <%s>.", id));
 		try {
-			if (userRole != null && !userRole.isEmpty() && ("customer".equalsIgnoreCase(userRole) || "provider".equalsIgnoreCase(userRole))) {
-				Quote quote = quoteService.getQuoteById(id);
-				if (quote != null) {
-					/* 
-	    			 * Validamos si el presupuesto siendo procesado le pertenezca 
-	    			 * al usuario autenticado (como usuario prestador, o como usuario final)
-	    			 */
-	    			String authenticatedUsername = 
-	    					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-	    			boolean isServiceAccountOrAdministrator = 
-	    					userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
-	    			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
-	    			boolean isOwnerAndProvider = quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
-	    			
-	    			if ((isServiceAccountOrAdministrator || isOwnerAndCustomer) && "customer".equalsIgnoreCase(userRole))
-	    				quoteService.customerRejectsQuote(id);
-	    			else if ((isServiceAccountOrAdministrator || isOwnerAndProvider) && "provider".equalsIgnoreCase(userRole))
-	    				quoteService.providerRejectsQuote(id);
-	    			else {
-	    				logger.warn(String.format("RejectQuote - PUT - Request failed - "
-	    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
-	    				FieldError error = new FieldError(
-								"Authorization","error",messageSource.getMessage(
-										"client.error.unauthorized", null, Locale.getDefault()));
-						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
-	    			}
-	    			
-	    			logger.info("RejectQuote - PUT - Exiting method, providing response resource to client.");
-		            return new ResponseEntity<>(HttpStatus.OK);
-		        }
-		        else {
-		        	logger.warn(String.format("RejectQuote - PUT - Request failed - Unable to reject quote. Quote <%s> doesn't exist.", id));
-		        	FieldError error = new FieldError(
-		        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
-		        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
-		        }
-			}
-			else {
-				logger.warn(String.format("RejectQuote - PUT - Request failed - "
-						+ "Incorrect URI path argument <%s> (must be customer | provider).", userRole));
+			Quote quote = quoteService.getQuoteById(id);
+			if (quote != null) {
+				/* 
+    			 * Validamos si el presupuesto siendo procesado le pertenezca 
+    			 * al usuario autenticado (como usuario prestador, o como usuario final)
+    			 */
+    			String authenticatedUsername = 
+    					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    			boolean isServiceAccountOrAdministrator = 
+    					userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+    			boolean isOwnerAndCustomer = quote.getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
+    			boolean isOwnerAndProvider = quote.getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
+    			
+    			if (isServiceAccountOrAdministrator || isOwnerAndCustomer)
+    				quoteService.customerRejectsQuoteById(id);
+    			else if (isOwnerAndProvider)
+    				quoteService.providerRejectsQuoteById(id);
+    			else {
+    				logger.warn(String.format("RejectQuote - PUT - Request failed - "
+    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
+    				FieldError error = new FieldError(
+							"Authorization","error",messageSource.getMessage(
+									"client.error.unauthorized", null, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
+    			}
+    			
+    			logger.info("RejectQuote - PUT - Exiting method, providing response resource to client.");
+	            return new ResponseEntity<>(HttpStatus.OK);
+	        }
+	        else {
+	        	logger.warn(String.format("RejectQuote - PUT - Request failed - Unable to reject quote. Quote <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError(
-	        			"Quote","error",messageSource.getMessage(
-	        					"quote.incorrect.rejection.uri.argument", new Integer[]{id}, Locale.getDefault()));
-	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.METHOD_NOT_ALLOWED);
-			}
+	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
+	        }
 		}
 		catch (CustomResponseError e) {
 			logger.warn("RejectQuote - PUT - Request failed - Validation error(s) detected.");

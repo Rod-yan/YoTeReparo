@@ -1,28 +1,22 @@
 package com.yotereparo.controller.dto;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 public class UserPasswordChangeDto {
 	
-	@NotEmpty(message = "{user.id.not.empty}")
-	@Size(min=3, max=15, message = "{user.id.size}")
-	private String id;
-	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@NotEmpty(message = "{user.contrasenaActual.not.empty}")
 	private String contrasenaActual;
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@NotEmpty(message = "{user.contrasenaNueva.not.empty}")
 	private String contrasenaNueva;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = (id != null && !id.isEmpty()) ? id.toLowerCase() : null;
-	}
-
+	@JsonIgnore
 	public String getContrasenaActual() {
 		return contrasenaActual;
 	}
@@ -31,6 +25,7 @@ public class UserPasswordChangeDto {
 		this.contrasenaActual = contrasenaActual;
 	}
 
+	@JsonIgnore
 	public String getContrasenaNueva() {
 		return contrasenaNueva;
 	}
@@ -45,7 +40,6 @@ public class UserPasswordChangeDto {
 		int result = 1;
 		result = prime * result + ((contrasenaActual == null) ? 0 : contrasenaActual.hashCode());
 		result = prime * result + ((contrasenaNueva == null) ? 0 : contrasenaNueva.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -67,11 +61,6 @@ public class UserPasswordChangeDto {
 			if (other.contrasenaNueva != null)
 				return false;
 		} else if (!contrasenaNueva.equals(other.contrasenaNueva))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

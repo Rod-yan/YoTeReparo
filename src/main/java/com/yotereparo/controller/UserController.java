@@ -62,7 +62,7 @@ public class UserController {
 	@Autowired
 	UserValidation userValidation;
 	@Autowired
-	UserMapper userConverter;
+	UserMapper userMapper;
 	@Autowired
 	MiscUtils miscUtils;
 
@@ -82,7 +82,7 @@ public class UserController {
 			if (users != null && !users.isEmpty()) {
 				
 				List<UserDto> usersDto = users.stream()
-		                .map(user -> userConverter.convertToDto(user))
+		                .map(user -> userMapper.convertToDto(user))
 		                .collect(Collectors.toList());
 				
 	        	logger.info("ListUsers - GET - Exiting method, providing response resource to client.");
@@ -115,7 +115,7 @@ public class UserController {
             
     		if (user != null) {
             	logger.info("GetUser - GET - Exiting method, providing response resource to client.");
-                return new ResponseEntity<UserDto>(userConverter.convertToDto(user), HttpStatus.OK);
+                return new ResponseEntity<UserDto>(userMapper.convertToDto(user), HttpStatus.OK);
             }
             else {
             	logger.warn(String.format("GetUser - GET - Request failed - User with id <%s> not found.", id));
@@ -144,7 +144,7 @@ public class UserController {
 		try {
 			if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
 				if (userService.getUserById(clientInput.getId()) == null) {
-					userService.createUser(userConverter.convertToEntity(clientInput));
+					userService.createUser(userMapper.convertToEntity(clientInput));
 					
 					HttpHeaders headers = new HttpHeaders();
 			        headers.setLocation(ucBuilder.path("/users/{id}").buildAndExpand(clientInput.getId()).toUri());
@@ -193,10 +193,10 @@ public class UserController {
 			clientInput.setId(id);
 			if (userService.getUserById(id) != null) {
 				if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
-					userService.updateUser(userConverter.convertToEntity(clientInput));
+					userService.updateUser(userMapper.convertToEntity(clientInput));
 					
 					logger.info("UpdateUser - PUT - Exiting method, providing response resource to client.");
-					return new ResponseEntity<UserDto>(userConverter.convertToDto(userService.getUserById(id)), HttpStatus.OK);
+					return new ResponseEntity<UserDto>(userMapper.convertToDto(userService.getUserById(id)), HttpStatus.OK);
 				}
 				else {
 					logger.warn("UpdateUser - PUT - Request failed - Input validation error(s) detected.");
@@ -232,7 +232,6 @@ public class UserController {
     public ResponseEntity<?> changeUserPassword(@PathVariable("id") String id, @RequestBody UserPasswordChangeDto clientInput, BindingResult result) {
 		logger.info(String.format("ChangeUserPassword - PUT - Processing request for user <%s>.", id));
 		try {
-			clientInput.setId(id);
 			if (userService.getUserById(id) != null) {
 				if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
 					userService.changeUserPasswordById(id, clientInput.getContrasenaActual(), clientInput.getContrasenaNueva());
