@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Label, Input, Form, FormGroup } from "reactstrap";
 
 function AdditionalNotes(props) {
+  const minDate = useRef(null);
+
   return (
     <>
       <Form>
@@ -29,11 +31,12 @@ function AdditionalNotes(props) {
                 for="fechaInicioEjecucionPropuesta"
                 className="mr-sm-2 font-weight-bold"
               >
-                FECHA ESTIMADA DE VISTIA
+                FECHA ESTIMADA / INICIO DE VISITA
               </Label>
               <Input
                 type="date"
                 name="fechaInicioEjecucionPropuesta"
+                ref={minDate}
                 id="fechaInicioEjecucionPropuesta"
                 onChange={(e) => {
                   props.onHandleChange(e);
@@ -42,23 +45,40 @@ function AdditionalNotes(props) {
             </div>
             <div className="col-md-6">
               <Label
-                for="horaInicioEjecucionPropuesta"
+                for="fechaFinEjecucionPropuesta"
                 className="mr-sm-2 font-weight-bold"
               >
-                HORA ESTIMADA DE VISITA
+                FECHA ESTIMADA / FIN DE VISITA
               </Label>
               <Input
-                type="time"
-                step="2"
-                defaultValue="00:00:00"
-                name="horaInicioEjecucionPropuesta"
-                id="horaInicioEjecucionPropuesta"
+                type="date"
+                name="fechaFinEjecucionPropuesta"
+                id="fechaFinEjecucionPropuesta"
+                min={minDate.current?.value}
                 onChange={(e) => {
                   props.onHandleChange(e);
                 }}
               ></Input>
             </div>
           </div>
+        </FormGroup>
+        <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-2">
+          <Label
+            for="horaInicioEjecucionPropuesta"
+            className="mr-sm-2 font-weight-bold"
+          >
+            HORA ESTIMADA DE VISITA
+          </Label>
+          <Input
+            type="time"
+            step="2"
+            defaultValue="00:00:00"
+            name="horaInicioEjecucionPropuesta"
+            id="horaInicioEjecucionPropuesta"
+            onChange={(e) => {
+              props.onHandleChange(e);
+            }}
+          ></Input>
         </FormGroup>
         <FormGroup className="mb-2 mt-2 mr-sm-2 mb-sm-2">
           <div className="row">

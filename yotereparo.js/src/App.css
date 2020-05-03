@@ -89,6 +89,12 @@ body {
   background-clip: padding-box;
 }
 
+.table-radius {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 10px;
+}
+
 /* Style your items */
 .yotereparoGrid_column > div {
   /* change div to reference your elements you put in <Masonry> */

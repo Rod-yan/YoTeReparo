@@ -16,7 +16,7 @@ function Provider(props) {
           </div>
         </div>
         <hr className="my-4"></hr>
-        <div className="table table-striped table-responsive">
+        <div className="table table-responsive table-radius table-hover">
           <Table>
             <thead className="text-left thead-dark">
               <tr>
