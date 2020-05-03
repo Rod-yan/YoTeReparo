@@ -96,9 +96,10 @@ public class ContractController {
 						"Fetching all contracts of customer: <%s>", authenticatedUsername));
 				for(Quote quote : authenticatedUser.getPresupuestos()) {
 					Contract contract = quote.getContrato();
-					if (contract != null)
+					if (contract != null) {
 						contractService.refreshContractStatus(contract);
 						contracts.add(contract);
+					}
 				}
 			}
 			else if ("provider".equalsIgnoreCase(userRole)) {
@@ -107,9 +108,10 @@ public class ContractController {
 				for (Service service : authenticatedUser.getServicios())
 					for(Quote quote : service.getPresupuestos()) {
 						Contract contract = quote.getContrato();
-						if (contract != null)
+						if (contract != null) {
 							contractService.refreshContractStatus(contract);
 							contracts.add(contract);
+						}
 					}
 			}
             

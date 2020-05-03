@@ -30,6 +30,7 @@ import com.yotereparo.util.error.CustomResponseError;
  * 
  */
 @Service("contractService")
+@Transactional
 public class ContractServiceImpl implements ContractService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ContractServiceImpl.class);
@@ -44,7 +45,6 @@ public class ContractServiceImpl implements ContractService {
 	@Autowired
     private MessageSource messageSource;
 
-	@Transactional
 	@Override
 	public void createContract(Quote quote) throws CustomResponseError {
 		if (quote != null) {
@@ -105,7 +105,6 @@ public class ContractServiceImpl implements ContractService {
 		}
 	}
 	
-	@Transactional
 	@Override
 	public void setContractAsFinishedById(Integer id) {
 		Contract entity = getContractById(id);
@@ -115,14 +114,14 @@ public class ContractServiceImpl implements ContractService {
 		}
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as finished - incompatible Contract status: <%s>", 
+			logger.warn(String.format("Contract <%s> can't be set as finished - "
+					+ "incompatible Contract status: <%s>", 
 					entity.getId(), entity.getEstado()));
 			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
 					"contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 	
-	@Transactional
 	@Override
 	public void customerCancelsContractById(Integer id) {
 		Contract entity = getContractById(id);
@@ -132,14 +131,14 @@ public class ContractServiceImpl implements ContractService {
 		}
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as canceled by customer - incompatible Contract status: <%s>", 
+			logger.warn(String.format("Contract <%s> can't be set as canceled by customer - "
+					+ "incompatible Contract status: <%s>", 
 					entity.getId(), entity.getEstado()));
 			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
 					"contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
-	@Transactional
 	@Override
 	public void providerCancelsContractById(Integer id) {
 		Contract entity = getContractById(id);
@@ -149,14 +148,14 @@ public class ContractServiceImpl implements ContractService {
 		}
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as canceled by provider - incompatible Contract status: <%s>", 
+			logger.warn(String.format("Contract <%s> can't be set as canceled by provider - "
+					+ "incompatible Contract status: <%s>", 
 					entity.getId(), entity.getEstado()));
 			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
 					"contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
-	@Transactional
 	@Override
 	public void rateContractById(Integer contractId, Integer rate, String description) {
 		Contract entity = getContractById(contractId);
@@ -174,7 +173,8 @@ public class ContractServiceImpl implements ContractService {
 				if ((description == null && entity.getDescripcionValoracion() != null) || 
 					(description != null && !description.equalsIgnoreCase(entity.getDescripcionValoracion()))) {
 					logger.debug(
-							String.format("Updating attribute 'DescripcionValoracion' from contract <%s>", entity.getId()));
+							String.format("Updating attribute 'DescripcionValoracion' "
+									+ "from contract <%s>", entity.getId()));
 					entity.setDescripcionValoracion(description);
 				}
 			}
@@ -198,7 +198,6 @@ public class ContractServiceImpl implements ContractService {
 		}
 	}
 	
-	@Transactional
 	@Override
 	public void archiveContractById(Integer id) {
 		Contract entity = getContractById(id);
@@ -206,7 +205,8 @@ public class ContractServiceImpl implements ContractService {
 			entity.setEstado(Contract.ARCHIVED);
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as archived - incompatible Contract status: <%s>", 
+			logger.warn(String.format("Contract <%s> can't be set as archived - "
+					+ "incompatible Contract status: <%s>", 
 					entity.getId(), entity.getEstado()));
 			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
 					"contract.illegal.modification", null, Locale.getDefault()));
@@ -219,17 +219,15 @@ public class ContractServiceImpl implements ContractService {
 		dao.deleteContractById(id);
 	}
 	
-	@Transactional
 	@Override
 	public Contract getContractById(Integer id) {
 		logger.debug(String.format("Fetching contract <%s>", id));
 		Contract contract = dao.getByKey(id);
-		if (transitionalStates.contains(contract.getEstado()))
+		if (contract != null && transitionalStates.contains(contract.getEstado()))
 			refreshContractStatus(contract);
 		return contract;
 	}
 
-	@Transactional
 	@Override
 	public List<Contract> getAllContracts() {
 		logger.debug("Fetching all contracts");
@@ -242,6 +240,4 @@ public class ContractServiceImpl implements ContractService {
 		
 		return contracts;
 	}
-	
-	
 }
