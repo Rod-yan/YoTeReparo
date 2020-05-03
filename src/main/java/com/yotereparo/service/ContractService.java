@@ -11,13 +11,13 @@ public interface ContractService {
     
     void refreshContractStatus(Contract contract);
     
-    void setContractAsFinishedById(Integer contract);
+    void setContractAsFinishedById(Integer id);
     
-    void customerCancelsContractById(Integer contract);
+    void customerCancelsContractById(Integer id);
     
-    void providerCancelsContractById(Integer contract);
+    void providerCancelsContractById(Integer id);
     
-    void rateContractById(Integer contractId, Integer rate, String description);
+    void rateContractById(Integer id, Integer rate, String description);
     
     void archiveContractById(Integer id);
     	

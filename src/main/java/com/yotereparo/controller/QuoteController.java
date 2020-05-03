@@ -372,8 +372,7 @@ public class QuoteController {
     }
 	
 	/*
-	 * Rechaza un presupuesto por parte del usuario final o usuario prestador,
-	 * de acuerdo a lo recibido en el URI path (customer/provider).
+	 * Rechaza un presupuesto por parte del usuario final o usuario prestador.
 	 */
 	@RequestMapping(
 			value = { "/quotes/{id}/reject" },

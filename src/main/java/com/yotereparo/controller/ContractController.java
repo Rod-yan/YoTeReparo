@@ -254,8 +254,66 @@ public class ContractController {
     }
 	
 	/*
-	 * Cancela un contrato por parte del usuario final o usuario prestador,
-	 * de acuerdo a lo recibido en el URI path (customer/provider).
+	 * Confirma la finalización de un contrato por parte del usuario final o usuario prestador.
+	 */
+	@RequestMapping(
+			value = { "/contracts/{id}/finish" }, 
+			produces = "application/json; charset=UTF-8",			
+			method = RequestMethod.PUT)
+	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
+    public ResponseEntity<?> finishContract(@PathVariable("id") Integer id) {
+		logger.info(String.format("FinishContract - PUT - Processing request for contract <%s>.", id));
+		try {
+			Contract contract = contractService.getContractById(id);
+			if (contract != null) {
+				/* 
+    			 * Validamos si el contrato siendo procesado le pertenezca 
+    			 * al usuario autenticado (como usuario prestador, o como usuario final)
+    			 */
+    			String authenticatedUsername = 
+    					((UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+    			boolean isServiceAccountOrAdministrator = 
+    					userService.isServiceAccountOrAdministrator(userService.getUserById(authenticatedUsername));
+    			boolean isOwnerAndCustomer = 
+    					contract.getPresupuesto().getUsuarioFinal().getId().equalsIgnoreCase(authenticatedUsername);
+    			boolean isOwnerAndProvider = 
+    					contract.getPresupuesto().getServicio().getUsuarioPrestador().getId().equalsIgnoreCase(authenticatedUsername);
+    			
+    			if (isServiceAccountOrAdministrator || isOwnerAndCustomer || isOwnerAndProvider)
+    				contractService.setContractAsFinishedById(id);
+    			else {
+    				logger.warn(String.format("FinishContract - PUT - Request failed - "
+    						+ "User <%s> doesn't have access to contract <%s> in this context.", authenticatedUsername, id));
+    				FieldError error = new FieldError(
+							"Authorization","error",messageSource.getMessage(
+									"client.error.unauthorized", null, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
+    			}
+    			
+    			logger.info("FinishContract - PUT - Exiting method, providing response resource to client.");
+	            return new ResponseEntity<>(HttpStatus.OK);
+	        }
+	        else {
+	        	logger.warn(String.format(
+	        			"FinishContract - PUT - Request failed - Unable to finish contract. Contract <%s> doesn't exist.", id));
+	        	FieldError error = new FieldError(
+	        			"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
+	        }
+		}
+		catch (CustomResponseError e) {
+			logger.warn("FinishContract - PUT - Request failed - Validation error(s) detected.");
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(e), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			logger.error("FinishContract - PUT - Request failed - Error procesing request: ", e);
+			FieldError error = new FieldError("Contract","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
+		}  
+    }
+	
+	/*
+	 * Cancela un contrato por parte del usuario final o usuario prestador.
 	 */
 	@RequestMapping(
 			value = { "/contracts/{id}/cancel" }, 
@@ -298,7 +356,7 @@ public class ContractController {
 	        }
 	        else {
 	        	logger.warn(String.format(
-	        			"CancelContract - PUT - Request failed - Unable to reject contract. Contract <%s> doesn't exist.", id));
+	        			"CancelContract - PUT - Request failed - Unable to cancel contract. Contract <%s> doesn't exist.", id));
 	        	FieldError error = new FieldError(
 	        			"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
