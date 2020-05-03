@@ -248,6 +248,7 @@ public class QuoteController {
     public ResponseEntity<?> updateQuote(@PathVariable("id") Integer id, @RequestBody QuoteDto clientInput, BindingResult result) {	
 		logger.info(String.format("UpdateQuote - PUT - Processing request for quote <%s>.", id));
 		try {
+			clientInput.setId(id);
 			Quote quote = quoteService.getQuoteById(id);
 			if (quote != null) {
 				/* 
