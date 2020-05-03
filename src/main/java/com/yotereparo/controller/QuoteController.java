@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.yotereparo.controller.dto.QuoteDto;
-import com.yotereparo.controller.dto.mapping.QuoteMapper;
 import com.yotereparo.controller.dto.validation.QuoteValidation;
+import com.yotereparo.controller.mapping.QuoteMapper;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;

@@ -1,4 +1,4 @@
-package com.yotereparo.controller.dto.mapping;
+package com.yotereparo.controller.mapping;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

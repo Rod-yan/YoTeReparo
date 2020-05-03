@@ -1,4 +1,4 @@
-package com.yotereparo.controller.dto.mapping;
+package com.yotereparo.controller.mapping;
 
 import java.util.HashSet;
 import java.util.Set;

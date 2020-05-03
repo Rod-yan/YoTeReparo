@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yotereparo.controller.dto.ContractDto;
-import com.yotereparo.controller.dto.mapping.ContractMapper;
 import com.yotereparo.controller.dto.validation.ContractValidation;
+import com.yotereparo.controller.mapping.ContractMapper;
 import com.yotereparo.model.Contract;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;

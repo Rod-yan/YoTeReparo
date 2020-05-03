@@ -1,4 +1,4 @@
-package com.yotereparo.controller.dto.mapping;
+package com.yotereparo.controller.mapping;
 
 /**
  * Interfaz genérica para conversores entre entidades y sus respectivos DTOs.
