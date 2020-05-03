@@ -36,6 +36,8 @@ public class QuoteServiceImpl implements QuoteService {
 	private QuoteDaoImpl dao;
 	@Autowired
     private MessageSource messageSource;
+	@Autowired
+	private ContractService contractService; 
 	
 	@Override
 	public void createQuote(Quote quote) {
@@ -55,9 +57,11 @@ public class QuoteServiceImpl implements QuoteService {
 		}
 		quote.setPrecioTotal();
 		quote.setFechaSolicitud(new DateTime());
+		quote.setFechaCreacion(new DateTime());
 		quote.setEstado(Quote.AWAITING_PROVIDER);
 		
-		logger.info("Commiting creation of quote.");
+		logger.info(String.format("Commiting creation of quote for service <%s> by user <%s>.", 
+						quote.getServicio().getId(), quote.getUsuarioFinal().getId()));
 		dao.persist(quote);
 	}
 	
@@ -186,18 +190,23 @@ public class QuoteServiceImpl implements QuoteService {
 					}
 			}
 			
-			if (quote.getFechaInicioEjecucionPropuesta() != null) {
-				if (!quote.getFechaInicioEjecucionPropuesta().equals(entity.getFechaInicioEjecucionPropuesta())) {
+			if (!quote.getFechaInicioEjecucionPropuesta().equals(entity.getFechaInicioEjecucionPropuesta())) {
+				logger.debug(String.format("Updating attribute 'FechaInicioEjecucionPropuesta' from quote <%s>", quote.getId()));
+				entity.setFechaInicioEjecucionPropuesta(quote.getFechaInicioEjecucionPropuesta());
+			}
+			
+			if (quote.getFechaFinEjecucionPropuesta() != null) {
+				if (!quote.getFechaFinEjecucionPropuesta().equals(entity.getFechaFinEjecucionPropuesta())) {
 					logger.debug(
-							String.format("Updating attribute 'FechaInicioEjecucionPropuesta' from quote <%s>", quote.getId()));
-					entity.setFechaInicioEjecucionPropuesta(quote.getFechaInicioEjecucionPropuesta());
+							String.format("Updating attribute 'FechaFinEjecucionPropuesta' from quote <%s>", quote.getId()));
+					entity.setFechaFinEjecucionPropuesta(quote.getFechaFinEjecucionPropuesta());
 				}
 			}
 			else 
-				if (entity.getFechaInicioEjecucionPropuesta() != null) {
+				if (entity.getFechaFinEjecucionPropuesta() != null) {
 					logger.debug(
-							String.format("Updating attribute 'FechaInicioEjecucionPropuesta' from quote <%s>", quote.getId()));
-					entity.setFechaInicioEjecucionPropuesta(null);
+							String.format("Updating attribute 'FechaFinEjecucionPropuesta' from quote <%s>", quote.getId()));
+					entity.setFechaFinEjecucionPropuesta(null);
 				}
 			
 			if (quote.isIncluyeInsumos() != entity.isIncluyeInsumos()) {
@@ -255,12 +264,27 @@ public class QuoteServiceImpl implements QuoteService {
 	}
 	
 	@Override
-	public void customerAcceptsQuote(Integer id) {
+	public void customerAcceptsQuoteById(Integer id) {
 		Quote quote = getQuoteById(id);
 		if (quote != null && quote.getEstado().equals(Quote.AWAITING_CUSTOMER)) {
-			logger.info(String.format("Customer accepted quote <%s>", quote.getId()));
-			quote.setEstado(Quote.ACCEPTED_BY_CUSTOMER);
-			// TODO: Generar Contrato
+			DateTime fechaInicioEjecucion = quote.getFechaInicioEjecucionPropuesta();
+			if (fechaInicioEjecucion == null  || 
+				(fechaInicioEjecucion != null && (fechaInicioEjecucion.isAfter(new DateTime())))) {
+				logger.info(String.format("Customer accepted quote <%s>", quote.getId()));
+				quote.setEstado(Quote.ACCEPTED_BY_CUSTOMER);
+				
+				// Crea el contrato
+				contractService.createContract(quote);
+			}
+			else {
+				// Illegal
+				logger.debug(
+						String.format("Quote <%s> can't be accepted by customer - proposed date for execution start has already passed", 
+								quote.getId()));
+				throw new CustomResponseError(
+						"Quote","fechaInicioEjecucionPropuesta",messageSource.getMessage(
+								"quote.fechaInicioEjecucionPropuesta.already.passed", null, Locale.getDefault()));
+			}
 		}
 		else {
 			// Illegal
@@ -274,7 +298,7 @@ public class QuoteServiceImpl implements QuoteService {
 	}
 
 	@Override
-	public void customerRejectsQuote(Integer id) {
+	public void customerRejectsQuoteById(Integer id) {
 		Quote quote = getQuoteById(id);
 		if (quote != null && quote.getEstado().equals(Quote.AWAITING_CUSTOMER)) {
 			logger.info(String.format("Customer rejected quote <%s>", quote.getId()));
@@ -292,7 +316,7 @@ public class QuoteServiceImpl implements QuoteService {
 	}
 	
 	@Override
-	public void providerRejectsQuote(Integer id) {
+	public void providerRejectsQuoteById(Integer id) {
 		Quote quote = getQuoteById(id);
 		if (quote != null && 
 				(quote.getEstado().equals(Quote.AWAITING_CUSTOMER) || 

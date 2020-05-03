@@ -17,9 +17,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.yotereparo.controller.dto.ContractDto;
 import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
+import com.yotereparo.model.Contract;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
@@ -90,11 +92,21 @@ public class AppConfig implements WebMvcConfigurer {
 		modelMapper.createTypeMap(QuoteDto.class, Quote.class).addMappings(mapper -> {
 			mapper.skip(Quote::setUsuarioFinal);
 			mapper.skip(Quote::setServicio);
+			mapper.skip(Quote::setContrato);
 		});
 		// Quote -> QuoteDto
 		modelMapper.createTypeMap(Quote.class, QuoteDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getUsuarioFinal().getId(), QuoteDto::setUsuarioFinal);
 			mapper.map(src -> src.getServicio().getId(), QuoteDto::setServicio);
+			mapper.skip(QuoteDto::setContrato);
+		});
+		// ContractDto -> Contract
+		modelMapper.createTypeMap(ContractDto.class, Contract.class).addMappings(mapper -> {
+			mapper.skip(Contract::setPresupuesto);
+		});
+		// Contract -> ContractDto
+		modelMapper.createTypeMap(Contract.class, ContractDto.class).addMappings(mapper -> {
+			mapper.map(src -> src.getPresupuesto().getId(), ContractDto::setPresupuesto);
 		});
 	    return modelMapper;
 	}

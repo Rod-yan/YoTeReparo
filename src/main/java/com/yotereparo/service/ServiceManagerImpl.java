@@ -62,9 +62,6 @@ public class ServiceManagerImpl implements ServiceManager {
 		if (userService.isProvider(service.getUsuarioPrestador()))
 			if (service.getUsuarioPrestador().getDirecciones() != null && service.getUsuarioPrestador().getDirecciones().size() != 0) {
 				service.setFechaCreacion(new DateTime());
-				// No cargamos imagenes en tiempo de creacion, siempre usar el metodo dedicado
-				service.setImagen(null);
-				service.setThumbnail(null);
 				service.setEstado(Service.ACTIVE);
 				
 				logger.info(String.format("Commiting creation of service <%s>", service.getTitulo()));
@@ -176,9 +173,17 @@ public class ServiceManagerImpl implements ServiceManager {
 			}
 		}
 		
-		if (!service.getHorasEstimadasEjecucion().equals(entity.getHorasEstimadasEjecucion())) {
-			logger.debug(String.format("Updating attribute 'HorasEstimadasEjecucion' from service <%s>", service.getId()));
-			entity.setHorasEstimadasEjecucion(service.getHorasEstimadasEjecucion());
+		if (service.getHorasEstimadasEjecucion() != null) {
+			if (service.getHorasEstimadasEjecucion() != entity.getHorasEstimadasEjecucion()) {
+				logger.debug(String.format("Updating attribute 'HorasEstimadasEjecucion' from service <%s>", service.getId()));
+				entity.setHorasEstimadasEjecucion(service.getHorasEstimadasEjecucion());
+			}
+		}
+		else {
+			if (entity.getHorasEstimadasEjecucion() != null) {
+				logger.debug(String.format("Updating attribute 'HorasEstimadasEjecucion' from service <%s>", service.getId()));
+				entity.setHorasEstimadasEjecucion(null);
+			}
 		}
 		
 		if (!service.getCantidadTrabajadores().equals(entity.getCantidadTrabajadores())) {

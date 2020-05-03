@@ -89,7 +89,7 @@ public class Service {
 	private ServiceType tipoServicio;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column(name = "fecha_creacion", nullable = true)
+	@Column(name = "fecha_creacion", nullable = false)
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime fechaCreacion;
 	

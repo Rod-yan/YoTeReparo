@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>utn.frro</groupId>
   <artifactId>YoTeReparo</artifactId>
-  <version>0.8.52</version>
+  <version>0.9.1</version>
   <packaging>war</packaging>
   <name>YoTeReparo</name>
   <parent>
