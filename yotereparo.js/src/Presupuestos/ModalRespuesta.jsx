@@ -41,7 +41,8 @@ function ModalRespuesta(props) {
               <Input
                 name="precioPresupuestado"
                 type="number"
-                min="0"
+                min={props.minPrice}
+                max={props.maxPrice}
                 step="10.0"
                 placeholder="Descripcion del Presupuesto"
                 className="form-control btn-block"

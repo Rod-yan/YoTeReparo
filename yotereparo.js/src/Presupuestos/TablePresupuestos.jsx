@@ -66,12 +66,10 @@ function TablePresupuestos(props) {
 
   //Generate Response from the provider to the customer
   const responseQuote = (idQuote, idServicio) => {
-    console.log(idQuote, idServicio);
     toggleQuoteModal();
     let quoteProvider = tableDataProvider
       .filter((x) => x.id === idQuote && x.servicio === idServicio)
       .shift();
-    console.log(quoteProvider);
     setQuote(quoteProvider);
   };
 
@@ -87,6 +85,7 @@ function TablePresupuestos(props) {
       fechaInicioEjecucionPropuesta: getFecha(
         quote.fechaInicioEjecucionPropuesta
       ),
+      fechaFinEjecucionPropuesta: getFecha(quote.fechaFinEjecucionPropuesta),
       direccionUsuarioFinal: quote.direccionUsuarioFinal,
       estado: "ESPERANDO_USUARIO_FINAL",
     };
