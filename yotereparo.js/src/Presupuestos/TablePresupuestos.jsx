@@ -150,6 +150,9 @@ function TablePresupuestos(props) {
     }
   }, [session.username, props.match.params.userId, loading]);
 
+  console.log(tableDataProvider);
+  console.log(tableDataCustomer);
+
   return (
     <>
       <ModalRespuesta
