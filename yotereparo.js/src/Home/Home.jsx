@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../Home/Home.css";
 import CardContent from "../Container/CardContent";
 
-import * as teamWork from "../Utils/21332-teamwork.json";
-import * as plumber from "../Utils/14525-plumbers.json";
-import * as writer from "../Utils/21333-writer.json";
+import * as teamWork from "../Utils/Animations/21332-teamwork.json";
+import * as plumber from "../Utils/Animations/14525-plumbers.json";
+import * as writer from "../Utils/Animations/21333-writer.json";
 
 const descriptionServices = (
   <div align="center">

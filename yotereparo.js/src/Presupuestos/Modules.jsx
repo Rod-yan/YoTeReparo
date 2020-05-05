@@ -15,7 +15,7 @@ import { useHistory } from "react-router-dom";
 import Errors from "../Errors/Errors";
 import { processErrors } from "../Utils/Errors";
 import Lottie from "react-lottie";
-import * as doneState from "../Utils/433-checked-done.json";
+import * as doneState from "../Utils/Animations/433-checked-done.json";
 
 const defaultOptions = {
   loop: false,
