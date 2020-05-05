@@ -14,6 +14,17 @@ import Axios from "axios";
 import { useHistory } from "react-router-dom";
 import Errors from "../Errors/Errors";
 import { processErrors } from "../Utils/Errors";
+import Lottie from "react-lottie";
+import * as doneState from "../Utils/433-checked-done.json";
+
+const defaultOptions = {
+  loop: false,
+  autoplay: true,
+  animationData: doneState.default,
+  rendererSettings: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
 
 export function Introduction(props) {
   const { presupuestosContextGet } = useContext(PresupuestoContext);
@@ -83,6 +94,7 @@ export function Acceptance(props) {
   const [userFromData, setUserFromData] = useState({});
   const [formErrors, setErrors] = useState({ errors: [] });
   const [validateState, setValidateState] = useState(false);
+  const [finalState, setFinalState] = useState(false);
 
   const handleChanges = (event) => {
     additionalNotes[event.target.name] = event.target.value;
@@ -168,19 +180,26 @@ export function Acceptance(props) {
     }
   };
 
+  const changeToFinalState = () => {
+    setFinalState(true);
+    setTimeout(() => {
+      let urlTo =
+        session.security.roles.length > 1
+          ? "/prestador/presupuestos"
+          : "/presupuestos";
+      history.push(urlTo, {
+        prestador: session.security.roles.length > 1 ? true : false,
+      });
+    }, 2000);
+  };
+
   const sendQuote = (object, config) => {
     Axios.post("http://localhost:8080/YoTeReparo/quotes/", object, config)
       .then((response) => {
         if (response.status === 400) {
           console.log(response.data);
         } else {
-          let urlTo =
-            session.security.roles.length > 1
-              ? "/prestador/presupuestos"
-              : "/presupuestos";
-          history.push(urlTo, {
-            prestador: session.security.roles.length > 1 ? true : false,
-          });
+          changeToFinalState();
         }
       })
       .catch((error) => {
@@ -192,22 +211,32 @@ export function Acceptance(props) {
 
   return (
     <>
-      <Jumbotron>
-        <Errors formErrors={formErrors}></Errors>
-        <div className="display-4 mb-4">Datos Adicionales</div>
-        <AdditionalNotes
-          onHandleChange={handleChanges}
-          adicionales={adicionalesCheckBox}
-          setAdicionales={setAdicionalesCheckBox}
-          insumos={insumosCheckBox}
-          setInsumos={setInsumosCheckBox}
-        />
-        <StatusFooter
-          {...props}
-          validateSubmit={readyToSubmit}
-          onSubmit={handleSubmit}
-        />
-      </Jumbotron>
+      {finalState ? (
+        <div>
+          <h2 className="display-4 mb-4 mt-2 text-center">
+            Tu presupuesto ya esta listo!
+          </h2>
+          <hr className="my-4" />
+          <Lottie options={defaultOptions} height={300} width={300} />
+        </div>
+      ) : (
+        <Jumbotron>
+          <Errors formErrors={formErrors}></Errors>
+          <div className="display-4 mb-4">Datos Adicionales</div>
+          <AdditionalNotes
+            onHandleChange={handleChanges}
+            adicionales={adicionalesCheckBox}
+            setAdicionales={setAdicionalesCheckBox}
+            insumos={insumosCheckBox}
+            setInsumos={setInsumosCheckBox}
+          />
+          <StatusFooter
+            {...props}
+            validateSubmit={readyToSubmit}
+            onSubmit={handleSubmit}
+          />
+        </Jumbotron>
+      )}
     </>
   );
 }

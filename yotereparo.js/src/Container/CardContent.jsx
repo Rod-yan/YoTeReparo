@@ -1,19 +1,14 @@
 import CardElement from "./Card";
 import React from "react";
 import { Link } from "react-router-dom";
+import Lottie from "react-lottie";
 
 function CardContent(props) {
   return (
     <>
       <CardElement>
         <div className="home-icon-logo text-center">
-          <span className="fa-stack fa-2x">
-            <i className="fas fa-circle fa-stack-2x"></i>
-            <i
-              className={`fas ${props.cardIcon} fa-stack-1x home-icon-color`}
-            ></i>
-          </span>
-          <hr></hr>
+          <Lottie options={props.animation} height={150} width={200} />
         </div>
         <div className="home-text-welcome">{props.cardDescription}</div>
         <div className="text-center">
