@@ -53,6 +53,8 @@ function Customer(props) {
                     acceptedQuote,
                     waitingForProvider,
                   } = getStates(item);
+                  let existQuote = item.contrato !== null ? true : false;
+
                   return (
                     <tr key={idx}>
                       <td className="text-center bg-info">
@@ -82,28 +84,60 @@ function Customer(props) {
                           {renderQuoteState(item.estado)}
                         </div>
                       </td>
-                      <td className="text-center">
-                        <button
-                          onClick={() => props.acceptQuote(item.id)}
-                          className="btn btn-success btn-block"
-                          disabled={
-                            rejectedQuote || acceptedQuote || waitingForProvider
-                          }
-                        >
-                          <i className="fas fa-thumbs-up fa-1x"></i>
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => props.rejectQuote(item.id)}
-                          className="btn btn-danger btn-block"
-                          disabled={
-                            rejectedQuote || acceptedQuote || waitingForProvider
-                          }
-                        >
-                          <i className="fas fa-thumbs-down fa-1x"></i>
-                        </button>
-                      </td>
+                      {existQuote ? (
+                        <>
+                          <td>
+                            <button
+                              onClick={() => props.showContract(item.contrato)}
+                              className="btn btn-warning btn-block"
+                            >
+                              <i className="fas fa-angle-double-right fa-1x"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => props.rejectQuote(item.id)}
+                              className="btn btn-danger btn-block"
+                              disabled={
+                                rejectedQuote ||
+                                acceptedQuote ||
+                                waitingForProvider
+                              }
+                            >
+                              <i className="fas fa-thumbs-down fa-1x"></i>
+                            </button>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="text-center">
+                            <button
+                              onClick={() => props.acceptQuote(item.id)}
+                              className="btn btn-success btn-block"
+                              disabled={
+                                rejectedQuote ||
+                                acceptedQuote ||
+                                waitingForProvider
+                              }
+                            >
+                              <i className="fas fa-thumbs-up fa-1x"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => props.rejectQuote(item.id)}
+                              className="btn btn-danger btn-block"
+                              disabled={
+                                rejectedQuote ||
+                                acceptedQuote ||
+                                waitingForProvider
+                              }
+                            >
+                              <i className="fas fa-thumbs-down fa-1x"></i>
+                            </button>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   );
                 })}

@@ -39,6 +39,8 @@ function Provider(props) {
                     waitingForCustomer,
                   } = getStates(item, true);
 
+                  let existQuote = item.contrato !== null ? true : false;
+
                   return (
                     <tr key={idx}>
                       <td className="text-center bg-info">
@@ -65,30 +67,62 @@ function Provider(props) {
                           {renderQuoteState(item.estado)}
                         </div>
                       </td>
-                      <td className="text-center">
-                        <button
-                          onClick={() =>
-                            props.responseQuote(item.id, item.servicio)
-                          }
-                          className="btn btn-success btn-block"
-                          disabled={
-                            rejectedQuote || acceptedQuote || waitingForCustomer
-                          }
-                        >
-                          <i className="fas fa-reply fa-1x"></i>
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => props.rejectQuote(item.id)}
-                          className="btn btn-danger btn-block"
-                          disabled={
-                            rejectedQuote || acceptedQuote || waitingForCustomer
-                          }
-                        >
-                          <i className="fas fa-thumbs-down fa-1x"></i>
-                        </button>
-                      </td>
+                      {existQuote ? (
+                        <>
+                          <td>
+                            <button
+                              onClick={() => props.showContract(item.contrato)}
+                              className="btn btn-warning btn-block"
+                            >
+                              <i className="fas fa-angle-double-right fa-1x"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => props.rejectQuote(item.id)}
+                              className="btn btn-danger btn-block"
+                              disabled={
+                                rejectedQuote ||
+                                acceptedQuote ||
+                                waitingForCustomer
+                              }
+                            >
+                              <i className="fas fa-thumbs-down fa-1x"></i>
+                            </button>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="text-center">
+                            <button
+                              onClick={() =>
+                                props.responseQuote(item.id, item.servicio)
+                              }
+                              className="btn btn-success btn-block"
+                              disabled={
+                                rejectedQuote ||
+                                acceptedQuote ||
+                                waitingForCustomer
+                              }
+                            >
+                              <i className="fas fa-reply fa-1x"></i>
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => props.rejectQuote(item.id)}
+                              className="btn btn-danger btn-block"
+                              disabled={
+                                rejectedQuote ||
+                                acceptedQuote ||
+                                waitingForCustomer
+                              }
+                            >
+                              <i className="fas fa-thumbs-down fa-1x"></i>
+                            </button>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   );
                 })}

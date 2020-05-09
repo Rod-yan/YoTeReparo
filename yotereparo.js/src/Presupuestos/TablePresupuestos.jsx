@@ -8,6 +8,7 @@ import Customer from "./Customer";
 import { useLocation } from "react-router-dom";
 import { putData } from "../Utils/SessionHandlers";
 import ModalRespuesta from "./ModalRespuesta";
+import ModalContrato from "../Contratos/ModalContrato";
 
 function TablePresupuestos(props) {
   const { session } = useContext(SessionContext);
@@ -16,8 +17,10 @@ function TablePresupuestos(props) {
   const [tableDataProvider, setTableDataProvider] = useState([]);
   const [loading, setLoading] = useState(false);
   const [quoteModal, setQuoteModal] = useState(false);
+  const [contractModal, setContractModal] = useState(false);
   const [quote, setQuote] = useState({});
   const [modelResponseQuote, setModelResponseQuote] = useState({});
+  const [contrato, setContrato] = useState({});
 
   let requestConfig = {
     headers: {
@@ -64,6 +67,10 @@ function TablePresupuestos(props) {
     );
   };
 
+  const handleContractModal = () => {
+    setContractModal(!contractModal);
+  };
+
   //Generate Response from the provider to the customer
   const responseQuote = (idQuote, idServicio) => {
     toggleQuoteModal();
@@ -102,6 +109,14 @@ function TablePresupuestos(props) {
     setQuoteModal(false);
   };
 
+  const showContract = (quoteId) => {
+    setContractModal(true);
+    fetchData(
+      `http://localhost:8080/YoTeReparo/contracts/${quoteId}`,
+      setContrato
+    );
+  };
+
   const onQuoteChange = (event) => {
     modelResponseQuote[event.target.name] = event.target.value;
     setModelResponseQuote({
@@ -123,17 +138,17 @@ function TablePresupuestos(props) {
     );
   };
 
-  useEffect(() => {
-    const fetchData = async (urlToFetch, callback) => {
-      await Axios(urlToFetch, requestConfig)
-        .then((resp) => {
-          callback(resp.data);
-        })
-        .catch((error) => {
-          return error;
-        });
-    };
+  const fetchData = async (urlToFetch, callback) => {
+    await Axios(urlToFetch, requestConfig)
+      .then((resp) => {
+        callback(resp.data);
+      })
+      .catch((error) => {
+        return error;
+      });
+  };
 
+  useEffect(() => {
     try {
       if (props.prestador === true || location.state?.prestador === true) {
         fetchData(
@@ -158,9 +173,15 @@ function TablePresupuestos(props) {
         sendResponseQuote={sendResponseQuote}
         onQuoteChange={onQuoteChange}
       />
+      <ModalContrato
+        isOpen={contractModal}
+        cancelModal={handleContractModal}
+        contrato={contrato}
+      />
       <Customer
         acceptQuote={acceptQuote}
         rejectQuote={rejectQuote}
+        showContract={showContract}
         tableDataCustomer={tableDataCustomer}
       ></Customer>
       {props.prestador === true || location.state?.prestador === true ? (
@@ -168,6 +189,7 @@ function TablePresupuestos(props) {
           responseQuote={responseQuote}
           archiveQuote={archiveQuote}
           rejectQuote={rejectQuote}
+          showContract={showContract}
           tableDataProvider={tableDataProvider}
         ></Provider>
       ) : (
