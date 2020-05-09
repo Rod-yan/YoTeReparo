@@ -11,8 +11,9 @@ import NotAuth from "../Errors/NotAuth";
 import Direcciones from "../Servicios/Direcciones";
 import ConfirmPassword from "./ConfirmPassword";
 
-//TODO: Add CRUD for address and neighbours if the user is prestador
-//TODO: Validate token expired
+const toLower = (text) => {
+  return text.toLowerCase();
+};
 
 function PerfilUsuario(props) {
   const history = useHistory();
@@ -68,7 +69,7 @@ function PerfilUsuario(props) {
       await Axios.post(
         `http://localhost:8080/YoTeReparo/auth/signin`,
         {
-          username: profile.id,
+          username: toLower(profile.id),
           password: password,
         },
         requestConfig
@@ -193,7 +194,7 @@ function PerfilUsuario(props) {
         result?.name !== "Error" ||
         result?.security.accessToken != null
       ) {
-        if (session.username === result?.data.id && session.security) {
+        if (toLower(session.username) === result?.data.id && session.security) {
           setAuth(true);
           setProfile(result.data);
           console.log("OK: Ingresaste correctamente");

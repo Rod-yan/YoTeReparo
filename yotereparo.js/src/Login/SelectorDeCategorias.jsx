@@ -8,6 +8,7 @@ function SelectorDeCategorias(props) {
         <div className="row">
           <div align="center" className="col-md-6">
             <CardContent
+              animation={null}
               cardIcon="fa-users"
               cardDescription="Si estas buscando contratar servicios, puedes registrarte como cliente"
               cardUrl="/registrar-usuario"
@@ -17,6 +18,7 @@ function SelectorDeCategorias(props) {
           </div>
           <div align="center" className="col-md-6">
             <CardContent
+              animation={null}
               cardIcon="fa-briefcase"
               cardDescription="Si estas buscando publicar tus servicios, puedes registrarte como prestador"
               cardUrl="/registrar-empleador"

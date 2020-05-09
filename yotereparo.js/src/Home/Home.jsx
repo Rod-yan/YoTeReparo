@@ -20,15 +20,6 @@ const descriptionHelp = (
   </div>
 );
 
-const defaultOptionsWriters = {
-  loop: true,
-  autoplay: true,
-  animationData: teamWork.default,
-  rendererSettings: {
-    preserveAspectRatio: "xMidYMid meet",
-  },
-};
-
 const defaultOptionsPlumbers = {
   loop: true,
   autoplay: true,

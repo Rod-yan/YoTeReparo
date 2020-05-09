@@ -8,7 +8,19 @@ function CardContent(props) {
     <>
       <CardElement>
         <div className="home-icon-logo text-center">
-          <Lottie options={props.animation} height={150} width={200} />
+          {props.animation != null ? (
+            <Lottie options={props.animation} height={150} width={200} />
+          ) : (
+            <>
+              <span class="fa-stack fa-2x">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i
+                  class={`fas ${props.cardIcon} fa-stack-1x home-icon-color`}
+                ></i>
+              </span>
+              <hr></hr>
+            </>
+          )}
         </div>
         <div className="home-text-welcome">{props.cardDescription}</div>
         <div className="text-center">

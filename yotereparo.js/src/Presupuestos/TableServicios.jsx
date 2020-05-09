@@ -68,23 +68,27 @@ function TableServicios(props) {
                 </tr>
               </thead>
               <tbody>
-                {tableData.map((item, idx) => {
-                  return (
-                    <tr key={idx}>
-                      <td>{item.titulo}</td>
-                      <td>{item.descripcion}</td>
-                      <td>{item.disponibilidad}</td>
-                      <td>
-                        <a
-                          className="btn btn-danger btn-block"
-                          href={`/servicio/${item.id}`}
-                        >
-                          <i className="fas fa-chevron-right fa-1x"></i>
-                        </a>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {tableData.length > 1 ? (
+                  tableData.map((item, idx) => {
+                    return (
+                      <tr key={idx}>
+                        <td>{item.titulo}</td>
+                        <td>{item.descripcion}</td>
+                        <td>{item.disponibilidad}</td>
+                        <td>
+                          <a
+                            className="btn btn-danger btn-block"
+                            href={`/servicio/${item.id}`}
+                          >
+                            <i className="fas fa-chevron-right fa-1x"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
               </tbody>
             </Table>
           </div>

@@ -24,12 +24,12 @@ function ConfirmPassword(props) {
           )}
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={props.validatePassword}>
-            Confirmar
-          </Button>{" "}
           <Button color="secondary" onClick={props.toggle}>
             Cerrar
           </Button>
+          <Button color="danger" onClick={props.validatePassword}>
+            Confirmar
+          </Button>{" "}
         </ModalFooter>
       </Modal>
     </div>

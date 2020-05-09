@@ -246,12 +246,13 @@ const FormRegistro = (props) => {
                   name="id"
                   style={{ textTransform: "lowercase" }}
                   id="usernameLabel"
-                  placeholder="Tu nombre de usuario..."
+                  placeholder="Tu Nombre de usuario..."
                   minLength="5"
                   maxLength="15"
                   onChange={(e) => {
                     handleChange(e);
                   }}
+                  required
                 />
               </FormGroup>
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">

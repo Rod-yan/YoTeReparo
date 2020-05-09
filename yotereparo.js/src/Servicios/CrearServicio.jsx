@@ -149,7 +149,10 @@ const CrearServicio = (props) => {
 
     setCantidadTrabajadores(0);
     setHorasEstimadasEjecucion(0);
-    setPreciosRange(0);
+    setPreciosRange({
+      min: 0,
+      max: 0,
+    });
   };
 
   const clearRequerimientos = () => {
