@@ -18,7 +18,7 @@ import {
   Label,
 } from "reactstrap";
 import { useState } from "react";
-import { LogOutHandler } from "../Utils/SessionHandlers";
+import ModalValoracion from "./ModalValoracion";
 
 const convertToFecha = (fechaJson) => {
   if (fechaJson) {
@@ -37,13 +37,39 @@ function ModalContrato(props) {
   const fechaCreacion = convertToFecha(contrato.fechaCreacion) || "";
   const fechaFinEjecucion = convertToFecha(contrato.fechaFinEjecucion) || "";
   const [menuAcciones, setMenuAcciones] = useState(false);
+  const [showRateContractModal, setShowRateContract] = useState(false);
+  const isProvider = props.isProvider;
+  const [rateObject, setRateObject] = useState({});
 
   const handleAcciones = () => {
     setMenuAcciones(!menuAcciones);
   };
 
+  const showRateContract = () => {
+    setShowRateContract(!showRateContractModal);
+  };
+
+  const handleChangesRateModal = (event) => {
+    setRateObject({ ...rateObject, [event.target.name]: event.target.value });
+    console.log(rateObject);
+  };
+
+  const rateContractFromModal = () => {
+    props.rateContract(contrato.id, rateObject);
+  };
+
   return (
     <div>
+      <ModalValoracion
+        isOpen={showRateContractModal}
+        toggle={showRateContract}
+        onChange={handleChangesRateModal}
+        callbackAction={rateContractFromModal}
+        valoracion={{
+          puntaje: contrato.valoracion,
+          desc: contrato.descripcionValoracion,
+        }}
+      ></ModalValoracion>
       <Modal isOpen={props.isOpen} toggle={props.cancelModal}>
         <Form>
           <ModalHeader toggle={props.cancelModal}>
@@ -89,26 +115,51 @@ function ModalContrato(props) {
             </div>
           </ModalBody>
           <ModalFooter>
+            <Button onClick={props.cancelModal} color="info">
+              Aceptar
+            </Button>
             <ButtonGroup>
               <ButtonDropdown isOpen={menuAcciones} toggle={handleAcciones}>
-                <DropdownToggle caret>Acciones de Contrato</DropdownToggle>
+                <DropdownToggle caret color="danger">
+                  Acciones de Contrato
+                </DropdownToggle>
                 <DropdownMenu>
-                  <DropdownItem onClick={props.cancelModal} color="info">
+                  <DropdownItem
+                    onClick={() => props.finalizeContract(contrato.id)}
+                    color="info"
+                    disabled={
+                      contrato.estado === "CANCELADO_USUARIO_PRESTADOR" ||
+                      contrato.estado === "CANCELADO_USUARIO_FINAL" ||
+                      contrato.estado === "FINALIZADO"
+                        ? true
+                        : false
+                    }
+                  >
                     Finalizar
                   </DropdownItem>
-                  <DropdownItem onClick={props.cancelModal} color="info">
-                    Archivar
-                  </DropdownItem>
-                  <DropdownItem onClick={props.cancelModal} color="info">
+                  {contrato.estado === "FINALIZADO" && !isProvider ? (
+                    <DropdownItem onClick={showRateContract} color="info">
+                      Valorar
+                    </DropdownItem>
+                  ) : (
+                    <></>
+                  )}
+                  <DropdownItem
+                    onClick={() => props.cancelContract(contrato.id)}
+                    color="info"
+                    disabled={
+                      contrato.estado === "CANCELADO_USUARIO_PRESTADOR" ||
+                      contrato.estado === "CANCELADO_USUARIO_FINAL" ||
+                      contrato.estado === "FINALIZADO"
+                        ? true
+                        : false
+                    }
+                  >
                     Cancelar
                   </DropdownItem>
                 </DropdownMenu>
               </ButtonDropdown>
             </ButtonGroup>
-
-            <Button onClick={props.cancelModal} color="danger">
-              Aceptar
-            </Button>
           </ModalFooter>
         </Form>
       </Modal>

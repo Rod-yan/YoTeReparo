@@ -88,8 +88,10 @@ function Customer(props) {
                         <>
                           <td>
                             <button
-                              onClick={() => props.showContract(item.contrato)}
-                              className="btn btn-warning btn-block"
+                              onClick={() =>
+                                props.showContract(item.contrato, false)
+                              }
+                              className="btn btn-primary btn-block"
                             >
                               <i className="fas fa-angle-double-right fa-1x"></i>
                             </button>

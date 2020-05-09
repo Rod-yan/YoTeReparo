@@ -18,6 +18,7 @@ function TablePresupuestos(props) {
   const [loading, setLoading] = useState(false);
   const [quoteModal, setQuoteModal] = useState(false);
   const [contractModal, setContractModal] = useState(false);
+  const [isProviderForContract, setIsProviderForContract] = useState(false);
   const [quote, setQuote] = useState({});
   const [modelResponseQuote, setModelResponseQuote] = useState({});
   const [contrato, setContrato] = useState({});
@@ -109,8 +110,9 @@ function TablePresupuestos(props) {
     setQuoteModal(false);
   };
 
-  const showContract = (quoteId) => {
+  const showContract = (quoteId, isProvider) => {
     setContractModal(true);
+    setIsProviderForContract(isProvider);
     fetchData(
       `http://localhost:8080/YoTeReparo/contracts/${quoteId}`,
       setContrato
@@ -136,6 +138,33 @@ function TablePresupuestos(props) {
       requestConfig,
       callbackToRender
     );
+  };
+
+  const rateContract = (idContract, rateObject) => {
+    putData(
+      `http://localhost:8080/YoTeReparo/contracts/${idContract}`,
+      requestConfig,
+      callbackToRender,
+      rateObject
+    );
+  };
+
+  const cancelContract = (idContract) => {
+    putData(
+      `http://localhost:8080/YoTeReparo/contracts/${idContract}/cancel`,
+      requestConfig,
+      callbackToRender
+    );
+    setContractModal(false);
+  };
+
+  const finalizeContract = (idContract) => {
+    putData(
+      `http://localhost:8080/YoTeReparo/contracts/${idContract}/finish`,
+      requestConfig,
+      callbackToRender
+    );
+    setContractModal(false);
   };
 
   const fetchData = async (urlToFetch, callback) => {
@@ -177,6 +206,10 @@ function TablePresupuestos(props) {
         isOpen={contractModal}
         cancelModal={handleContractModal}
         contrato={contrato}
+        finalizeContract={finalizeContract}
+        isProvider={isProviderForContract}
+        cancelContract={cancelContract}
+        rateContract={rateContract}
       />
       <Customer
         acceptQuote={acceptQuote}
