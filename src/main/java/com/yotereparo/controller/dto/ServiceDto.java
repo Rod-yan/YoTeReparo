@@ -41,6 +41,9 @@ public class ServiceDto {
 	@Size(max = 255, message = "{service.disponibilidad.too.long}")
 	private String disponibilidad;
 	
+	@JsonProperty(access = Access.READ_ONLY)
+	private Float valoracionPromedio;
+	
 	@NotNull(message = "{service.insitu.not.null}")
 	private boolean insitu;
 	
@@ -135,6 +138,15 @@ public class ServiceDto {
 
 	public void setDisponibilidad(String disponibilidad) {
 		this.disponibilidad = disponibilidad;
+	}
+
+	@JsonIgnore
+	public Float getValoracionPromedio() {
+		return valoracionPromedio;
+	}
+
+	public void setValoracionPromedio(Float valoracionPromedio) {
+		this.valoracionPromedio = valoracionPromedio;
 	}
 
 	public boolean isInsitu() {
@@ -393,12 +405,13 @@ public class ServiceDto {
 	@Override
 	public String toString() {
 		return "ServiceDto [id=" + id + ", usuarioPrestador=" + usuarioPrestador + ", titulo=" + titulo
-				+ ", descripcion=" + descripcion + ", disponibilidad=" + disponibilidad + ", insitu=" + insitu
-				+ ", precioMaximo=" + precioMaximo + ", precioMinimo=" + precioMinimo + ", precioPromedio="
-				+ precioPromedio + ", precioInsumos=" + precioInsumos + ", precioAdicionales=" + precioAdicionales
-				+ ", horasEstimadasEjecucion=" + horasEstimadasEjecucion + ", cantidadTrabajadores="
-				+ cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", tipoServicio=" + tipoServicio
-				+ ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago
-				+ ", requerimientos=" + requerimientos + ", presupuestos=" + presupuestos + "]";
+				+ ", descripcion=" + descripcion + ", disponibilidad=" + disponibilidad + ", valoracionPromedio="
+				+ valoracionPromedio + ", insitu=" + insitu + ", precioMaximo=" + precioMaximo + ", precioMinimo="
+				+ precioMinimo + ", precioPromedio=" + precioPromedio + ", precioInsumos=" + precioInsumos
+				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
+				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida
+				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
+				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + ", presupuestos="
+				+ presupuestos + "]";
 	}
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
+import com.yotereparo.model.Contract;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.service.QuoteService;
@@ -38,12 +39,25 @@ public class ServiceMapper implements Mapper<Service, ServiceDto> {
 	@Override
 	public ServiceDto convertToDto(Service service) {
 		ServiceDto serviceDto = modelMapper.map(service, ServiceDto.class);
-		// Hacemos pasar cada Presupuesto por su respectivo converter para no omitir cualquier regla que se aplique en el mismo.
+		// Hacemos pasar cada Presupuesto por su respectivo converter
+		// para no omitir cualquier regla que se aplique en el mismo.
 		Set<Quote> quotes = service.getPresupuestos();
 	    if (quotes != null && !quotes.isEmpty()) {
 	    	serviceDto.setPresupuestos(new HashSet<QuoteDto>(0));
-	    	for (Quote qte : quotes) {
-	    		serviceDto.addPresupuesto(quoteConverter.convertToDto(qte));
+	    	int ratedContracts = 0;
+			int accumulatedRating = 0;
+	    	for (Quote quote : quotes) {
+	    		serviceDto.addPresupuesto(quoteConverter.convertToDto(quote));
+	    		// Promediamos la valoración del servicio con las valoraciones de cada uno de sus contratos.
+	    		Contract contract = quote.getContrato();
+				if (contract != null && contract.getValoracion() != null) {
+					ratedContracts++;
+					accumulatedRating = accumulatedRating + contract.getValoracion();
+				}
+	    	}
+	    	if (ratedContracts != 0) {
+				serviceDto.setValoracionPromedio( 
+						(float) (Math.round(((float) accumulatedRating / (float) ratedContracts) * 10.0)/10.0));
 	    	}
 	    }
 	    return serviceDto;
