@@ -190,8 +190,10 @@ public class ContractServiceImpl implements ContractService {
 	@Override
 	public void archiveContractById(Integer id) {
 		Contract entity = getContractById(id);
-		if (finalStates.contains(entity.getEstado()))
+		if (finalStates.contains(entity.getEstado())) {
+			logger.info("Setting contract <{}> as <{}>", entity.getId(), Contract.ARCHIVED);
 			entity.setEstado(Contract.ARCHIVED);
+		}
 		else {
 			// Illegal
 			logger.warn("Contract <{}> status can't be updated - incompatible Contract status: <{}>", 
