@@ -18,7 +18,7 @@ function AdditionalNotes(props) {
             type="text"
             name="descripcionSolicitud"
             id="descripcionSolicitud"
-            placeholder="Especifique una descripcion adicional para el servicio a solicitar..."
+            placeholder="Escribí aquí cualquier detalle de importancia que quieras que lea el usuario prestador..."
             onChange={(e) => {
               props.onHandleChange(e);
             }}
@@ -31,8 +31,10 @@ function AdditionalNotes(props) {
                 for="fechaInicioEjecucionPropuesta"
                 className="mr-sm-2 font-weight-bold"
               >
-                FECHA ESTIMADA / INICIO DE VISITA
+                FECHA ESTIMADA DE INICIO DEL SERVICIO
               </Label>
+			    <br/>Ingresá la fecha que te convenga para la cual 
+				se iniciaría la prestación del servicio.
               <Input
                 type="date"
                 name="fechaInicioEjecucionPropuesta"
@@ -48,8 +50,11 @@ function AdditionalNotes(props) {
                 for="fechaFinEjecucionPropuesta"
                 className="mr-sm-2 font-weight-bold"
               >
-                FECHA ESTIMADA / FIN DE VISITA
+                FECHA ESTIMADA DE FIN DEL SERVICIO
               </Label>
+				<br/>Ingresá la fecha para la que necesitás
+				que el servicio ya se haya completado. Podés
+				omitir este dato.
               <Input
                 type="date"
                 name="fechaFinEjecucionPropuesta"
@@ -69,6 +74,7 @@ function AdditionalNotes(props) {
           >
             HORA ESTIMADA DE VISITA
           </Label>
+				<br/>¿A qué hora te queda bien?<br/>
           <Input
             type="time"
             step="2"
@@ -88,7 +94,7 @@ function AdditionalNotes(props) {
                   for="incluyeAdicionales"
                   className="mr-sm-2 font-weight-bold"
                 >
-                  INLCUYE ADICIONALES
+                  ¿DESEAS INCLUIR ADICIONALES?
                 </Label>
                 <Input
                   className="ml-4 mr-4"
@@ -110,7 +116,7 @@ function AdditionalNotes(props) {
                   for="incluyeInsumos"
                   className="mr-sm-2 font-weight-bold"
                 >
-                  INCLUYE INSUMOS
+                  ¿DESEAS INCLUIR INSUMOS?
                 </Label>
                 <Input
                   className="ml-4 mr-4"

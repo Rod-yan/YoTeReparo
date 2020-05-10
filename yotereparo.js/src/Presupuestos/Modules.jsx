@@ -32,15 +32,18 @@ export function Introduction(props) {
   return (
     <>
       <Jumbotron>
-        <h1 className="display-4">
-          Ya estas a un paso de solucionar tu {presupuestosContextGet.title}
+        <h1 className="display-4 text-center">
+          ¡Estas cada vez más cerca de solucionar tu inconveniente!
         </h1>
-        <div className="lead">
-          Al continuar con el proceso, comenzara el proceso para presupuestar el
-          servicio de {presupuestosContextGet.provider}
+        <div className="lead text-center">
+          Si eliges continuar con el proceso, se solicitará 
+		  un presupuesto para el servicio:
+		  <br/><b>{presupuestosContextGet.title}</b><br/>
+		  Ofrecido por el usuario: 
+          <br/><b>{presupuestosContextGet.provider}</b>
         </div>
         <hr className="my-2" />
-        <p className="text-center">¿Estas seguro que deseas continuar?</p>
+        <p className="text-center">¿Deseas continuar con la solicitud del presupuesto?</p>
         <StatusFooter validateSubmit={true} {...props} />
       </Jumbotron>
     </>
@@ -55,12 +58,8 @@ export function Discussion(props) {
   return (
     <>
       <Jumbotron>
-        <div className="display-4 mb-4">
-          Presupuesto para {session.username}
-        </div>
-        <div className="lead">
-          De la mano de {presupuestosContextGet.provider} encargado de{" "}
-          {presupuestosContextGet.body}
+        <div className="display-4 mb-4 text-center">
+          Revisá el servicio una vez más
         </div>
         <hr className="my-4" />
         <ElementContainer>
@@ -222,7 +221,14 @@ export function Acceptance(props) {
       ) : (
         <Jumbotron>
           <Errors formErrors={formErrors}></Errors>
-          <div className="display-4 mb-4">Datos Adicionales</div>
+          <div className="display-4 mb-4 text-center">Detalle de la solicitud de presupuesto</div>
+		  <div className="lead text-center">
+            Una vez confirmada la solicitud, podrás gestionar los detalles
+		    de la misma en la pantalla de Presupuestos.<br/> 
+		    Allí podrás seguir el estado de tu solicitud, así como también modificarla
+		    si así lo deseas.
+          </div>
+		  <hr className="my-4" />
           <AdditionalNotes
             onHandleChange={handleChanges}
             adicionales={adicionalesCheckBox}
