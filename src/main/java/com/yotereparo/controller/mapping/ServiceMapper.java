@@ -12,6 +12,7 @@ import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.model.Contract;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
+import com.yotereparo.model.ServiceRatingEntry;
 import com.yotereparo.service.QuoteService;
 import com.yotereparo.service.ServiceTypeService;
 import com.yotereparo.service.UserService;
@@ -48,9 +49,12 @@ public class ServiceMapper implements Mapper<Service, ServiceDto> {
 			int accumulatedRating = 0;
 	    	for (Quote quote : quotes) {
 	    		serviceDto.addPresupuesto(quoteConverter.convertToDto(quote));
-	    		// Promediamos la valoración del servicio con las valoraciones de cada uno de sus contratos.
 	    		Contract contract = quote.getContrato();
 				if (contract != null && contract.getValoracion() != null) {
+					// Agregamos la valoración al DTO de servicio.
+					serviceDto.addValoracion(
+							new ServiceRatingEntry(contract.getValoracion(), contract.getDescripcionValoracion()));
+					// Promediamos la valoración del servicio con las valoraciones de cada uno de sus contratos.
 					ratedContracts++;
 					accumulatedRating = accumulatedRating + contract.getValoracion();
 				}
