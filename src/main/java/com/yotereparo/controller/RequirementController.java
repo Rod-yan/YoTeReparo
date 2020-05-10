@@ -74,7 +74,7 @@ public class RequirementController {
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getRequirement(@PathVariable("id") Integer id) {
-		logger.info(String.format("GetRequirement - GET - Processing request for requirement <%s>.", id));
+		logger.info("GetRequirement - GET - Processing request for requirement <{}>.", id);
         try {
         	Requirement requirement = requirementService.getRequirementById(id);
             
@@ -83,9 +83,9 @@ public class RequirementController {
                 return new ResponseEntity<Requirement>(requirement, HttpStatus.OK);
             }
             else {
-            	logger.warn(String.format("GetRequirement - GET - Request failed - Requirement with id <%s> not found.", id));
-                FieldError error = new FieldError(
-                		"Requirement","error",messageSource.getMessage("requirement.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+            	logger.warn("GetRequirement - GET - Request failed - Requirement with id <{}> not found.", id);
+                FieldError error = new FieldError("Requirement","error",
+                		messageSource.getMessage("requirement.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }

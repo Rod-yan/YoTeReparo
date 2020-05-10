@@ -82,18 +82,15 @@ public class ContractController {
 				if (userService.isServiceAccountOrAdministrator(authenticatedUser))
 					contracts = new HashSet<Contract>(contractService.getAllContracts());
 				else {
-					logger.warn(
-    						String.format("ListContracts - GET - Request failed - "
-    								+ "User <%s> doesn't have access to all contracts.", authenticatedUsername));
-					FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+					logger.warn("ListContracts - GET - Request failed - User <{}> doesn't have access to all contracts.", 
+							authenticatedUsername);
+					FieldError error = new FieldError("Authorization","error",
+							messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
 				}
 			}
 			else if ("customer".equalsIgnoreCase(userRole)) {
-				logger.debug(String.format(
-						"Fetching all contracts of customer: <%s>", authenticatedUsername));
+				logger.debug("Fetching all contracts of customer: <{}>", authenticatedUsername);
 				for(Quote quote : authenticatedUser.getPresupuestos()) {
 					Contract contract = quote.getContrato();
 					if (contract != null) {
@@ -103,8 +100,7 @@ public class ContractController {
 				}
 			}
 			else if ("provider".equalsIgnoreCase(userRole)) {
-				logger.debug(String.format(
-						"Fetching all contracts of provider: <%s>", authenticatedUsername));
+				logger.debug("Fetching all contracts of provider: <{}>", authenticatedUsername);
 				for (Service service : authenticatedUser.getServicios())
 					for(Quote quote : service.getPresupuestos()) {
 						Contract contract = quote.getContrato();
@@ -145,7 +141,7 @@ public class ContractController {
 			method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
 	public ResponseEntity<?> getContract(@PathVariable("id") Integer id) {
-		logger.info(String.format("GetContract - GET - Processing request for contract <%s>.", id));
+		logger.info("GetContract - GET - Processing request for contract <{}>.", id);
         try {
         	Contract contract = contractService.getContractById(id);
             
@@ -168,19 +164,17 @@ public class ContractController {
                     return new ResponseEntity<ContractDto>(contractMapper.convertToDto(contract), HttpStatus.OK);
             	}
     			else {
-    				logger.warn(
-    						String.format("GetContract - GET - Request failed - "
-    								+ "User <%s> doesn't have access to contract <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("GetContract - GET - Request failed - User <{}> doesn't have access to contract <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
             }
             else {
-            	logger.warn(String.format("GetContract - GET - Request failed - Contract with id <%s> not found.", id));
-                FieldError error = new FieldError(
-                		"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+            	logger.warn("GetContract - GET - Request failed - Contract with id <{}> not found.", id);
+                FieldError error = new FieldError("Contract","error",
+                		messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
@@ -201,7 +195,7 @@ public class ContractController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> rateContract(@PathVariable("id") Integer id, @RequestBody ContractDto clientInput, BindingResult result) {	
-		logger.info(String.format("RateContract - PUT - Processing request for contract <%s>.", id));
+		logger.info("RateContract - PUT - Processing request for contract <{}>.", id);
 		try {
 			Contract contract = contractService.getContractById(id);
 			if (contract != null) {
@@ -229,18 +223,17 @@ public class ContractController {
     				}
     			}
     			else {
-    				logger.warn(String.format("RateContract - PUT - Request failed - "
-    						+ "User <%s> doesn't have access to contract <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("RateContract - PUT - Request failed - User <{}> doesn't have access to contract <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
 	        }
 			else {
-				logger.warn(String.format("RateContract - PUT - Request failed - Unable to update contract. Contract <%s> doesn't exist.", id));
-	            FieldError error = new FieldError(
-	            		"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+				logger.warn("RateContract - PUT - Request failed - Unable to update contract. Contract <{}> doesn't exist.", id);
+	            FieldError error = new FieldError("Contract","error",
+	            		messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -264,7 +257,7 @@ public class ContractController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> finishContract(@PathVariable("id") Integer id) {
-		logger.info(String.format("FinishContract - PUT - Processing request for contract <%s>.", id));
+		logger.info("FinishContract - PUT - Processing request for contract <{}>.", id);
 		try {
 			Contract contract = contractService.getContractById(id);
 			if (contract != null) {
@@ -284,11 +277,10 @@ public class ContractController {
     			if (isServiceAccountOrAdministrator || isOwnerAndCustomer || isOwnerAndProvider)
     				contractService.setContractAsFinishedById(id);
     			else {
-    				logger.warn(String.format("FinishContract - PUT - Request failed - "
-    						+ "User <%s> doesn't have access to contract <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("FinishContract - PUT - Request failed - User <{}> doesn't have access to contract <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
     			
@@ -296,10 +288,9 @@ public class ContractController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format(
-	        			"FinishContract - PUT - Request failed - Unable to finish contract. Contract <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("FinishContract - PUT - Request failed - Unable to finish contract. Contract <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Contract","error",
+	        			messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -323,7 +314,7 @@ public class ContractController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> cancelContract(@PathVariable("id") Integer id) {
-		logger.info(String.format("CancelContract - PUT - Processing request for contract <%s>.", id));
+		logger.info("CancelContract - PUT - Processing request for contract <{}>.", id);
 		try {
 			Contract contract = contractService.getContractById(id);
 			if (contract != null) {
@@ -345,11 +336,10 @@ public class ContractController {
     			else if (isOwnerAndProvider)
     				contractService.providerCancelsContractById(id);
     			else {
-    				logger.warn(String.format("CancelContract - PUT - Request failed - "
-    						+ "User <%s> doesn't have access to contract <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("CancelContract - PUT - Request failed - User <{}> doesn't have access to contract <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
     			
@@ -357,10 +347,9 @@ public class ContractController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format(
-	        			"CancelContract - PUT - Request failed - Unable to cancel contract. Contract <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("CancelContract - PUT - Request failed - Unable to cancel contract. Contract <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Contract","error",
+	        			messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -384,7 +373,7 @@ public class ContractController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> archiveContract(@PathVariable("id") Integer id) {
-		logger.info(String.format("ArchiveContract - PUT - Processing request for contract <%s>.", id));
+		logger.info("ArchiveContract - PUT - Processing request for contract <{}>.", id);
 		try {
 			if (contractService.getContractById(id) != null) {
 				contractService.archiveContractById(id);
@@ -393,10 +382,9 @@ public class ContractController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format(
-	        			"ArchiveContract - POST - Request failed - Unable to archive contract. Contract <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("ArchiveContract - POST - Request failed - Unable to archive contract. Contract <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Contract","error",
+	        			messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -420,7 +408,7 @@ public class ContractController {
 			method = RequestMethod.DELETE)
 	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteContract(@PathVariable("id") Integer id) {
-		logger.info(String.format("DeleteContract - DELETE - Processing request for contract <%s>.", id));
+		logger.info("DeleteContract - DELETE - Processing request for contract <{}>.", id);
 		try {
 			if (contractService.getContractById(id) != null) {
 				contractService.deleteContractById(id);
@@ -429,10 +417,9 @@ public class ContractController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format(
-	        			"DeleteContract - DELETE - Request failed - Unable to delete contract. Contract <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Contract","error",messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("DeleteContract - DELETE - Request failed - Unable to delete contract. Contract <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Contract","error",
+	        			messageSource.getMessage("contract.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}

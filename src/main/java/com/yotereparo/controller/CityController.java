@@ -61,7 +61,8 @@ public class CityController {
         }
 		catch (Exception e) {
 			logger.error("ListCities - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("City","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("City","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
@@ -75,7 +76,7 @@ public class CityController {
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getCity(@PathVariable("id") String id) {
 		id = id.toLowerCase();
-		logger.info(String.format("GetCity - GET - Processing request for city <%s>.", id));
+		logger.info("GetCity - GET - Processing request for city <{}>.", id);
         try {
         	City city = cityService.getCityById(id);
             
@@ -84,15 +85,16 @@ public class CityController {
                 return new ResponseEntity<City>(city, HttpStatus.OK);
             }
             else {
-            	logger.warn(String.format("GetCity - GET - Request failed - City with id <%s> not found.", id));
-                FieldError error = new FieldError(
-                		"City","error",messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
+            	logger.warn("GetCity - GET - Request failed - City with id <{}> not found.", id);
+                FieldError error = new FieldError("City","error",
+                		messageSource.getMessage("city.doesnt.exist", new String[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
         catch (Exception e) {
 			logger.error("GetCity - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("City","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("City","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }

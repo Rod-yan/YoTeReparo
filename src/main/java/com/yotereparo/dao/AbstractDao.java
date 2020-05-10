@@ -9,8 +9,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Clase base genérica para todas las implementaciones de clases DAO. 
- * Brinda wrappers comunes para las operaciones con hibernate.
+ * Clase base para implementaciones de DAOs. 
+ * Brinda wrappers comunes para operaciones con hibernate.
  * 
  * @author Rodrigo Yanis
  * 

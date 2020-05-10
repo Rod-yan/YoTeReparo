@@ -36,12 +36,12 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 	}
 
 	public PaymentMethod getPaymentMethodById(Integer id) {
-		logger.debug(String.format("Fetching payment method by id <%s>", id));
+		logger.debug("Fetching payment method by id <{}>", id);
 		return dao.getPaymentMethodById(id);
 	}
 	
 	public PaymentMethod getPaymentMethodByDescription(String description) {
-		logger.debug(String.format("Fetching payment method <%s>", description));
+		logger.debug("Fetching payment method <{}>", description);
 		return dao.getPaymentMethodByDescription(description);
 	}
 }

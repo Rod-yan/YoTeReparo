@@ -57,11 +57,10 @@ public class ContractServiceImpl implements ContractService {
 			contract.setEstado(Contract.PENDING_EXECUTION);
 			
 			try { 
-				logger.info(String.format("Commiting creation of contract between "
-						+ "customer <%s> and provider <%s> for service <%s>.",
-							quote.getUsuarioFinal().getId(),
-							quote.getServicio().getUsuarioPrestador().getId(),
-							quote.getServicio().getId()));
+				logger.info("Commiting creation of contract between customer <{}> and provider <{}> for service <{}>.",
+						quote.getUsuarioFinal().getId(),
+						quote.getServicio().getUsuarioPrestador().getId(),
+						quote.getServicio().getId());
 			
 				dao.persist(contract);
 			}
@@ -73,15 +72,15 @@ public class ContractServiceImpl implements ContractService {
 		else {
 			// Illegal
 			logger.warn("Contract creation failed - null quote received.");
-			throw new CustomResponseError("Contract","error",messageSource.getMessage(
-					"contract.creation.error", null, Locale.getDefault()));
+			throw new CustomResponseError("Contract","error",
+					messageSource.getMessage("contract.creation.error", null, Locale.getDefault()));
 		}
 	}
 
 	@Override
 	public void refreshContractStatus(Contract contract) {
 		if (contract != null) {
-			logger.trace(String.format("Refreshing status of contract <%s>", contract.getId()));
+			logger.trace("Refreshing status of contract <{}>", contract.getId());
 			Boolean contractWasUpdated = false;
 			String currentStatus = contract.getEstado();
 			if (contract.getFechaInicioEjecucion().isBeforeNow()) {
@@ -101,7 +100,7 @@ public class ContractServiceImpl implements ContractService {
 					}
 			}
 			if (contractWasUpdated)
-				logger.debug(String.format("Status of contract <%s> has been updated", contract.getId()));
+				logger.debug("Status of contract <{}> has been updated", contract.getId());
 		}
 	}
 	
@@ -109,16 +108,15 @@ public class ContractServiceImpl implements ContractService {
 	public void setContractAsFinishedById(Integer id) {
 		Contract entity = getContractById(id);
 		if (entity.getEstado().equals(Contract.ONGOING_EXECUTION)) {
-			logger.info(String.format("Setting contract <%s> as FINISHED", entity.getId()));
+			logger.info("Setting contract <{}> as <{}>", entity.getId(), Contract.ALREADY_EXECUTED);
 			entity.setEstado(Contract.ALREADY_EXECUTED);
 		}
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as finished - "
-					+ "incompatible Contract status: <%s>", 
-					entity.getId(), entity.getEstado()));
-			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
-					"contract.illegal.modification", null, Locale.getDefault()));
+			logger.warn("Contract <{}> status can't be updated - incompatible Contract status: <{}>", 
+					entity.getId(), entity.getEstado());
+			throw new CustomResponseError("Contract","estado",
+					messageSource.getMessage("contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 	
@@ -126,16 +124,15 @@ public class ContractServiceImpl implements ContractService {
 	public void customerCancelsContractById(Integer id) {
 		Contract entity = getContractById(id);
 		if (entity.getEstado().equals(Contract.PENDING_EXECUTION)) {
-			logger.info(String.format("Setting contract <%s> as CANCELED BY CUSTOMER", entity.getId()));
+			logger.info("Setting contract <{}> as <{}>", entity.getId(), Contract.CANCELED_BY_CUSTOMER);
 			entity.setEstado(Contract.CANCELED_BY_CUSTOMER);
 		}
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as canceled by customer - "
-					+ "incompatible Contract status: <%s>", 
-					entity.getId(), entity.getEstado()));
-			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
-					"contract.illegal.modification", null, Locale.getDefault()));
+			logger.warn("Contract <{}> status can't be updated - incompatible Contract status: <{}>", 
+					entity.getId(), entity.getEstado());
+			throw new CustomResponseError("Contract","estado",
+					messageSource.getMessage("contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
@@ -143,16 +140,15 @@ public class ContractServiceImpl implements ContractService {
 	public void providerCancelsContractById(Integer id) {
 		Contract entity = getContractById(id);
 		if (entity.getEstado().equals(Contract.PENDING_EXECUTION)) {
-			logger.info(String.format("Setting contract <%s> as CANCELED BY PROVIDER", entity.getId()));
+			logger.info("Setting contract <{}> as <{}>", entity.getId(), Contract.CANCELED_BY_PROVIDER);
 			entity.setEstado(Contract.CANCELED_BY_PROVIDER);
 		}
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as canceled by provider - "
-					+ "incompatible Contract status: <%s>", 
-					entity.getId(), entity.getEstado()));
-			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
-					"contract.illegal.modification", null, Locale.getDefault()));
+			logger.warn("Contract <{}> status can't be updated - incompatible Contract status: <{}>", 
+					entity.getId(), entity.getEstado());
+			throw new CustomResponseError("Contract","estado",
+					messageSource.getMessage("contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
@@ -162,39 +158,32 @@ public class ContractServiceImpl implements ContractService {
 		if (entity.getEstado().equals(Contract.ALREADY_EXECUTED)) {
 			if (rate != null) {
 				if (rate != entity.getValoracion()) {
-					logger.debug(
-							String.format("Updating attribute 'Valoracion' from contract <%s>", entity.getId()));
+					logger.debug("Updating attribute 'Valoracion' from contract <{}>", entity.getId());
 					entity.setValoracion(rate);
 					
-					logger.debug(
-							String.format("Updating attribute 'FechaValoracion' from contract <%s>", entity.getId()));
+					logger.debug("Updating attribute 'FechaValoracion' from contract <{}>", entity.getId());
 					entity.setFechaValoracion(new DateTime());
 				}
 				if ((description == null && entity.getDescripcionValoracion() != null) || 
 					(description != null && !description.equalsIgnoreCase(entity.getDescripcionValoracion()))) {
-					logger.debug(
-							String.format("Updating attribute 'DescripcionValoracion' "
-									+ "from contract <%s>", entity.getId()));
+					logger.debug("Updating attribute 'DescripcionValoracion' from contract <{}>", entity.getId());
 					entity.setDescripcionValoracion(description);
 				}
 			}
 			else
 				if (entity.getValoracion() != null) {
 					// Illegal
-					logger.debug(
-							String.format("Contract <%s> rated value: <%s> can't be erased!", 
-									entity.getId(), entity.getValoracion()));
-					throw new CustomResponseError(
-							"Contract","valoracion",messageSource.getMessage(
-									"contract.valoracion.cant.be.deleted", null, Locale.getDefault()));
+					logger.debug("Contract <{}> rated value can't be erased!", entity.getId());
+					throw new CustomResponseError("Contract","valoracion",
+							messageSource.getMessage("contract.valoracion.cant.be.deleted", null, Locale.getDefault()));
 				}
 		}
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be rated - incompatible Contract status: <%s>", 
-					entity.getId(), entity.getEstado()));
-			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
-					"contract.illegal.modification", null, Locale.getDefault()));
+			logger.warn("Contract <{}> can't be rated - incompatible Contract status: <{}>", 
+					entity.getId(), entity.getEstado());
+			throw new CustomResponseError("Contract","estado",
+					messageSource.getMessage("contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 	
@@ -205,23 +194,22 @@ public class ContractServiceImpl implements ContractService {
 			entity.setEstado(Contract.ARCHIVED);
 		else {
 			// Illegal
-			logger.warn(String.format("Contract <%s> can't be set as archived - "
-					+ "incompatible Contract status: <%s>", 
-					entity.getId(), entity.getEstado()));
-			throw new CustomResponseError("Contract","estado",messageSource.getMessage(
-					"contract.illegal.modification", null, Locale.getDefault()));
+			logger.warn("Contract <{}> status can't be updated - incompatible Contract status: <{}>", 
+					entity.getId(), entity.getEstado());
+			throw new CustomResponseError("Contract","estado",
+					messageSource.getMessage("contract.illegal.modification", null, Locale.getDefault()));
 		}
 	}
 
 	@Override
 	public void deleteContractById(Integer id) {
-		logger.info(String.format("Commiting deletion of contract <%s>", id));
+		logger.info("Commiting deletion of contract <{}>", id);
 		dao.deleteContractById(id);
 	}
 	
 	@Override
 	public Contract getContractById(Integer id) {
-		logger.debug(String.format("Fetching contract <%s>", id));
+		logger.debug("Fetching contract <{}>", id);
 		Contract contract = dao.getByKey(id);
 		if (contract != null && transitionalStates.contains(contract.getEstado()))
 			refreshContractStatus(contract);

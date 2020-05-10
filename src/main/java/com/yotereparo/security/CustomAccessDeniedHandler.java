@@ -33,10 +33,10 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle
       (HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex) 
       throws IOException, ServletException {
-    	logger.error("[403] Forbidden error: {}", ex.getMessage()+" to resource "+request.getServletPath());
+    	logger.error("[403] Forbidden error: {} to resource {}", ex.getMessage(), request.getServletPath());
     	ObjectMapper objectMapper = new ObjectMapper();
-		CustomResponseError error = new CustomResponseError(
-				"Authorization","error",messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
+		CustomResponseError error = new CustomResponseError("Authorization","error",
+				messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 		String jsonObject = objectMapper.writeValueAsString(miscUtils.getFormatedResponseError(error)); 
 		response.setContentType("application/json; charset=UTF-8");
 		response.getWriter().write(jsonObject);

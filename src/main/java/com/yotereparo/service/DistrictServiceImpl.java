@@ -36,7 +36,7 @@ public class DistrictServiceImpl implements DistrictService {
 	}
 
 	public District getDistrictById(Integer id) {
-		logger.debug(String.format("Fetching district <%s>", id));
+		logger.debug("Fetching district <{}>", id);
 		return dao.getDistrictById(id);
 	}
 }

@@ -33,8 +33,8 @@ public class ContractValidation {
 			String propertyPath = violation.getPropertyPath().toString();
 	        String message = violation.getMessage();
 	        result.addError(new FieldError("Contract", propertyPath, message));
-	        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-	        				"Contract", propertyPath, message));
+	        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+	        		"Contract", propertyPath, message);
 	    }
 		
 		return result;

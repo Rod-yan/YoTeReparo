@@ -61,7 +61,8 @@ public class PaymentMethodController {
         }
 		catch (Exception e) {
 			logger.error("ListPaymentMethods - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("PaymentMethod","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("PaymentMethod","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
@@ -74,7 +75,7 @@ public class PaymentMethodController {
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getPaymentMethod(@PathVariable("id") Integer id) {
-		logger.info(String.format("GetPaymentMethod - GET - Processing request for payment method <%s>.", id));
+		logger.info("GetPaymentMethod - GET - Processing request for payment method <{}>.", id);
         try {
         	PaymentMethod paymentMethod = paymentMethodService.getPaymentMethodById(id);
             
@@ -83,9 +84,9 @@ public class PaymentMethodController {
                 return new ResponseEntity<PaymentMethod>(paymentMethod, HttpStatus.OK);
             }
             else {
-            	logger.warn(String.format("GetPaymentMethod - GET - Request failed - Payment Method with id <%s> not found.", id));
-                FieldError error = new FieldError(
-                		"PaymentMethod","error",messageSource.getMessage("paymentMethod.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+            	logger.warn("GetPaymentMethod - GET - Request failed - Payment Method with id <{}> not found.", id);
+                FieldError error = new FieldError("PaymentMethod","error",
+                		messageSource.getMessage("paymentMethod.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }

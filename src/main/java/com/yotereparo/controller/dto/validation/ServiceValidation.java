@@ -59,22 +59,26 @@ public class ServiceValidation {
 			String propertyPath = violation.getPropertyPath().toString();
 	        String message = violation.getMessage();
 	        result.addError(new FieldError("Service", propertyPath, message));
-	        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-	        				"Service", propertyPath, message));
+	        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+	        		"Service", propertyPath, message);
 	    }
 		
 		if (serviceDto.getUsuarioPrestador() != null && !serviceDto.getUsuarioPrestador().isEmpty())
 			// Validamos existencia del usuario prestador
 			if (userService.getUserById(serviceDto.getUsuarioPrestador().toLowerCase()) == null) {
-				result.addError(new FieldError("User","usuarioPrestador",messageSource.getMessage("user.doesnt.exist", new String[]{serviceDto.getUsuarioPrestador()}, Locale.getDefault())));
-				logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","User"));
+				result.addError(new FieldError("User","usuarioPrestador",
+						messageSource.getMessage("user.doesnt.exist", 
+								new String[]{serviceDto.getUsuarioPrestador()}, Locale.getDefault())));
+				logger.debug("Validation error in entity <{}>, entity does not exist.","User");
 			}
 		
 		if (serviceDto.getTipoServicio() != null && !serviceDto.getTipoServicio().isEmpty())
 			// Validamos existencia del tipo de servicio
 			if (serviceTypeService.getServiceTypeByDescription(serviceDto.getTipoServicio()) == null) {
-				result.addError(new FieldError("ServiceType","tipoServicio",messageSource.getMessage("serviceType.doesnt.exist", new String[] {serviceDto.getTipoServicio()}, Locale.getDefault())));
-				logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","ServiceType"));
+				result.addError(new FieldError("ServiceType","tipoServicio",
+						messageSource.getMessage("serviceType.doesnt.exist", 
+								new String[] {serviceDto.getTipoServicio()}, Locale.getDefault())));
+				logger.debug("Validation error in entity <{}>, entity does not exist.","ServiceType");
 			}
 		
 		for (PaymentMethod paymentMethod : serviceDto.getMediosDePago()) {
@@ -82,14 +86,16 @@ public class ServiceValidation {
 		        String propertyPath = violation.getPropertyPath().toString();
 		        String message = violation.getMessage();
 		        result.addError(new FieldError("PaymentMethod", propertyPath, message));
-		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-        				"PaymentMethod", propertyPath, message));
+		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+        				"PaymentMethod", propertyPath, message);
 		    }
 			if (paymentMethod.getId() != null)
 				// Validamos existencia del medio de pago
 				if (paymentMethodService.getPaymentMethodById(paymentMethod.getId()) == null) {
-					result.addError(new FieldError("PaymentMethod","mediosDePago",messageSource.getMessage("paymentMethod.doesnt.exist", new Integer[] {paymentMethod.getId()}, Locale.getDefault())));
-					logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","PaymentMethod"));
+					result.addError(new FieldError("PaymentMethod","mediosDePago",
+							messageSource.getMessage("paymentMethod.doesnt.exist", 
+									new Integer[] {paymentMethod.getId()}, Locale.getDefault())));
+					logger.debug("Validation error in entity <{}>, entity does not exist.","PaymentMethod");
 				}
 		}
 		
@@ -98,14 +104,16 @@ public class ServiceValidation {
 		        String propertyPath = violation.getPropertyPath().toString();
 		        String message = violation.getMessage();
 		        result.addError(new FieldError("Requirement", propertyPath, message));
-		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-        				"Requirement", propertyPath, message));
+		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+        				"Requirement", propertyPath, message);
 		    }
 			if (requirement.getId() != null)
 				// Validamos existencia del requerimiento
 				if (requirementService.getRequirementById(requirement.getId()) == null) {
-					result.addError(new FieldError("Requirement","requerimientos",messageSource.getMessage("requirement.doesnt.exist", new Integer[] {requirement.getId()}, Locale.getDefault())));
-					logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","Requirement"));
+					result.addError(new FieldError("Requirement","requerimientos",
+							messageSource.getMessage("requirement.doesnt.exist", 
+									new Integer[] {requirement.getId()}, Locale.getDefault())));
+					logger.debug("Validation error in entity <{}>, entity does not exist.","Requirement");
 				}
 		}
 		
@@ -114,21 +122,25 @@ public class ServiceValidation {
 		        String propertyPath = violation.getPropertyPath().toString();
 		        String message = violation.getMessage();
 		        result.addError(new FieldError("Quote", propertyPath, message));
-		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-        				"Quote", propertyPath, message));
+		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+        				"Quote", propertyPath, message);
 		    }
 			if (quoteDto.getId() != null) {
 				Quote quote = quoteService.getQuoteById(quoteDto.getId());
 				// Validamos existencia del presupuesto
 				if (quote == null) {
-					result.addError(new FieldError("Quote","presupuestos",messageSource.getMessage("quote.doesnt.exist", new Integer[]{quoteDto.getId()}, Locale.getDefault())));
-					logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","Quote"));
+					result.addError(new FieldError("Quote","presupuestos",
+							messageSource.getMessage("quote.doesnt.exist", 
+									new Integer[]{quoteDto.getId()}, Locale.getDefault())));
+					logger.debug("Validation error in entity <{}>, entity does not exist.","Quote");
 				}
 				else
 					// Validamos que el presupuesto le pertenezca al servicio siendo validado
 					if (!quote.getServicio().getId().equals(serviceDto.getId())) {
-						result.addError(new FieldError("Quote","presupuestos",messageSource.getMessage("quote.doesnt.belong.to.service", new Integer[]{quote.getId()}, Locale.getDefault())));
-						logger.debug(String.format("Validation error in entity <%s>, quote does not belong to current service.","Quote"));
+						result.addError(new FieldError("Quote","presupuestos",
+								messageSource.getMessage("quote.doesnt.belong.to.service", 
+										new Integer[]{quote.getId()}, Locale.getDefault())));
+						logger.debug("Validation error in entity <{}>, quote does not belong to current service.","Quote");
 					}
 			}
 		}

@@ -74,7 +74,7 @@ public class ServiceTypeController {
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.GET)
 	public ResponseEntity<?> getServiceType(@PathVariable("id") Integer id) {
-		logger.info(String.format("GetServiceType - GET - Processing request for service type <%s>.", id));
+		logger.info("GetServiceType - GET - Processing request for service type <{}>.", id);
         try {
         	ServiceType serviceType = serviceTypeService.getServiceTypeById(id);
             
@@ -83,15 +83,16 @@ public class ServiceTypeController {
                 return new ResponseEntity<ServiceType>(serviceType, HttpStatus.OK);
             }
             else {
-            	logger.warn(String.format("GetServiceType - GET - Request failed - Service Type with id <%s> not found.", id));
-                FieldError error = new FieldError(
-                		"ServiceType","error",messageSource.getMessage("serviceType.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+            	logger.warn("GetServiceType - GET - Request failed - Service Type with id <{}> not found.", id);
+                FieldError error = new FieldError("ServiceType","error",
+                		messageSource.getMessage("serviceType.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             } 
         }
         catch (Exception e) {
 			logger.error("GetServiceType - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("ServiceType","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("ServiceType","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }

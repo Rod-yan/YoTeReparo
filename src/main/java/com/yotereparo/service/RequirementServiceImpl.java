@@ -37,12 +37,12 @@ public class RequirementServiceImpl implements RequirementService {
 	}
 
 	public Requirement getRequirementById(Integer id) {
-		logger.debug(String.format("Fetching requirement by id <%s>", id));
+		logger.debug("Fetching requirement by id <{}>", id);
 		return dao.getRequirementById(id);
 	}
 	
 	public Requirement getRequirementByDescription(String description) {
-		logger.debug(String.format("Fetching requirement by description <%s>", description));
+		logger.debug("Fetching requirement by description <{}>", description);
 		return dao.getRequirementByDescription(description);
 	}
 }

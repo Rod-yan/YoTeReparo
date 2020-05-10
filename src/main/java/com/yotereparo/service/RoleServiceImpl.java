@@ -42,7 +42,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	public Role getRoleById(String id) {
-		logger.trace(String.format("Fetching role <%s>", id));
+		logger.trace("Fetching role <{}>", id);
 		return dao.getRoleById(id);
 	}
 	

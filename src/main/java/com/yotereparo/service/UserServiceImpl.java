@@ -66,7 +66,8 @@ public class UserServiceImpl implements UserService {
 	public void createUser(User user) {
 		user.setSalt(SecurityUtils.saltGenerator());
 		user.setContrasena(SecurityUtils.encryptPassword(user.getContrasena().concat(user.getSalt())));
-		user.setFechaExpiracionContrasena(new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days"))));
+		user.setFechaExpiracionContrasena(new DateTime().plusDays(
+				Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days"))));
 		user.setFechaCreacion(new DateTime());
 		user.setEstado(User.ACTIVE);
 		user.setIntentosIngreso(0);
@@ -77,26 +78,28 @@ public class UserServiceImpl implements UserService {
 		 *  a la ciudad elegida.
 		 */
 		Role role = roleService.getRoleById(environment.getProperty("role.id.usuariofinal"));
-		logger.debug(String.format("Adding role <%s> to user <%s>", role.toString(), user.getId()));
+		logger.debug("Adding role <{}> to user <{}>", role.toString(), user.getId());
 		user.addRole(role);
 		if (user.getMembresia() != null) {
 			role = roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase()));
-			logger.debug(String.format("Adding role <%s> to user <%s>", role.toString(), user.getId()));
+			logger.debug("Adding role <{}> to user <{}>", role.toString(), user.getId());
 			user.addRole(role);
 			
-			// Filtramos los barrios elegidos que no sean de la ciudad elegida. Si no quedan barrios válidos, levantamos excepción.
+			// Filtramos los barrios elegidos que no sean de la ciudad elegida. 
+			// Si no quedan barrios válidos, levantamos excepción.
 			user.getBarrios().removeAll(cityService.getInvalidDistricts(user.getCiudad(), user.getBarrios()));
 			if (user.getBarrios().size() == 0) {
-				throw new CustomResponseError("User","barrios",messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
+				throw new CustomResponseError("User","barrios",
+						messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
 			}
 		}
 		else {
-			logger.debug(String.format("Clearing all districts from user <%s>", user.getId()));
+			logger.debug("Clearing all districts from user <{}>", user.getId());
 			if (user.getBarrios() != null)
 				user.getBarrios().clear();
 		}
 		
-		logger.info(String.format("Commiting creation of user <%s>", user.getId()));
+		logger.info("Commiting creation of user <{}>", user.getId());
 		dao.createUser(user);
 	}
 
@@ -105,90 +108,94 @@ public class UserServiceImpl implements UserService {
 		
 		if (!SecurityUtils.encryptPassword(user.getContrasena().concat(entity.getSalt())).equals(entity.getContrasena()))
 			// Si la contraseña ingresada es incorrecta, no procedemos con el update.
-			throw new CustomResponseError("User","contrasena",messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
+			throw new CustomResponseError("User","contrasena",
+					messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
 		
 		if (!user.getNombre().equals(entity.getNombre())) {
-			logger.debug(String.format("Updating attribute 'Nombre' from user <%s>", user.getId()));
+			logger.debug("Updating attribute 'Nombre' from user <{}>", user.getId());
 			entity.setNombre(user.getNombre());
 		}
 		
 		if (!user.getApellido().equals(entity.getApellido())) {
-			logger.debug(String.format("Updating attribute 'Apellido' from user <%s>", user.getId()));
+			logger.debug("Updating attribute 'Apellido' from user <{}>", user.getId());
 			entity.setApellido(user.getApellido());
 		}
 		
 		if (!user.getEmail().equals(entity.getEmail())) {
-			logger.debug(String.format("Updating attribute 'Email' from user <%s>", user.getId()));
+			logger.debug("Updating attribute 'Email' from user <{}>", user.getId());
 			entity.setEmail(user.getEmail());
 		}
 		
 		if (user.getFechaNacimiento() != null) {
 			if (!user.getFechaNacimiento().equals(entity.getFechaNacimiento())) {
-				logger.debug(String.format("Updating attribute 'FechaNacimiento' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'FechaNacimiento' from user <{}>", user.getId());
 				entity.setFechaNacimiento(user.getFechaNacimiento());
 			}
 		}
 		else {
 			if (entity.getFechaNacimiento() != null) {
-				logger.debug(String.format("Updating attribute 'FechaNacimiento' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'FechaNacimiento' from user <{}>", user.getId());
 				entity.setFechaNacimiento(null);
 			}
 		}
 		
 		if (user.getTelefonoPrincipal() != null) {
 			if (!user.getTelefonoPrincipal().equals(entity.getTelefonoPrincipal())) {
-				logger.debug(String.format("Updating attribute 'TelefonoPrincipal' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'TelefonoPrincipal' from user <{}>", user.getId());
 				entity.setTelefonoPrincipal(user.getTelefonoPrincipal());
 			}
 		}
 		else {
 			if (entity.getTelefonoPrincipal() != null) {
-				logger.debug(String.format("Updating attribute 'TelefonoPrincipal' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'TelefonoPrincipal' from user <{}>", user.getId());
 				entity.setTelefonoPrincipal(null);
 			}
 		}
 		
 		if (user.getTelefonoAlternativo() != null) {
 			if (!user.getTelefonoAlternativo().equals(entity.getTelefonoAlternativo())) {
-				logger.debug(String.format("Updating attribute 'TelefonoAlternativo' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'TelefonoAlternativo' from user <{}>", user.getId());
 				entity.setTelefonoAlternativo(user.getTelefonoAlternativo());
 			}
 		}
 		else {
 			if (entity.getTelefonoAlternativo() != null) {
-				logger.debug(String.format("Updating attribute 'TelefonoAlternativo' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'TelefonoAlternativo' from user <{}>", user.getId());
 				entity.setTelefonoAlternativo(null);
 			}
 		}
 		
 		if (user.getDescripcion() != null) {
 			if (!user.getDescripcion().equals(entity.getDescripcion())) {
-				logger.debug(String.format("Updating attribute 'Descripcion' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'Descripcion' from user <{}>", user.getId());
 				entity.setDescripcion(user.getDescripcion());
 			}
 		}
 		else {
 			if (entity.getDescripcion() != null) {
-				logger.debug(String.format("Updating attribute 'Descripcion' from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'Descripcion' from user <{}>", user.getId());
 				entity.setDescripcion(null);
 			}
 		}
 		
-		// Agregamos y quitamos roles al usuario de acuerdo con su definicion de membresia actual. Todo usuario es usuario final.
+		// Agregamos y quitamos roles al usuario de acuerdo con su definicion de membresia actual. 
+		// Todo usuario es usuario final.
 		if (!Objects.equals(user.getMembresia(), entity.getMembresia())) {
 			if (entity.getMembresia() != null) {
-				Role role = roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+entity.getMembresia().toLowerCase()));
-				logger.debug(String.format("Removing role <%s> from user <%s>", role.toString(), user.getId()));
+				Role role = roleService.getRoleById(
+						environment.getProperty("role.id.usuarioprestador."+entity.getMembresia().toLowerCase()));
+				logger.debug("Removing role <{}> from user <{}>", role.toString(), user.getId());
 				entity.removeRole(role);
 			}
 				
 			if (user.getMembresia() != null) {
-				Role role = roleService.getRoleById(environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase()));
-				logger.debug(String.format("Adding role <%s> to user <%s>", role.toString(), user.getId()));
+				Role role = roleService.getRoleById(
+						environment.getProperty("role.id.usuarioprestador."+user.getMembresia().toLowerCase()));
+				logger.debug("Adding role <{}> to user <{}>", role.toString(), user.getId());
 				entity.addRole(role);
 			}
 				
-			logger.debug(String.format("Updating attribute 'Membresia' from user <%s>", user.getId()));
+			logger.debug("Updating attribute 'Membresia' from user <{}>", user.getId());
 			entity.setMembresia(user.getMembresia());
 		}
 		
@@ -227,8 +234,12 @@ public class UserServiceImpl implements UserService {
 		entity.getDirecciones().addAll(addressesToBeAdded);
 		entity.getDirecciones().removeAll(addressesToBeRemoved);
 		// Si el usuario tiene servicios registrados no puede vaciar sus direcciones
-		if (entity.getDirecciones().size() == 0 && user.getMembresia() != null && (user.getServicios() != null && user.getServicios().size() != 0))
-			throw new CustomResponseError("User","direcciones",messageSource.getMessage("user.direcciones.not.empty", null, Locale.getDefault()));
+		if (entity.getDirecciones().size() == 0 
+		 && user.getMembresia() != null 
+		 && (user.getServicios() != null 
+		 && user.getServicios().size() != 0))
+			throw new CustomResponseError("User","direcciones",
+					messageSource.getMessage("user.direcciones.not.empty", null, Locale.getDefault()));
 		
 		/* Si el usuario es prestador (su membresía no es nula), validamos y procesamos los barrios, de lo contrario
 		 * descartamos los barrios del usuario.
@@ -237,27 +248,28 @@ public class UserServiceImpl implements UserService {
 		if (user.getMembresia() != null) {
 			user.getBarrios().removeAll(cityService.getInvalidDistricts(user.getCiudad(), user.getBarrios()));
 			if (user.getBarrios().size() == 0) {
-				throw new CustomResponseError("User","barrios",messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
+				throw new CustomResponseError("User","barrios",
+						messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
 			}
 			if (!user.getCiudad().equals(entity.getCiudad()) || !user.getBarrios().equals(entity.getBarrios())) {
-				logger.debug(String.format("Updating all districts from user <%s>", user.getId()));
+				logger.debug("Updating all districts from user <{}>", user.getId());
 				entity.getBarrios().clear();
 				entity.getBarrios().addAll(user.getBarrios());
 			}
 		}
 		else {
 			if (entity.getBarrios().size() != 0) {
-				logger.debug(String.format("Clearing all districts from user <%s>", user.getId()));
+				logger.debug("Clearing all districts from user <{}>", user.getId());
 				entity.getBarrios().clear();
 			}
 		}
 			
 		if (!user.getCiudad().equals(entity.getCiudad())) {
-			logger.debug(String.format("Updating attribute 'Ciudad' from user <%s>", user.getId()));
+			logger.debug("Updating attribute 'Ciudad' from user <{}>", user.getId());
 			entity.setCiudad(user.getCiudad());
 		}
 		
-		logger.info(String.format("Commiting update for user <%s>", user.getId()));
+		logger.info("Commiting update for user <{}>", user.getId());
 	}
 	
 	public void changeUserPasswordById(String id, String currentPassword, String newPassword) {
@@ -267,7 +279,8 @@ public class UserServiceImpl implements UserService {
 		newPassword = SecurityUtils.encryptPassword(newPassword.concat(user.getSalt()));
 		String trueCurrentPassword = user.getContrasena();
 		
-		// Si el usuario está autenticado y es administrador o cuenta de servicio, ignoramos la validación de la contraseña actual
+		// Si el usuario está autenticado y es administrador o cuenta de servicio,
+		// ignoramos la validación de la contraseña actual
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		boolean isServiceAccountOrAdministrator = false;
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
@@ -279,59 +292,63 @@ public class UserServiceImpl implements UserService {
 		if (currentPassword.equals(trueCurrentPassword) || isServiceAccountOrAdministrator) {
 			// La nueva contraseña no puede ser igual a la anterior
 			if (!newPassword.equals(trueCurrentPassword) || isServiceAccountOrAdministrator) {
-				logger.debug(String.format("Updating attribute 'Contrasena' (and derivates) from user <%s>", user.getId()));
+				logger.debug("Updating attribute 'Contrasena' (and derivates) from user <{}>", user.getId());
 				user.setContrasena(newPassword);
 				user.setFechaUltimoCambioContrasena(new DateTime());
 				user.setFechaExpiracionContrasena(
-						new DateTime().plusDays(Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days")))
+						new DateTime().plusDays(
+								Integer.parseInt(environment.getProperty("password.expiration.timeoffset.days")))
 						);
 				// Limpiamos estado de sesión del usuario, desbloqueamos si se encuentra bloqueado
 				if (user.getIntentosIngreso() != 0) {
-					logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
+					logger.debug("Updating attribute 'IntentosIngreso' from user <{}>", user.getId());
 					user.setIntentosIngreso(0);
 				}
 				if (user.getEstado().equals(User.BLOCKED)) {
-					logger.warn(String.format("Enabling previously blocked user <%s>", user.getId()));
+					logger.warn("Enabling previously blocked user <{}>", user.getId());
 					user.setEstado(User.ACTIVE);
 				}
 			}
 			else
-				throw new CustomResponseError("User","contrasena",messageSource.getMessage("user.contrasena.must.be.different.from.current", null, Locale.getDefault()));
+				throw new CustomResponseError("User","contrasena",
+						messageSource.getMessage("user.contrasena.must.be.different.from.current",
+								null, Locale.getDefault()));
 		}
 		else
-			throw new CustomResponseError("User","contrasena",messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
+			throw new CustomResponseError("User","contrasena",
+					messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
 	}
 	
 	public void registerSuccessfulLoginAttempt(User user) {
 		User entity = getUserById(user.getId());
 		
-		logger.debug(String.format("Updating attribute 'FechaUltimoIngreso' from user <%s>", user.getId()));
+		logger.debug("Updating attribute 'FechaUltimoIngreso' from user <{}>", user.getId());
 		entity.setFechaUltimoIngreso(new DateTime());
 		if (user.getIntentosIngreso() != 0) {
-			logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
+			logger.debug("Updating attribute 'IntentosIngreso' from user <{}>", user.getId());
 			entity.setIntentosIngreso(0);
 		}
 		
-		logger.info(String.format("Successful login attempt registered for user <%s>", user.getId()));
+		logger.info("Successful login attempt registered for user <{}>", user.getId());
 	}
 	
 	public void registerFailedLoginAttempt(User user) {
 		User entity = getUserById(user.getId());
 		
-		logger.debug(String.format("Updating attribute 'IntentosIngreso' from user <%s>", user.getId()));
+		logger.debug("Updating attribute 'IntentosIngreso' from user <{}>", user.getId());
 		entity.setIntentosIngreso(user.getIntentosIngreso()+1);
 		// Si el usuario alcanza o excede el límite de intentos de ingreso, se bloquea
 		if (entity.getIntentosIngreso() >= Integer.parseInt(environment.getProperty("login.attempts.limit")))
 			if (!entity.getEstado().equals(User.BLOCKED)) {
-				logger.warn(String.format("Disabling user <%s>: Too many failed login attempts", user.getId()));
+				logger.warn("Disabling user <{}>: Too many failed login attempts", user.getId());
 				entity.setEstado(User.BLOCKED);
 			}
 		
-		logger.info(String.format("Failed login attempt registered for user <%s>", user.getId()));
+		logger.info("Failed login attempt registered for user <{}>", user.getId());
 	}
 	
 	public void deleteUserById(String id) {
-		logger.info(String.format("Commiting deletion of user <%s>", id));
+		logger.info("Commiting deletion of user <{}>", id);
 		dao.deleteUserById(id);
 	}
 
@@ -341,12 +358,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public User getUserById(String id) {
-		logger.debug(String.format("Fetching user <%s>", id));
+		logger.debug("Fetching user <{}>", id);
 		return dao.getUserById(id);
 	}
 	
 	public boolean isProvider(User user) {
-		logger.debug(String.format("Verifying if user's <%s> is of type PRESTADOR", user.getId()));
+		logger.debug("Verifying if user's <{}> is of type PRESTADOR", user.getId());
 		for (Role role : roleService.getAllPrestadorRoles()) {
 			if (user.getRoles().contains(role))
 				return true;
@@ -355,7 +372,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	public boolean isCustomer(User user) {
-		logger.debug(String.format("Verifying if user's <%s> is of type FINAL", user.getId()));
+		logger.debug("Verifying if user's <{}> is of type FINAL", user.getId());
 		for (Role role : roleService.getAllFinalRoles()) {
 			if (user.getRoles().contains(role))
 				return true;
@@ -364,7 +381,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	public boolean isServiceAccountOrAdministrator(User user) {
-		logger.debug(String.format("Verifying if user's <%s> is of type CUENTA SERVICIO or ADMINISTRADOR", user.getId()));
+		logger.debug("Verifying if user's <{}> is of type CUENTA SERVICIO or ADMINISTRADOR", user.getId());
 		if (user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.serviceaccount")))
 		 || user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.administrator"))))
 			return true;
@@ -391,12 +408,12 @@ public class UserServiceImpl implements UserService {
 		        
 		        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		        ImageIO.write(userPhoto, "png", baos);
-		        logger.debug(String.format("Updating attribute 'Foto' from user <%s>",id));
+		        logger.debug("Updating attribute 'Foto' from user <{}>",id);
 	        	entity.setFoto(baos.toByteArray());
 	        	
 	        	baos.reset();
 	        	ImageIO.write(userThumbnail, "png", baos);
-	        	logger.debug(String.format("Updating attribute 'Thumbnail' from user <%s>",id));
+	        	logger.debug("Updating attribute 'Thumbnail' from user <{}>",id);
 		        entity.setThumbnail(baos.toByteArray());
 		        
 		        img.flush();
@@ -409,18 +426,18 @@ public class UserServiceImpl implements UserService {
 		        throw new RuntimeException(e.getMessage());
 	        }
 	        finally {
-	        	logger.info(String.format("Commiting update for user <%s>", id));
+	        	logger.info("Commiting update for user <{}>", id);
 	        }
 		}
 		else {
 			if (entity.getFoto() != null || entity.getThumbnail() != null) {
-				logger.debug(String.format("Deleting attribute 'Foto' and 'Thumbnail' from user <%s>",id));
+				logger.debug("Deleting attribute 'Foto' and 'Thumbnail' from user <{}>",id);
 				
 				entity.setFoto(null);
 				entity.setThumbnail(null);
 			}
 			
-			logger.debug(String.format("No 'Foto' nor 'Thumbnail' registered for user <%s>, discarding transaction.",id));
+			logger.debug("No 'Foto' nor 'Thumbnail' registered for user <{}>, discarding transaction.",id);
 		}
 	}
 }

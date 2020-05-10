@@ -64,7 +64,7 @@ public class AuthController {
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.POST)
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-		logger.info(String.format("AuthenticateUser - POST - Processing request for user <%s>.", loginRequest.getUsername()));
+		logger.info("AuthenticateUser - POST - Processing request for user <{}>.", loginRequest.getUsername());
 		try {
 			User user = userService.getUserById(loginRequest.getUsername());
 			if (user != null) {
@@ -89,10 +89,8 @@ public class AuthController {
 									.map(item -> item.getAuthority())
 									.collect(Collectors.toList());
 							
-							logger.info(
-									String.format(
-											"AuthenticateUser - POST - Successful Authentication for user <%s>.", 
-											loginRequest.getUsername()));
+							logger.info("AuthenticateUser - POST - Successful Authentication for user <{}>.", 
+									loginRequest.getUsername());
 							return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), roles));
 						}
 						catch (BadCredentialsException e) {
@@ -100,46 +98,37 @@ public class AuthController {
 							userService.registerFailedLoginAttempt(user);
 							
 							logger.warn("AuthenticateUser - POST - Request failed - Bad credentials.");
-							FieldError error = new FieldError(
-									"Authentication","error",messageSource.getMessage(
-											"bad.credentials", null, Locale.getDefault()));
+							FieldError error = new FieldError("Authentication","error",
+									messageSource.getMessage("bad.credentials", null, Locale.getDefault()));
 							return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 						}
 					}
 					else {
 						logger.warn("AuthenticateUser - POST - Request failed - User is not an active user.");
-						FieldError error = new FieldError(
-								"Authentication","error",messageSource.getMessage(
-										"user.not.active", new String[]{
-												loginRequest.getUsername()}, 
-										Locale.getDefault()));
+						FieldError error = new FieldError("Authentication","error",
+								messageSource.getMessage("user.not.active", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
 						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 					}
 				}
 				else {
 					logger.warn("AuthenticateUser - POST - Request failed - Password is expired.");
-					FieldError error = new FieldError(
-							"Authentication","error",messageSource.getMessage(
-									"user.password.expired", null, Locale.getDefault()));
+					FieldError error = new FieldError("Authentication","error",
+							messageSource.getMessage("user.password.expired", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
 				}
 			}
 			else {
-				logger.warn(
-						String.format(
-								"AuthenticateUser - POST - Request failed - User with id <%s> not found.", 
-								loginRequest.getUsername()));
-				FieldError error = new FieldError(
-						"Authentication","error",messageSource.getMessage(
-								"user.doesnt.exist", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
+				logger.warn("AuthenticateUser - POST - Request failed - User with id <{}> not found.", 
+						loginRequest.getUsername());
+				FieldError error = new FieldError("Authentication","error",
+						messageSource.getMessage("user.doesnt.exist", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
 				return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (Exception e) {
 			logger.error("AuthenticateUser - POST - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError(
-					"Authentication","error",messageSource.getMessage(
-							"server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("Authentication","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

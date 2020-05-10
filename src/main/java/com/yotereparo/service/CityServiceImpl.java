@@ -39,7 +39,7 @@ public class CityServiceImpl implements CityService {
 	}
 
 	public City getCityById(String id) {
-		logger.debug(String.format("Fetching city <%s>", id));
+		logger.debug("Fetching city <{}>", id);
 		return dao.getCityById(id);
 	}
 	
@@ -47,7 +47,7 @@ public class CityServiceImpl implements CityService {
 		Set<District> validDistricts = new HashSet<District>();
 		for (District district : districts)
 			if (cityContainsDistrict(city, district)) {
-				logger.debug(String.format("Allowing district <%s>", district.getId()));
+				logger.debug("Allowing district <{}>", district.getId());
 				validDistricts.add(district);
 			}
 		
@@ -58,7 +58,7 @@ public class CityServiceImpl implements CityService {
 		Set<District> invalidDistricts = new HashSet<District>();
 		for (District district : districts)
 			if (!cityContainsDistrict(city, district)) {
-				logger.debug(String.format("Discarding district <%s>", district.getId()));
+				logger.debug("Discarding district <{}>", district.getId());
 				invalidDistricts.add(district);
 			}
 		
@@ -66,7 +66,7 @@ public class CityServiceImpl implements CityService {
 	}
 	
 	public boolean cityContainsDistrict(City city, District district) {
-		logger.debug(String.format("Validating that district <%s> belongs in city with ID <%s>", district.getId(), city.getId()));
+		logger.debug("Validating that district <{}> belongs in city with ID <{}>", district.getId(), city.getId());
 		for (District entry : city.getBarrios())
 			if (entry.getId() == district.getId())
 				return true;

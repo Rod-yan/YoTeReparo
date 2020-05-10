@@ -95,7 +95,8 @@ public class UserController {
         }
 		catch (Exception e) {
 			logger.error("ListUsers - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
     }
@@ -109,7 +110,7 @@ public class UserController {
 			method = RequestMethod.GET)
 	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
 	public ResponseEntity<?> getUser(@PathVariable("id") String id) {
-		logger.info(String.format("GetUser - GET - Processing request for user <%s>.", id));
+		logger.info("GetUser - GET - Processing request for user <{}>.", id);
         try {
         	User user = userService.getUserById(id.toLowerCase());
             
@@ -118,7 +119,7 @@ public class UserController {
                 return new ResponseEntity<UserDto>(userMapper.convertToDto(user), HttpStatus.OK);
             }
             else {
-            	logger.warn(String.format("GetUser - GET - Request failed - User with id <%s> not found.", id));
+            	logger.warn("GetUser - GET - Request failed - User with id <{}> not found.", id);
                 FieldError error = new FieldError("User","error",
                 		messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
@@ -126,7 +127,8 @@ public class UserController {
         }
         catch (Exception e) {
 			logger.error("GetUser - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
@@ -140,7 +142,7 @@ public class UserController {
 			produces = "application/json; charset=UTF-8",
 			method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody UserDto clientInput, UriComponentsBuilder ucBuilder, BindingResult result) {
-		logger.info(String.format("CreateUser - POST - Processing request for user <%s>.", clientInput.getId().toLowerCase()));
+		logger.info("CreateUser - POST - Processing request for user <{}>.", clientInput.getId().toLowerCase());
 		try {
 			if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
 				if (userService.getUserById(clientInput.getId()) == null) {
@@ -153,10 +155,10 @@ public class UserController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 		        }
 				else {
-					logger.warn(
-							String.format("CreateUser - POST - Request failed - Unable to create user. User <%s> already exist.", clientInput.getId()));
-		            FieldError error = new FieldError(
-		            		"User","error",messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
+					logger.warn("CreateUser - POST - Request failed - Unable to create user. User <{}> already exist.", 
+							clientInput.getId());
+		            FieldError error = new FieldError("User","error",
+		            		messageSource.getMessage("user.already.exist", new String[]{clientInput.getId()}, Locale.getDefault()));
 		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 				}
 			}
@@ -171,7 +173,8 @@ public class UserController {
 		}
 		catch (Exception e) {
 			logger.error("CreateUser - POST - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
@@ -188,7 +191,7 @@ public class UserController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody UserDto clientInput, BindingResult result) {
-		logger.info(String.format("UpdateUser - PUT - Processing request for user <%s>.", id));
+		logger.info("UpdateUser - PUT - Processing request for user <{}>.", id);
 		try {
 			clientInput.setId(id);
 			if (userService.getUserById(id) != null) {
@@ -204,9 +207,9 @@ public class UserController {
 				}
 	        }
 			else {
-				logger.warn(String.format("UpdateUser - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
-	            FieldError error = new FieldError(
-	            		"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+				logger.warn("UpdateUser - PUT - Request failed - Unable to update user. User <{}> doesn't exist.", id);
+	            FieldError error = new FieldError("User","error",
+	            		messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -216,7 +219,8 @@ public class UserController {
 		}
 		catch (Exception e) {
 			logger.error("UpdateUser - PUT - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
@@ -230,7 +234,7 @@ public class UserController {
 			produces = "application/json; charset=UTF-8", 
 			method = RequestMethod.PUT)
     public ResponseEntity<?> changeUserPassword(@PathVariable("id") String id, @RequestBody UserPasswordChangeDto clientInput, BindingResult result) {
-		logger.info(String.format("ChangeUserPassword - PUT - Processing request for user <%s>.", id));
+		logger.info("ChangeUserPassword - PUT - Processing request for user <{}>.", id);
 		try {
 			if (userService.getUserById(id) != null) {
 				if (!userValidation.validateRequest(clientInput, result).hasErrors()) {
@@ -245,10 +249,9 @@ public class UserController {
 				}
 	        }
 			else {
-				logger.warn(
-						String.format("ChangeUserPassword - PUT - Request failed - Unable to update user. User <%s> doesn't exist.", id));
-	            FieldError error = new FieldError(
-	            		"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+				logger.warn("ChangeUserPassword - PUT - Request failed - Unable to update user. User <{}> doesn't exist.", id);
+	            FieldError error = new FieldError("User","error",
+	            		messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -258,7 +261,8 @@ public class UserController {
 		}
 		catch (Exception e) {
 			logger.error("ChangeUserPassword - PUT - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
     }
@@ -273,7 +277,7 @@ public class UserController {
 	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
 		id = id.toLowerCase();
-		logger.info(String.format("DeleteUser - DELETE - Processing request for user <%s>.", id));
+		logger.info("DeleteUser - DELETE - Processing request for user <{}>.", id);
 		try {
 			if (userService.getUserById(id) != null) {
 	        	userService.deleteUserById(id);
@@ -282,16 +286,16 @@ public class UserController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(
-	        			String.format("DeleteUser - DELETE - Request failed - Unable to delete user. User <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+	        	logger.warn("DeleteUser - DELETE - Request failed - Unable to delete user. User <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("User","error",
+	        			messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
 		catch (Exception e) {
 			logger.error("DeleteUser - DELETE - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
     }
@@ -307,11 +311,12 @@ public class UserController {
 	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> getUserPhoto(@PathVariable("id") String id) {
 		id = id.toLowerCase();
-		logger.info(String.format("GetUserPhoto - GET - Processing request for user's <%s> photo.", id));
+		logger.info("GetUserPhoto - GET - Processing request for user's <{}> photo.", id);
 		try {
 			User user = userService.getUserById(id);
 			if (user != null) {			
-				// evaluamos el uri path del request para determinar si vamos a estar trabajando con la foto o con el thumbnail
+				// Evaluamos el uri path del request para determinar si vamos a estar trabajando 
+				// con la foto o con el thumbnail
 				String requestUri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
 				byte[] userPhoto;
 	 			if (requestUri.contains("thumbnail")) {
@@ -339,24 +344,24 @@ public class UserController {
 					return new ResponseEntity<byte[]>(userPhoto, headers, HttpStatus.OK);
 				}
 				else {
-					logger.warn(
-							String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. No photo was found for user <%s>.", id));
-		        	FieldError error = new FieldError(
-		        			"User","foto",messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
+					logger.warn("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. "
+							+ "No photo was found for user <{}>.", id);
+		        	FieldError error = new FieldError("User","foto",
+		        			messageSource.getMessage("user.doesnt.have.photo", new String[]{id}, Locale.getDefault()));
 		        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 				}
 	        }
 			else {
-				logger.warn(
-						String.format("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. User <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+				logger.warn("GetUserPhoto - GET - Request failed - Unable to fetch user's photo. User <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("User","error",
+	        			messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (Exception e) {
 			logger.error("GetUserPhoto - GET - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}  
 	}
@@ -373,7 +378,7 @@ public class UserController {
 	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> updateUserPhoto(@PathVariable("id") String id, @RequestBody ObjectNode photoPayload) {
 		id = id.toLowerCase();
-		logger.info(String.format("UpdateUserPhoto - PUT - Processing request for user's <%s> photo.", id));
+		logger.info("UpdateUserPhoto - PUT - Processing request for user's <{}> photo.", id);
 		// parseamos el json object recibido y generamos el byte array validando la estructura del request al mismo tiempo.
 		try { 
 			JsonNode jsonPhotoPayload = photoPayload.get("foto");
@@ -386,27 +391,30 @@ public class UserController {
 					return new ResponseEntity<String>(HttpStatus.OK);
 		        }
 				else {
-					logger.warn(
-							String.format("UpdateUserPhoto - PUT - Request failed - Unable to update user's photo. User <%s> doesn't exist.", id));
-		        	FieldError error = new FieldError(
-		        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+					logger.warn("UpdateUserPhoto - PUT - Request failed - Unable to update user's photo. "
+							+ "User <{}> doesn't exist.", id);
+		        	FieldError error = new FieldError("User","error",
+		        			messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 				}
 			}
 			else {
 				logger.warn("UpdateUserPhoto - PUT - Request failed - Received malformed request, returning error to client.");
-	        	FieldError error = new FieldError("User","foto",messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
+	        	FieldError error = new FieldError("User","foto",
+	        			messageSource.getMessage("format.mismatch", null, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.BAD_REQUEST);
 			}
 		}
 		catch (IllegalArgumentException e){
 			logger.warn("UpdateUserPhoto - PUT - Request failed - Received invalid base64 image, returning error to client.");
-        	FieldError error =new FieldError("User","foto",messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
+        	FieldError error =new FieldError("User","foto",
+        			messageSource.getMessage("invalid.base64.image", null, Locale.getDefault()));
         	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.BAD_REQUEST);
 		}
 		catch (Exception e) {
 			logger.error("UpdateUserPhoto - PUT - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		} 
 	}
@@ -421,7 +429,7 @@ public class UserController {
 	@PreAuthorize("authentication.principal.username.equalsIgnoreCase(#id) or hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteUserPhoto(@PathVariable("id") String id) {
 		id = id.toLowerCase();
-		logger.info(String.format("DeleteUserPhoto - DELETE - Processing request for user's <%s> photo.", id));
+		logger.info("DeleteUserPhoto - DELETE - Processing request for user's <{}> photo.", id);
 		try {
 			if (userService.getUserById(id) != null) {
 				userService.updateUserPhotoById(id, null);
@@ -430,16 +438,17 @@ public class UserController {
 				return new ResponseEntity<String>(HttpStatus.OK);
 	        }
 			else {
-				logger.warn(
-						String.format("DeleteUserPhoto - DELETE - Request failed - Unable to delete user's photo. User <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"User","error",messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
+				logger.warn("DeleteUserPhoto - DELETE - Request failed - Unable to delete user's photo. "
+						+ "User <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("User","error",
+	        			messageSource.getMessage("user.doesnt.exist", new String[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
 		catch (Exception e) {
 			logger.error("DeleteUserPhoto - DELETE - Request failed - Error procesing request: ", e);
-			FieldError error = new FieldError("User","error",messageSource.getMessage("server.error", null, Locale.getDefault()));
+			FieldError error = new FieldError("User","error",
+					messageSource.getMessage("server.error", null, Locale.getDefault()));
 			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

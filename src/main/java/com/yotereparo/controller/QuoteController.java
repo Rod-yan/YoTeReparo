@@ -83,23 +83,19 @@ public class QuoteController {
 				if (userService.isServiceAccountOrAdministrator(authenticatedUser))
 					quotes = new HashSet<Quote>(quoteService.getAllQuotes());
 				else {
-					logger.warn(
-    						String.format("ListQuotes - GET - Request failed - "
-    								+ "User <%s> doesn't have access to all quotes.", authenticatedUsername));
-					FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+					logger.warn("ListQuotes - GET - Request failed - User <{}> doesn't have access to all quotes.", 
+							authenticatedUsername);
+					FieldError error = new FieldError("Authorization","error",
+							messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
 				}
 			}
 			else if ("customer".equalsIgnoreCase(userRole)) {
-				logger.debug(String.format(
-						"Fetching all quotes made by user: <%s>", authenticatedUsername));
+				logger.debug("Fetching all quotes made by user: <{}>", authenticatedUsername);
 				quotes = authenticatedUser.getPresupuestos();
 			}
 			else if ("provider".equalsIgnoreCase(userRole)) {
-				logger.debug(String.format(
-						"Fetching all quotes directed to user: <%s>", authenticatedUsername));
+				logger.debug("Fetching all quotes directed to user: <{}>", authenticatedUsername);
 				for (Service service : authenticatedUser.getServicios())
 					quotes.addAll(service.getPresupuestos());
 			}
@@ -134,7 +130,7 @@ public class QuoteController {
 			method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
 	public ResponseEntity<?> getQuote(@PathVariable("id") Integer id) {
-		logger.info(String.format("GetQuote - GET - Processing request for quote <%s>.", id));
+		logger.info("GetQuote - GET - Processing request for quote <{}>.", id);
         try {
         	Quote quote = quoteService.getQuoteById(id);
     		if (quote != null) {
@@ -155,19 +151,17 @@ public class QuoteController {
                     return new ResponseEntity<QuoteDto>(quoteMapper.convertToDto(quote), HttpStatus.OK);
             	}
     			else {
-    				logger.warn(
-    						String.format("GetQuote - GET - Request failed - "
-    								+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("GetQuote - GET - Request failed - User <{}> doesn't have access to quote <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
             }
             else {
-            	logger.warn(String.format("GetQuote - GET - Request failed - Quote with id <%s> not found.", id));
-                FieldError error = new FieldError(
-                		"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+            	logger.warn("GetQuote - GET - Request failed - Quote with id <{}> not found.", id);
+                FieldError error = new FieldError("Quote","error",
+                		messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
                 return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
             }
         }
@@ -207,13 +201,10 @@ public class QuoteController {
 					return new ResponseEntity<>(headers, HttpStatus.CREATED);
 				}
 				else {
-					logger.warn(
-							String.format("CreateQuote - POST - Request failed - Unable to create quote. An active quote already exist between "
-							+ "service <%s> and"
-							+ "user <%s>.", quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()));
-		            FieldError error = new FieldError(
-		            		"Quote","error",messageSource.getMessage(
-		            				"quote.active.already.exist", 
+					logger.warn("CreateQuote - POST - Request failed - Unable to create quote. An active quote already exist between "
+							+ "service <{}> and user <{}>.", quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId());
+		            FieldError error = new FieldError("Quote","error",
+		            		messageSource.getMessage("quote.active.already.exist", 
 		            				new String[]{quote.getServicio().getDescripcion(), quote.getUsuarioFinal().getId()}, Locale.getDefault()));
 		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
 				}
@@ -246,7 +237,7 @@ public class QuoteController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> updateQuote(@PathVariable("id") Integer id, @RequestBody QuoteDto clientInput, BindingResult result) {	
-		logger.info(String.format("UpdateQuote - PUT - Processing request for quote <%s>.", id));
+		logger.info("UpdateQuote - PUT - Processing request for quote <{}>.", id);
 		try {
 			clientInput.setId(id);
 			Quote quote = quoteService.getQuoteById(id);
@@ -276,11 +267,10 @@ public class QuoteController {
 	    						return new ResponseEntity<QuoteDto>(quoteMapper.convertToDto(quoteService.getQuoteById(id)), HttpStatus.OK);
 	        				}
 	    				else {
-	    					logger.warn(String.format("UpdateQuote - PUT - Request failed - "
-	        						+ "Status <%s> forbidden for user <%s> for this opperation.", clientInput.getEstado(), authenticatedUsername));
-	    					FieldError error = new FieldError(
-	    							"Quote","error",messageSource.getMessage(
-	    									"quote.estado.forbidden.value", null, Locale.getDefault()));
+	    					logger.warn("UpdateQuote - PUT - Request failed - Status <{}> forbidden for user <{}> for this opperation.", 
+	    							clientInput.getEstado(), authenticatedUsername);
+	    					FieldError error = new FieldError("Quote","error",
+	    							messageSource.getMessage("quote.estado.forbidden.value", null, Locale.getDefault()));
 	    					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
 	    				}
     				}
@@ -290,18 +280,17 @@ public class QuoteController {
     				}
     			}
     			else {
-    				logger.warn(String.format("UpdateQuote - PUT - Request failed - "
-    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("UpdateQuote - PUT - Request failed - User <{}> doesn't have access to quote <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
 	        }
 			else {
-				logger.warn(String.format("UpdateQuote - PUT - Request failed - Unable to update quote. Quote <%s> doesn't exist.", id));
-	            FieldError error = new FieldError(
-	            		"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+				logger.warn("UpdateQuote - PUT - Request failed - Unable to update quote. Quote <{}> doesn't exist.", id);
+	            FieldError error = new FieldError("Quote","error",
+	            		messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 			}
 		}
@@ -325,7 +314,7 @@ public class QuoteController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> acceptQuote(@PathVariable("id") Integer id) {
-		logger.info(String.format("AcceptQuote - PUT - Processing request for quote <%s>.", id));
+		logger.info("AcceptQuote - PUT - Processing request for quote <{}>.", id);
 		try {
 			Quote quote = quoteService.getQuoteById(id);
 			if (quote != null) {
@@ -346,18 +335,17 @@ public class QuoteController {
     	            return new ResponseEntity<>(HttpStatus.OK);
     			}
     			else {
-    				logger.warn(String.format("AcceptQuote - PUT - Request failed - "
-    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("AcceptQuote - PUT - Request failed - User <{}> doesn't have access to quote <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
 	        }
 	        else {
-	        	logger.warn(String.format("AcceptQuote - PUT - Request failed - Unable to accept quote. Quote <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("AcceptQuote - PUT - Request failed - Unable to accept quote. Quote <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Quote","error",
+	        			messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -381,7 +369,7 @@ public class QuoteController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('USUARIO_FINAL')")
     public ResponseEntity<?> rejectQuote(@PathVariable("id") Integer id) {
-		logger.info(String.format("RejectQuote - PUT - Processing request for quote <%s>.", id));
+		logger.info("RejectQuote - PUT - Processing request for quote <{}>.", id);
 		try {
 			Quote quote = quoteService.getQuoteById(id);
 			if (quote != null) {
@@ -401,11 +389,10 @@ public class QuoteController {
     			else if (isOwnerAndProvider)
     				quoteService.providerRejectsQuoteById(id);
     			else {
-    				logger.warn(String.format("RejectQuote - PUT - Request failed - "
-    						+ "User <%s> doesn't have access to quote <%s> in this context.", authenticatedUsername, id));
-    				FieldError error = new FieldError(
-							"Authorization","error",messageSource.getMessage(
-									"client.error.unauthorized", null, Locale.getDefault()));
+    				logger.warn("RejectQuote - PUT - Request failed - User <{}> doesn't have access to quote <{}> in this context.", 
+    						authenticatedUsername, id);
+    				FieldError error = new FieldError("Authorization","error",
+    						messageSource.getMessage("client.error.unauthorized", null, Locale.getDefault()));
 					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
     			}
     			
@@ -413,9 +400,9 @@ public class QuoteController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format("RejectQuote - PUT - Request failed - Unable to reject quote. Quote <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("RejectQuote - PUT - Request failed - Unable to reject quote. Quote <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Quote","error",
+	        			messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -439,7 +426,7 @@ public class QuoteController {
 			method = RequestMethod.PUT)
 	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> archiveQuote(@PathVariable("id") Integer id) {
-		logger.info(String.format("ArchiveQuote - PUT - Processing request for quote <%s>.", id));
+		logger.info("ArchiveQuote - PUT - Processing request for quote <{}>.", id);
 		try {
 			if (quoteService.getQuoteById(id) != null) {
 				quoteService.archiveQuoteById(id);
@@ -448,9 +435,9 @@ public class QuoteController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(String.format("ArchiveQuote - POST - Request failed - Unable to archive quote. Quote <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("ArchiveQuote - POST - Request failed - Unable to archive quote. Quote <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Quote","error",
+	        			messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}
@@ -474,7 +461,7 @@ public class QuoteController {
 			method = RequestMethod.DELETE)
 	@PreAuthorize("hasAuthority('ADMINISTRATOR')")
     public ResponseEntity<?> deleteQuote(@PathVariable("id") Integer id) {
-		logger.info(String.format("DeleteQuote - DELETE - Processing request for quote <%s>.", id));
+		logger.info("DeleteQuote - DELETE - Processing request for quote <{}>.", id);
 		try {
 			if (quoteService.getQuoteById(id) != null) {
 				quoteService.deleteQuoteById(id);
@@ -483,10 +470,9 @@ public class QuoteController {
 	            return new ResponseEntity<>(HttpStatus.OK);
 	        }
 	        else {
-	        	logger.warn(
-	        			String.format("DeleteQuote - DELETE - Request failed - Unable to delete quote. Quote <%s> doesn't exist.", id));
-	        	FieldError error = new FieldError(
-	        			"Quote","error",messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
+	        	logger.warn("DeleteQuote - DELETE - Request failed - Unable to delete quote. Quote <{}> doesn't exist.", id);
+	        	FieldError error = new FieldError("Quote","error",
+	        			messageSource.getMessage("quote.doesnt.exist", new Integer[]{id}, Locale.getDefault()));
 	        	return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
 	        }
 		}

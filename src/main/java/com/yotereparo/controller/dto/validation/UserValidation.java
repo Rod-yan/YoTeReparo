@@ -59,15 +59,17 @@ public class UserValidation {
 			String propertyPath = violation.getPropertyPath().toString();
 	        String message = violation.getMessage();
 	        result.addError(new FieldError("User", propertyPath, message));
-	        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-	        				"User", propertyPath, message));
+	        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+	        		"User", propertyPath, message);
 	    }
 		
 		if (userDto.getCiudad() != null && !userDto.getCiudad().isEmpty())
 			// Validamos existencia de la ciudad
 			if (cityService.getCityById(userDto.getCiudad()) == null) {
-				result.addError(new FieldError("City","ciudad",messageSource.getMessage("city.doesnt.exist", new String[] {userDto.getCiudad()}, Locale.getDefault())));
-				logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","City"));
+				result.addError(new FieldError("City","ciudad",
+						messageSource.getMessage("city.doesnt.exist", 
+								new String[] {userDto.getCiudad()}, Locale.getDefault())));
+				logger.debug("Validation error in entity <{}>, entity does not exist.","City");
 			}
 		
 		for (Address address : userDto.getDirecciones())
@@ -75,8 +77,8 @@ public class UserValidation {
 		        String propertyPath = violation.getPropertyPath().toString();
 		        String message = violation.getMessage();
 		        result.addError(new FieldError("Address", propertyPath, message));
-		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-        				"Address", propertyPath, message));
+		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+        				"Address", propertyPath, message);
 		    }
 		
 		
@@ -85,21 +87,25 @@ public class UserValidation {
 		        String propertyPath = violation.getPropertyPath().toString();
 		        String message = violation.getMessage();
 		        result.addError(new FieldError("Service", propertyPath, message));
-		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-        				"Service", propertyPath, message));
+		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+        				"Service", propertyPath, message);
 		    }
 			if (serviceDto.getId() != null) {
 				Service service = serviceManager.getServiceById(serviceDto.getId());
 				// Validamos existencia del servicio
 				if (service == null) {
-					result.addError(new FieldError("Service","servicios",messageSource.getMessage("service.doesnt.exist", new Integer[]{serviceDto.getId()}, Locale.getDefault())));
-					logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","Service"));
+					result.addError(new FieldError("Service","servicios",
+							messageSource.getMessage("service.doesnt.exist", 
+									new Integer[]{serviceDto.getId()}, Locale.getDefault())));
+					logger.debug("Validation error in entity <{}>, entity does not exist.","Service");
 				}
 				else
 					// Validamos que el servicio le pertenezca al usuario siendo validado
 					if (!service.getUsuarioPrestador().getId().equals(userDto.getId())) {
-						result.addError(new FieldError("Service","servicios",messageSource.getMessage("service.doesnt.belong.to.user", new Integer[]{service.getId()}, Locale.getDefault())));
-						logger.debug(String.format("Validation error in entity <%s>, service does not belong to current user.","Service"));
+						result.addError(new FieldError("Service","servicios",
+								messageSource.getMessage("service.doesnt.belong.to.user", 
+										new Integer[]{service.getId()}, Locale.getDefault())));
+						logger.debug("Validation error in entity <{}>, service does not belong to current user.","Service");
 					}
 			}
 		}
@@ -109,21 +115,25 @@ public class UserValidation {
 		        String propertyPath = violation.getPropertyPath().toString();
 		        String message = violation.getMessage();
 		        result.addError(new FieldError("Quote", propertyPath, message));
-		        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-        				"Quote", propertyPath, message));
+		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+        				"Quote", propertyPath, message);
 		    }
 			if (quoteDto.getId() != null) {
 				Quote quote = quoteService.getQuoteById(quoteDto.getId());
 				// Validamos existencia del presupuesto
 				if (quote == null) {
-					result.addError(new FieldError("Quote","presupuestos",messageSource.getMessage("quote.doesnt.exist", new Integer[] {quoteDto.getId()}, Locale.getDefault())));
-					logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","Quote"));
+					result.addError(new FieldError("Quote","presupuestos",
+							messageSource.getMessage("quote.doesnt.exist", 
+									new Integer[] {quoteDto.getId()}, Locale.getDefault())));
+					logger.debug("Validation error in entity <{}>, entity does not exist.","Quote");
 				}
 				else
 					// Validamos que el presupuesto le pertenezca al usuario siendo validado
 					if (!quote.getUsuarioFinal().getId().equals(userDto.getId())) {
-						result.addError(new FieldError("Quote","presupuestos",messageSource.getMessage("quote.doesnt.belong.to.user", new Integer[]{quote.getId()}, Locale.getDefault())));
-						logger.debug(String.format("Validation error in entity <%s>, quote does not belong to current user.","Quote"));
+						result.addError(new FieldError("Quote","presupuestos",
+								messageSource.getMessage("quote.doesnt.belong.to.user", 
+										new Integer[]{quote.getId()}, Locale.getDefault())));
+						logger.debug("Validation error in entity <{}>, quote does not belong to current user.","Quote");
 					}
 			}
 		}
@@ -135,14 +145,16 @@ public class UserValidation {
 				        String propertyPath = violation.getPropertyPath().toString();
 				        String message = violation.getMessage();
 				        result.addError(new FieldError("District", propertyPath, message));
-				        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-		        				"District", propertyPath, message));
+				        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+		        				"District", propertyPath, message);
 				    }
 					// Validamos existencia del barrio
 					if (district.getId() != null)
 						if (districtService.getDistrictById(district.getId()) == null) {
-							result.addError(new FieldError("District","barrios",messageSource.getMessage("district.doesnt.exist", new Integer[] {district.getId()}, Locale.getDefault())));
-							logger.debug(String.format("Validation error in entity <%s>, entity does not exist.","District"));
+							result.addError(new FieldError("District","barrios",
+									messageSource.getMessage("district.doesnt.exist", 
+											new Integer[] {district.getId()}, Locale.getDefault())));
+							logger.debug("Validation error in entity <{}>, entity does not exist.","District");
 						}
 				}
 		
@@ -157,8 +169,8 @@ public class UserValidation {
 			String propertyPath = violation.getPropertyPath().toString();
 	        String message = violation.getMessage();
 	        result.addError(new FieldError("User", propertyPath, message));
-	        logger.debug(String.format("Validation error in entity <%s>'s attribute <%s>, with message <%s>", 
-	        				"User", propertyPath, message));
+	        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
+	        		"User", propertyPath, message);
 	    }
 		
 		return result;

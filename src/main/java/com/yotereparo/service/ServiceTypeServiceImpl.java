@@ -36,12 +36,12 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
 	}
 
 	public ServiceType getServiceTypeById(Integer id) {
-		logger.debug(String.format("Fetching service type by id <%s>", id));
+		logger.debug("Fetching service type by id <{}>", id);
 		return dao.getServiceTypeById(id);
 	}
 	
 	public ServiceType getServiceTypeByDescription(String description) {
-		logger.debug(String.format("Fetching service type <%s>", description));
+		logger.debug("Fetching service type <{}>", description);
 		return dao.getServiceTypeByDescription(description);
 	}
 }
