@@ -9,7 +9,7 @@ import { SessionContext } from "../Utils/SessionManage";
 import { Search } from "./SearchBar";
 
 function EncontrarServicios(props) {
-  const [users, setUsers] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const { session } = useContext(SessionContext);
@@ -28,7 +28,7 @@ function EncontrarServicios(props) {
   useEffect(() => {
     const fetchData = async (urlToFetch) => {
       const result = await Axios(urlToFetch, requestConfig);
-      setUsers(result.data);
+      setServices(result.data);
     };
     try {
       fetchData("http://localhost:8080/YoTeReparo/services/").then((resp) => {
@@ -40,20 +40,22 @@ function EncontrarServicios(props) {
   }, [loading]);
 
   const ServicesData = {
-    users: users,
+    services: services,
     loading: loading,
   };
 
   //TODO ADD A FILTER SERVICESDATA
-  let filteredServices = ServicesData.users.filter((service) => {
+  let filteredServices = ServicesData.services.filter((service) => {
     return (
       service.titulo.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
     );
   });
 
+  console.log(filteredServices);
+
   const Servicios = Hoc(ListaServicios, {
     ...ServicesData,
-    users: filteredServices,
+    services: filteredServices,
   });
 
   const handleSearchTerm = (event) => {

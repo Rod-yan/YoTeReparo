@@ -130,7 +130,8 @@ function ModalContrato(props) {
                     disabled={
                       contrato.estado === "CANCELADO_USUARIO_PRESTADOR" ||
                       contrato.estado === "CANCELADO_USUARIO_FINAL" ||
-                      contrato.estado === "FINALIZADO"
+                      contrato.estado === "FINALIZADO" ||
+                      contrato.estado === "PENDIENTE"
                         ? true
                         : false
                     }

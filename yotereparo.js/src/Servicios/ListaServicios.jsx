@@ -12,7 +12,7 @@ const ListaServicios = (props) => {
   }
   return (
     <>
-      {props.data.users === undefined ? (
+      {props.data.services === undefined ? (
         <ResourceNotFound errorMessage="No hay resultados."></ResourceNotFound>
       ) : (
         <div>
@@ -21,7 +21,7 @@ const ListaServicios = (props) => {
             className="yotereparoGrid"
             columnClassName="yotereparoGrid_column"
           >
-            {props.data.users.map((item, i) => (
+            {props.data.services.map((item, i) => (
               <div className="text-center" key={i}>
                 <SingleServicio data={item}></SingleServicio>
               </div>

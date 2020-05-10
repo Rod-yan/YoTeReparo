@@ -10,6 +10,7 @@ import { SessionContext } from "../Utils/SessionManage";
 import ResourceNotFound from "../Errors/ResourceNotFound";
 import Loading from "../Loading/Loading";
 import ModalServicio from "./ModalServicio";
+import { convertToStars } from "../Utils/RateService";
 
 const Servicio = (props) => {
   const location = useLocation();
@@ -30,6 +31,7 @@ const Servicio = (props) => {
         estimateTime: location.state.estimateTime,
         averagePrice: location.state.averagePrice,
         id: location.state.id,
+        valoracionPromedio: location.state.valoracionPromedio,
       });
       setLoading(false);
     } else {
@@ -57,6 +59,7 @@ const Servicio = (props) => {
         if (resp.response != null) {
           setErrors(resp.response.data);
         } else {
+          console.log(resp.data);
           setProperties({
             body: resp.data.descripcion,
             title: resp.data.titulo,
@@ -65,6 +68,7 @@ const Servicio = (props) => {
             estimateTime: resp.data.horasEstimadasEjecucion,
             averagePrice: resp.data.precioPromedio,
             id: resp.data.id,
+            valoracionPromedio: resp.data.valoracionPromedio,
           });
         }
       });
@@ -89,6 +93,8 @@ const Servicio = (props) => {
         <Loading loadingMessage="Cargando el servicio. Por favor espera."></Loading>
       );
     } else {
+      const stars = convertToStars(properties.valoracionPromedio);
+
       return (
         <>
           <ElementContainer>
@@ -108,11 +114,14 @@ const Servicio = (props) => {
                         <div className="card-body">
                           <div className="row">
                             <div className="col-md-12">
-                              <h3 className="card-title">
-                                {" "}
-                                {properties.title}
-                              </h3>
-                              {properties.body}
+                              <h3 className="card-title">{properties.title}</h3>
+                              <p>{properties.body}</p>
+                              <div className="lead">Servicio a cargo de </div>
+                              <p>{properties.provider}</p>
+                              <div className="lead">Precio promedio</div>
+                              <p>{properties.averagePrice}$</p>
+                              <div className="lead">Valoracion</div>
+                              <div className="mt-2">{stars}</div>
                             </div>
                           </div>
                         </div>

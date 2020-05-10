@@ -17,6 +17,7 @@ const SingleServicio = (props) => {
         avaliable: data.disponibilidad,
         estimateTime: data.horasEstimadasEjecucion,
         averagePrice: data.precioPromedio,
+        valoracionPromedio: data.valoracionPromedio,
       },
     });
   };
