@@ -10,7 +10,7 @@ import * as writer from "../Utils/Animations/21333-writer.json";
 const descriptionServices = (
   <div align="center">
     ¿Querés <strong>contratar o publicar servicios profesionales</strong> en tu
-    zona fácilmente y sin complicaciones?
+    zona?
   </div>
 );
 const descriptionHelp = (
