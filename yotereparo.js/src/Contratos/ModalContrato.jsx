@@ -51,11 +51,20 @@ function ModalContrato(props) {
 
   const handleChangesRateModal = (event) => {
     setRateObject({ ...rateObject, [event.target.name]: event.target.value });
-    console.log(rateObject);
   };
 
   const rateContractFromModal = () => {
-    props.rateContract(contrato.id, rateObject);
+    let tempRate = {
+      valoracion:
+        rateObject.valoracion === undefined
+          ? contrato.valoracion
+          : rateObject.valoracion,
+      descripcionValoracion:
+        rateObject.descripcionValoracion === undefined
+          ? contrato.descripcionValoracion
+          : rateObject.descripcionValoracion,
+    };
+    props.rateContract(contrato.id, tempRate);
   };
 
   return (
