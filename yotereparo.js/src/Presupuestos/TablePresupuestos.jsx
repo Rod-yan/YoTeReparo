@@ -88,17 +88,22 @@ function TablePresupuestos(props) {
       descripcionRespuesta: modelResponseQuote.descripcionRespuesta,
       precioPresupuestado:
         modelResponseQuote.precioPresupuestado || quote.precioTotal,
-      incluyeInsumos: quote.incluyeInsumos,
-      incluyeAdicionales: quote.incluyeAdicionales,
+      incluyeInsumos: modelResponseQuote.incluyeInsumos || quote.incluyeInsumos,
+      incluyeAdicionales:
+        modelResponseQuote.incluyeAdicionales || quote.incluyeAdicionales,
       fechaInicioEjecucionPropuesta: getFecha(
         quote.fechaInicioEjecucionPropuesta
       ),
-      fechaFinEjecucionPropuesta: getFecha(quote.fechaFinEjecucionPropuesta),
       direccionUsuarioFinal: quote.direccionUsuarioFinal,
       estado: "ESPERANDO_USUARIO_FINAL",
     };
 
-    console.log(requestObject);
+    if (quote.fechaFinEjecucionPropuesta != null) {
+      requestObject = {
+        ...requestObject,
+        fechaFinEjecucionPropuesta: getFecha(quote.fechaFinEjecucionPropuesta),
+      };
+    }
 
     putData(
       `http://localhost:8080/YoTeReparo/quotes/${quote.id}`,
@@ -120,11 +125,20 @@ function TablePresupuestos(props) {
   };
 
   const onQuoteChange = (event) => {
-    modelResponseQuote[event.target.name] = event.target.value;
-    setModelResponseQuote({
-      ...modelResponseQuote,
-      [event.target.name]: event.target.value,
-    });
+    if (event.target.type == "checkbox") {
+      modelResponseQuote[event.target.name] = event.target.checked;
+      setModelResponseQuote({
+        ...modelResponseQuote,
+        [event.target.name]: event.target.checked,
+      });
+    } else {
+      modelResponseQuote[event.target.name] = event.target.value;
+      setModelResponseQuote({
+        ...modelResponseQuote,
+        [event.target.name]: event.target.value,
+      });
+    }
+    console.log(modelResponseQuote);
   };
 
   const toggleQuoteModal = () => {
@@ -201,6 +215,7 @@ function TablePresupuestos(props) {
         openResponseModel={toggleQuoteModal}
         sendResponseQuote={sendResponseQuote}
         onQuoteChange={onQuoteChange}
+        dataQuote={quote}
       />
       <ModalContrato
         isOpen={contractModal}

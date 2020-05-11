@@ -53,6 +53,36 @@ function ModalRespuesta(props) {
                 <InputGroupText>$</InputGroupText>
               </InputGroupAddon>
             </InputGroup>
+            <div className="row">
+              <div className="col-md-6">
+                <InputGroup className="mb-2">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>Insumos</InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    name="incluyeInsumos"
+                    type="checkbox"
+                    className="form-control btn-block"
+                    defaultChecked={props.dataQuote.incluyeInsumos}
+                    onChange={props.onQuoteChange}
+                  />
+                </InputGroup>
+              </div>
+              <div className="col-md-6">
+                <InputGroup className="mb-2">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>Adicionales</InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    name="incluyeAdicionales"
+                    type="checkbox"
+                    className="form-control btn-block"
+                    defaultChecked={props.dataQuote.incluyeAdicionales}
+                    onChange={props.onQuoteChange}
+                  />
+                </InputGroup>
+              </div>
+            </div>
           </ModalBody>
           <ModalFooter>
             <Button onClick={props.sendResponseQuote} color="danger">

@@ -110,7 +110,6 @@ export function Acceptance(props) {
 
     if (
       additionalNotes.fechaInicioEjecucionPropuesta &&
-      additionalNotes.fechaFinEjecucionPropuesta &&
       additionalNotes.horaInicioEjecucionPropuesta
     ) {
       setReadyToSubmit(true);
@@ -161,12 +160,18 @@ export function Acceptance(props) {
           additionalNotes.fechaInicioEjecucionPropuesta +
           "T" +
           additionalNotes.horaInicioEjecucionPropuesta,
-        fechaFinEjecucionPropuesta:
-          additionalNotes.fechaFinEjecucionPropuesta +
-          "T" +
-          additionalNotes.horaInicioEjecucionPropuesta,
         estado: "ESPERANDO_USUARIO_PRESTADOR",
       };
+
+      if (additionalNotes.fechaFinEjecucionPropuesta !== undefined) {
+        requestObject = {
+          ...requestObject,
+          fechaFinEjecucionPropuesta:
+            additionalNotes.fechaFinEjecucionPropuesta +
+            "T" +
+            additionalNotes.horaInicioEjecucionPropuesta,
+        };
+      }
 
       console.log(requestObject);
 
