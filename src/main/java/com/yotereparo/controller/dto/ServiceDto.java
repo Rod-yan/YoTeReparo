@@ -95,9 +95,6 @@ public class ServiceDto {
 	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
 	
 	@JsonProperty(access = Access.READ_ONLY)
-	private Set<QuoteDto> presupuestos = new HashSet<QuoteDto>(0);
-	
-	@JsonProperty(access = Access.READ_ONLY)
 	private Set<ServiceRatingEntry> valoraciones = new HashSet<ServiceRatingEntry>(0);
 	
 	public ServiceDto() { }
@@ -267,23 +264,6 @@ public class ServiceDto {
 	public void setRequerimientos(Set<Requirement> requerimientos) {
 		this.requerimientos = requerimientos;
 	}
-	
-	@JsonIgnore
-	public Set<QuoteDto> getPresupuestos() {
-		return presupuestos;
-	}
-
-	public void setPresupuestos(Set<QuoteDto> presupuestos) {
-		this.presupuestos = presupuestos;
-	}
-	
-	public void addPresupuesto(QuoteDto presupuesto) {
-		this.presupuestos.add(presupuesto);
-	}
-	
-	public void removePresupuesto(QuoteDto presupuesto) {
-		this.presupuestos.remove(presupuesto);
-	}
 
 	@JsonIgnore
 	public Set<ServiceRatingEntry> getValoraciones() {
@@ -316,7 +296,6 @@ public class ServiceDto {
 		result = prime * result + ((horasEstimadasEjecucion == null) ? 0 : horasEstimadasEjecucion.hashCode());
 		result = prime * result + ((mediosDePago == null) ? 0 : mediosDePago.hashCode());
 		result = prime * result + ((requerimientos == null) ? 0 : requerimientos.hashCode());
-		result = prime * result + ((presupuestos == null) ? 0 : presupuestos.hashCode());
 		result = prime * result + ((valoraciones == null) ? 0 : valoraciones.hashCode());
 		result = prime * result + ((precioAdicionales == null) ? 0 : precioAdicionales.hashCode());
 		result = prime * result + ((precioInsumos == null) ? 0 : precioInsumos.hashCode());
@@ -381,11 +360,6 @@ public class ServiceDto {
 				return false;
 		} else if (!requerimientos.equals(other.requerimientos))
 			return false;
-		if (presupuestos == null) {
-			if (other.presupuestos != null)
-				return false;
-		} else if (!presupuestos.equals(other.presupuestos))
-			return false;
 		if (valoraciones == null) {
 			if (other.valoraciones != null)
 				return false;
@@ -438,7 +412,7 @@ public class ServiceDto {
 				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
 				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida
 				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + ", presupuestos="
-				+ presupuestos + ", valoraciones=" + valoraciones + "]";
+				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + ", valoraciones="
+				+ valoraciones + "]";
 	}
 }

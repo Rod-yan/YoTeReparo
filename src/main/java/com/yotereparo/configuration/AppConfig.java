@@ -80,13 +80,11 @@ public class AppConfig implements WebMvcConfigurer {
 		modelMapper.createTypeMap(ServiceDto.class, Service.class).addMappings(mapper -> {
 			mapper.skip(Service::setTipoServicio);
 			mapper.skip(Service::setUsuarioPrestador);
-			mapper.skip(Service::setPresupuestos);
 		});
 		// Service -> ServiceDto
 		modelMapper.createTypeMap(Service.class, ServiceDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getTipoServicio().getDescripcion(), ServiceDto::setTipoServicio);
 			mapper.map(src -> src.getUsuarioPrestador().getId(), ServiceDto::setUsuarioPrestador);
-			mapper.skip(ServiceDto::setPresupuestos);
 		});
 		// QuoteDto -> Quote
 		modelMapper.createTypeMap(QuoteDto.class, Quote.class).addMappings(mapper -> {

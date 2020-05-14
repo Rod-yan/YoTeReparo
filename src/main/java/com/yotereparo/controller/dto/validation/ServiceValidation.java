@@ -15,13 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.model.PaymentMethod;
-import com.yotereparo.model.Quote;
 import com.yotereparo.model.Requirement;
 import com.yotereparo.service.PaymentMethodService;
-import com.yotereparo.service.QuoteService;
 import com.yotereparo.service.RequirementService;
 import com.yotereparo.service.ServiceTypeService;
 import com.yotereparo.service.UserService;
@@ -48,8 +45,6 @@ public class ServiceValidation {
 	private PaymentMethodService paymentMethodService;
 	@Autowired
 	private RequirementService requirementService;
-	@Autowired
-	private QuoteService quoteService;
 	
 	public BindingResult validateRequest(ServiceDto serviceDto, BindingResult result) {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -115,34 +110,6 @@ public class ServiceValidation {
 									new Integer[] {requirement.getId()}, Locale.getDefault())));
 					logger.debug("Validation error in entity <{}>, entity does not exist.","Requirement");
 				}
-		}
-		
-		for (QuoteDto quoteDto : serviceDto.getPresupuestos()) {
-			for (ConstraintViolation<QuoteDto> violation : validator.validate(quoteDto)) {
-		        String propertyPath = violation.getPropertyPath().toString();
-		        String message = violation.getMessage();
-		        result.addError(new FieldError("Quote", propertyPath, message));
-		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
-        				"Quote", propertyPath, message);
-		    }
-			if (quoteDto.getId() != null) {
-				Quote quote = quoteService.getQuoteById(quoteDto.getId());
-				// Validamos existencia del presupuesto
-				if (quote == null) {
-					result.addError(new FieldError("Quote","presupuestos",
-							messageSource.getMessage("quote.doesnt.exist", 
-									new Integer[]{quoteDto.getId()}, Locale.getDefault())));
-					logger.debug("Validation error in entity <{}>, entity does not exist.","Quote");
-				}
-				else
-					// Validamos que el presupuesto le pertenezca al servicio siendo validado
-					if (!quote.getServicio().getId().equals(serviceDto.getId())) {
-						result.addError(new FieldError("Quote","presupuestos",
-								messageSource.getMessage("quote.doesnt.belong.to.service", 
-										new Integer[]{quote.getId()}, Locale.getDefault())));
-						logger.debug("Validation error in entity <{}>, quote does not belong to current service.","Quote");
-					}
-			}
 		}
 			
 		return result;
