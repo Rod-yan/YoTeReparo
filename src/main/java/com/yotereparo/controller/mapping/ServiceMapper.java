@@ -11,7 +11,6 @@ import com.yotereparo.model.Contract;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.ServiceRatingEntry;
-import com.yotereparo.service.QuoteService;
 import com.yotereparo.service.ServiceTypeService;
 import com.yotereparo.service.UserService;
 
@@ -29,11 +28,7 @@ public class ServiceMapper implements Mapper<Service, ServiceDto> {
 	@Autowired
 	UserService userService;
 	@Autowired
-    QuoteService quoteService;
-	@Autowired
 	ServiceTypeService serviceTypeService;
-	@Autowired 
-	QuoteMapper quoteConverter;
 	
 	@Override
 	public ServiceDto convertToDto(Service service) {

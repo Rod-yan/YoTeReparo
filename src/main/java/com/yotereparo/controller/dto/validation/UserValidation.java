@@ -15,17 +15,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.controller.dto.UserPasswordChangeDto;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
-import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.service.CityService;
 import com.yotereparo.service.DistrictService;
-import com.yotereparo.service.QuoteService;
 import com.yotereparo.service.ServiceManager;
 
 /**
@@ -46,8 +43,6 @@ public class UserValidation {
 	private MessageSource messageSource;
 	@Autowired
 	private ServiceManager serviceManager;
-	@Autowired
-	private QuoteService quoteService;
 	@Autowired
 	private DistrictService districtService;
 	
@@ -106,34 +101,6 @@ public class UserValidation {
 								messageSource.getMessage("service.doesnt.belong.to.user", 
 										new Integer[]{service.getId()}, Locale.getDefault())));
 						logger.debug("Validation error in entity <{}>, service does not belong to current user.","Service");
-					}
-			}
-		}
-		
-		for (QuoteDto quoteDto : userDto.getPresupuestos()) {
-			for (ConstraintViolation<QuoteDto> violation : validator.validate(quoteDto)) {
-		        String propertyPath = violation.getPropertyPath().toString();
-		        String message = violation.getMessage();
-		        result.addError(new FieldError("Quote", propertyPath, message));
-		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
-        				"Quote", propertyPath, message);
-		    }
-			if (quoteDto.getId() != null) {
-				Quote quote = quoteService.getQuoteById(quoteDto.getId());
-				// Validamos existencia del presupuesto
-				if (quote == null) {
-					result.addError(new FieldError("Quote","presupuestos",
-							messageSource.getMessage("quote.doesnt.exist", 
-									new Integer[] {quoteDto.getId()}, Locale.getDefault())));
-					logger.debug("Validation error in entity <{}>, entity does not exist.","Quote");
-				}
-				else
-					// Validamos que el presupuesto le pertenezca al usuario siendo validado
-					if (!quote.getUsuarioFinal().getId().equals(userDto.getId())) {
-						result.addError(new FieldError("Quote","presupuestos",
-								messageSource.getMessage("quote.doesnt.belong.to.user", 
-										new Integer[]{quote.getId()}, Locale.getDefault())));
-						logger.debug("Validation error in entity <{}>, quote does not belong to current user.","Quote");
 					}
 			}
 		}
