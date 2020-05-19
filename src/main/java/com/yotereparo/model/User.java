@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
+
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
@@ -44,6 +46,7 @@ public class User {
 	
 	private String apellido;
 	
+	@NaturalId
 	private String email;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) 

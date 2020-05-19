@@ -64,6 +64,13 @@ public class UserServiceImpl implements UserService {
 	private CityService cityService;
 
 	public void createUser(User user) {
+		if (getUserByEmail(user.getEmail()) != null) {
+			// Illegal
+			logger.debug("User email: email <{}> is already registered to a different user.", user.getEmail());
+			throw new CustomResponseError("User","email",
+					messageSource.getMessage("user.email.already.exist", new String[]{user.getEmail()}, Locale.getDefault()));
+		}
+		
 		user.setSalt(SecurityUtils.saltGenerator());
 		user.setContrasena(SecurityUtils.encryptPassword(user.getContrasena().concat(user.getSalt())));
 		user.setFechaExpiracionContrasena(new DateTime().plusDays(
@@ -89,6 +96,8 @@ public class UserServiceImpl implements UserService {
 			// Si no quedan barrios válidos, levantamos excepción.
 			user.getBarrios().removeAll(cityService.getInvalidDistricts(user.getCiudad(), user.getBarrios()));
 			if (user.getBarrios().size() == 0) {
+				// Illegal
+				logger.debug("User districts: all entered districts were invalid for user's city.");
 				throw new CustomResponseError("User","barrios",
 						messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
 			}
@@ -106,10 +115,12 @@ public class UserServiceImpl implements UserService {
 	public void updateUser(User user) {
 		User entity = getUserById(user.getId());
 		
-		if (!SecurityUtils.encryptPassword(user.getContrasena().concat(entity.getSalt())).equals(entity.getContrasena()))
+		if (!SecurityUtils.encryptPassword(user.getContrasena().concat(entity.getSalt())).equals(entity.getContrasena())) {
 			// Si la contraseña ingresada es incorrecta, no procedemos con el update.
+			logger.debug("User password: password does not match.");
 			throw new CustomResponseError("User","contrasena",
 					messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
+		}
 		
 		if (!user.getNombre().equals(entity.getNombre())) {
 			logger.debug("Updating attribute 'Nombre' from user <{}>", user.getId());
@@ -122,6 +133,13 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		if (!user.getEmail().equals(entity.getEmail())) {
+			if (getUserByEmail(user.getEmail()) != null) {
+				// Illegal
+				logger.debug("User email: email <{}> is already registered to a different user.", user.getEmail());
+				throw new CustomResponseError("User","email",
+						messageSource.getMessage("user.email.already.exist", new String[]{user.getEmail()}, Locale.getDefault()));
+			}
+			
 			logger.debug("Updating attribute 'Email' from user <{}>", user.getId());
 			entity.setEmail(user.getEmail());
 		}
@@ -360,6 +378,11 @@ public class UserServiceImpl implements UserService {
 	public User getUserById(String id) {
 		logger.debug("Fetching user <{}>", id);
 		return dao.getUserById(id);
+	}
+	
+	public User getUserByEmail(String email) {
+		logger.debug("Fetching user by email <{}>", email);
+		return dao.getUserByEmail(email);
 	}
 	
 	public boolean isProvider(User user) {
