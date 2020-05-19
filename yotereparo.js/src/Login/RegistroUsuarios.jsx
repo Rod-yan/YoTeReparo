@@ -72,12 +72,14 @@ const FormRegistro = (props) => {
   //For the cities and the API
   useEffect(() => {
     fetchData(`http://localhost:8080/YoTeReparo/cities`, (citiesData) => {
-      citiesData.forEach((city) => {
-        setCities((cities) => [
-          ...cities,
-          { id: city.id, desc: city.descripcion },
-        ]);
-      });
+      if (citiesData != null) {
+        citiesData.forEach((city) => {
+          setCities((cities) => [
+            ...cities,
+            { id: city.id, desc: city.descripcion },
+          ]);
+        });
+      }
     });
   }, []);
 
@@ -125,8 +127,6 @@ const FormRegistro = (props) => {
         membresia: membresiaObject,
       };
     }
-
-    console.log(requestData);
 
     //TODO: SET membresia en funcion del formulario de entrada
 
@@ -218,8 +218,6 @@ const FormRegistro = (props) => {
         break;
     }
   };
-
-  console.log(account);
 
   return (
     <div className="registercentered card-center-form">
