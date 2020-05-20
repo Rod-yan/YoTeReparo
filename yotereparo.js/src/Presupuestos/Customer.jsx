@@ -16,7 +16,7 @@ function Customer(props) {
 
   useEffect(() => {
     fetchData("http://localhost:8080/YoTeReparo/services", setServices);
-  }, []);
+  }, [services]);
 
   return (
     <div className="mt-4 mb-5">
