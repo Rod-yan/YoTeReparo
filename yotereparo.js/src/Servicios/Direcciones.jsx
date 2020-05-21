@@ -27,6 +27,7 @@ function Direcciones(props) {
                         fieldActivate={props.addressModify}
                         fieldChange={props.handleChange}
                         fieldId={"calle"}
+                        required={true}
                       ></InputField>
                       <InputField
                         fieldTitle="Altura"
@@ -34,6 +35,8 @@ function Direcciones(props) {
                         fieldActivate={props.addressModify}
                         fieldChange={props.handleChange}
                         fieldId={"altura"}
+                        type={"number"}
+                        required={true}
                       ></InputField>
                       <InputField
                         fieldTitle="Piso"
@@ -41,6 +44,8 @@ function Direcciones(props) {
                         fieldActivate={props.addressModify}
                         fieldChange={props.handleChange}
                         fieldId={"piso"}
+                        type={"number"}
+                        required={true}
                       ></InputField>
                       <InputField
                         fieldTitle="Departamento"

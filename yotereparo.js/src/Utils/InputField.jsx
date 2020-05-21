@@ -17,6 +17,7 @@ export const InputField = (props) => {
         id={props.fieldId}
         min={props.min}
         max={props.max}
+        required={props.required ? props.required : false}
       />
     </div>
   );

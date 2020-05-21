@@ -69,7 +69,7 @@ function ProfileInformation(props) {
             className="btn btn-success btn-block mt-2"
             onClick={props.modifyAddress}
           >
-            AGREGAR DIRECCIONES
+            DIRECCIONES
           </button>
         </div>
       </div>
