@@ -192,6 +192,7 @@ function Usuario(props) {
                                     modifyAddress={props.modifyAddress}
                                     activateSave={props.activateSave}
                                     activateEdit={props.activateEdit}
+                                    activateCancel={props.cancelSave}
                                   ></ProfileInformation>
                                 </div>
                               </div>

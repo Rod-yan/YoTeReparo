@@ -31,7 +31,7 @@ function ProfileInformation(props) {
           fieldActivate={props.modify}
           fieldChange={props.handleChange}
           type="email"
-          fieldId={"email"}
+          fieldId={"email-field"}
         ></InputField>
         <InputField
           fieldTitle="Nombre"
@@ -60,6 +60,7 @@ function ProfileInformation(props) {
               modify={props.modify}
               activateOnSave={props.activateSave}
               activateOnEdit={props.activateEdit}
+              activateOnCancel={props.activateCancel}
             ></ButtonSave>
           }
         </div>

@@ -11,6 +11,7 @@ import NotAuth from "../Errors/NotAuth";
 import Direcciones from "../Servicios/Direcciones";
 import ConfirmPassword from "./ConfirmPassword";
 import ResourceNotFound from "../Errors/ResourceNotFound";
+import { useRef } from "react";
 
 const toLower = (text) => {
   return text.toLowerCase();
@@ -177,6 +178,11 @@ function PerfilUsuario(props) {
     activateModify(!modify);
   };
 
+  const handleCancelModifications = () => {
+    activateModify(!modify);
+    setUpdating(false);
+  };
+
   useEffect(() => {
     const fetchData = async (urlToFetch) => {
       let result;
@@ -278,6 +284,7 @@ function PerfilUsuario(props) {
                   activateSave={() => {
                     toggle();
                   }}
+                  cancelSave={handleCancelModifications}
                   modifyAddress={() => {
                     setAddress(!address);
                   }}
