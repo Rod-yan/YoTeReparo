@@ -46,7 +46,7 @@ public class User {
 	
 	private String apellido;
 	
-	@NaturalId
+	@NaturalId(mutable=true)
 	private String email;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) 
