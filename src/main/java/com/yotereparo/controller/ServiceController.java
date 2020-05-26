@@ -170,28 +170,38 @@ public class ServiceController {
 			
 			// Setteamos el usuario prestador de acuerdo al usuario autenticado que está registrando el request.
 			clientInput.setUsuarioPrestador(authenticatedUsername);
-			if (!serviceValidation.validateRequest(clientInput, result).hasErrors()) {
-				Service service = serviceMapper.convertToEntity(clientInput);
-				if (!serviceManager.similarExist(service)) {
-					serviceManager.createService(service);
-					
-					HttpHeaders headers = new HttpHeaders();
-			        headers.setLocation(ucBuilder.path("/services/{id}").buildAndExpand(service.getId()).toUri());
-			        
-			        logger.info("CreateService - POST - Exiting method, providing response resource to client.");
-					return new ResponseEntity<>(headers, HttpStatus.CREATED);
+			if (userService.hasMembershipAllowance(userService.getUserById(authenticatedUsername))) {
+				if (!serviceValidation.validateRequest(clientInput, result).hasErrors()) {
+					Service service = serviceMapper.convertToEntity(clientInput);
+					if (!serviceManager.similarExist(service)) {
+						serviceManager.createService(service);
+						
+						HttpHeaders headers = new HttpHeaders();
+				        headers.setLocation(ucBuilder.path("/services/{id}").buildAndExpand(service.getId()).toUri());
+				        
+				        logger.info("CreateService - POST - Exiting method, providing response resource to client.");
+						return new ResponseEntity<>(headers, HttpStatus.CREATED);
+					}
+					else {
+						logger.warn("CreateService - POST - Request failed - Unable to create service. "
+								+ "Service <{}> is too similar to another service", service.getTitulo());
+			            FieldError error = new FieldError("Service","error",
+			            		messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
+			            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
+					}
 				}
 				else {
-					logger.warn("CreateService - POST - Request failed - Unable to create service. "
-							+ "Service <{}> is too similar to another service", service.getTitulo());
-		            FieldError error = new FieldError("Service","error",
-		            		messageSource.getMessage("service.too.similar", new String[]{service.getTitulo()}, Locale.getDefault()));
-		            return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.CONFLICT);
+					logger.warn("CreateService - POST - Request failed - Input validation error(s) detected.");
+					return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
 				}
 			}
 			else {
-				logger.warn("CreateService - POST - Request failed - Input validation error(s) detected.");
-				return new ResponseEntity<>(miscUtils.getFormatedResponseErrorList(result), HttpStatus.BAD_REQUEST);
+				logger.warn("CreateService - POST - Request failed - User <{}> can't create any more services.", 
+						authenticatedUsername);
+				FieldError error = new FieldError("User","membresia",
+						messageSource.getMessage("user.membership.insufficient.allowance", 
+								new String[]{authenticatedUsername}, Locale.getDefault()));
+				return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.FORBIDDEN);
 			}
         }
 		catch (CustomResponseError e) {

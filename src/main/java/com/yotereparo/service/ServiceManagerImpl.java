@@ -59,8 +59,9 @@ public class ServiceManagerImpl implements ServiceManager {
 	
 	@Override
 	public void createService(Service service) {
-		if (userService.isProvider(service.getUsuarioPrestador()))
-			if (service.getUsuarioPrestador().getDirecciones() != null && service.getUsuarioPrestador().getDirecciones().size() != 0) {
+		User user = service.getUsuarioPrestador();
+		if (userService.isProvider(user))
+			if (user.getDirecciones() != null && user.getDirecciones().size() != 0) {
 				service.setFechaCreacion(new DateTime());
 				service.setEstado(Service.ACTIVE);
 				
@@ -69,17 +70,17 @@ public class ServiceManagerImpl implements ServiceManager {
 			}
 			else {
 				logger.debug("Service <{}> can't be created. User <{}> has no registered address", 
-						service.getTitulo(), service.getUsuarioPrestador().getId());
+						service.getTitulo(), user.getId());
 				throw new CustomResponseError("Service","usuarioPrestador",
 						messageSource.getMessage("service.usuarioPrestador.addresses.is.empty", 
-								new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
+								new String[]{user.getId()}, Locale.getDefault()));
 			}
 		else {
 			logger.debug("Service <{}> can't be created. User <{}> is not of type Prestador", 
-					service.getTitulo(), service.getUsuarioPrestador().getId());
+					service.getTitulo(), user.getId());
 			throw new CustomResponseError("Service","usuarioPrestador",
 					messageSource.getMessage("service.usuarioPrestador.unauthorized", 
-							new String[]{service.getUsuarioPrestador().getId()}, Locale.getDefault()));
+							new String[]{user.getId()}, Locale.getDefault()));
 		}
 			
 	}

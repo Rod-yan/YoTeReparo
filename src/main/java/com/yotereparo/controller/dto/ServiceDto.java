@@ -95,6 +95,9 @@ public class ServiceDto {
 	private Set<Requirement> requerimientos = new HashSet<Requirement>(0);
 	
 	@JsonProperty(access = Access.READ_ONLY)
+	private Set<MessageDto> mensajes = new HashSet<MessageDto>(0);
+	
+	@JsonProperty(access = Access.READ_ONLY)
 	private Set<ServiceRatingEntry> valoraciones = new HashSet<ServiceRatingEntry>(0);
 	
 	public ServiceDto() { }
@@ -266,6 +269,23 @@ public class ServiceDto {
 	}
 
 	@JsonIgnore
+	public Set<MessageDto> getMensajes() {
+		return mensajes;
+	}
+
+	public void setMensajes(Set<MessageDto> mensajes) {
+		this.mensajes = mensajes;
+	}
+	
+	public void addMensaje(MessageDto mensaje) {
+		this.mensajes.add(mensaje);
+	}
+	
+	public void removeMensaje(MessageDto mensaje) {
+		this.mensajes.remove(mensaje);
+	}
+
+	@JsonIgnore
 	public Set<ServiceRatingEntry> getValoraciones() {
 		return valoraciones;
 	}
@@ -297,6 +317,7 @@ public class ServiceDto {
 		result = prime * result + ((mediosDePago == null) ? 0 : mediosDePago.hashCode());
 		result = prime * result + ((requerimientos == null) ? 0 : requerimientos.hashCode());
 		result = prime * result + ((valoraciones == null) ? 0 : valoraciones.hashCode());
+		result = prime * result + ((mensajes == null) ? 0 : mensajes.hashCode());
 		result = prime * result + ((precioAdicionales == null) ? 0 : precioAdicionales.hashCode());
 		result = prime * result + ((precioInsumos == null) ? 0 : precioInsumos.hashCode());
 		result = prime * result + ((precioMaximo == null) ? 0 : precioMaximo.hashCode());
@@ -360,6 +381,11 @@ public class ServiceDto {
 				return false;
 		} else if (!requerimientos.equals(other.requerimientos))
 			return false;
+		if (mensajes == null) {
+			if (other.mensajes != null)
+				return false;
+		} else if (!mensajes.equals(other.mensajes))
+			return false;
 		if (valoraciones == null) {
 			if (other.valoraciones != null)
 				return false;
@@ -412,7 +438,7 @@ public class ServiceDto {
 				+ ", precioAdicionales=" + precioAdicionales + ", horasEstimadasEjecucion=" + horasEstimadasEjecucion
 				+ ", cantidadTrabajadores=" + cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida
 				+ ", tipoServicio=" + tipoServicio + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + ", valoraciones="
-				+ valoraciones + "]";
+				+ ", mediosDePago=" + mediosDePago + ", requerimientos=" + requerimientos + ", mensajes=" + mensajes
+				+ ", valoraciones=" + valoraciones + "]";
 	}
 }

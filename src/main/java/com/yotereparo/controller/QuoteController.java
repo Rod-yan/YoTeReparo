@@ -38,7 +38,7 @@ import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
 import com.yotereparo.util.error.CustomResponseError;
 /**
- * Controlador REST SpringMVC que expone presupuestos básicos para la gestión de Presupuestos.
+ * Controlador REST SpringMVC que expone servicios básicos para la gestión de Presupuestos.
  * 
  * @author Rodrigo Yanis
  * 
