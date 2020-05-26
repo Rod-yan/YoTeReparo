@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 import { putData } from "../Utils/SessionHandlers";
 import ModalRespuesta from "./ModalRespuesta";
 import ModalContrato from "../Contratos/ModalContrato";
+import NotAuth from "../Errors/NotAuth";
 
 function TablePresupuestos(props) {
   const { session } = useContext(SessionContext);
@@ -22,6 +23,7 @@ function TablePresupuestos(props) {
   const [quote, setQuote] = useState({});
   const [modelResponseQuote, setModelResponseQuote] = useState({});
   const [contrato, setContrato] = useState({});
+  const [auth, setAuth] = useState(false);
 
   let requestConfig = {
     headers: {
@@ -203,11 +205,17 @@ function TablePresupuestos(props) {
         `http://localhost:8080/YoTeReparo/quotes?userRole=customer`,
         setTableDataCustomer
       );
+      if (session.security.roles.length <= 1) {
+        setAuth(false);
+      } else {
+        setAuth(true);
+      }
     } catch (error) {
       console.log(error.response);
     }
   }, [session.username, props.match.params.userId, loading]);
 
+  if (auth){
   return (
     <>
       <ModalRespuesta
@@ -245,6 +253,12 @@ function TablePresupuestos(props) {
       )}
     </>
   );
+  }
+  return(
+    <NotAuth></NotAuth>
+  )
 }
+
+
 
 export default TablePresupuestos;
