@@ -31,4 +31,6 @@ public interface UserService {
     boolean isCustomer(User user);
     
     boolean isServiceAccountOrAdministrator(User user);
+    
+    boolean hasMembershipAllowance(User user);
 }

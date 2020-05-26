@@ -127,6 +127,9 @@ public class User {
 	@OneToMany(mappedBy = "usuarioFinal", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
 	@Where(clause = "estado <> '"+Quote.ARCHIVED+"'")
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
+	
+	@OneToMany(mappedBy = "usuarioFinal", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+	private Set<Message> mensajes = new HashSet<Message>(0);
 
 	public User() {	}
 	
@@ -340,6 +343,19 @@ public class User {
     public void removePresupuesto(Quote presupuesto) {
     	presupuestos.remove(presupuesto);
     }
+    
+    public Set<Message> getMensajes() {
+		return mensajes;
+	}
+	public void setMensajes(Set<Message> mensajes) {
+		this.mensajes = mensajes;
+	}
+	public void addMensaje(Message mensaje) {
+		mensajes.add(mensaje);
+    }
+    public void removeMensaje(Message mensaje) {
+    	mensajes.remove(mensaje);
+    }
 
 	@Override
 	public boolean equals(Object obj) {
@@ -384,6 +400,11 @@ public class User {
 			if (other.presupuestos != null)
 				return false;
 		} else if (!presupuestos.equals(other.presupuestos))
+			return false;
+		if (mensajes == null) {
+			if (other.mensajes != null)
+				return false;
+		} else if (!mensajes.equals(other.mensajes))
 			return false;
 		if (email == null) {
 			if (other.email != null)
@@ -480,6 +501,6 @@ public class User {
 				+ ", fechaUltimoIngreso=" + fechaUltimoIngreso + ", fechaExpiracionContrasena="
 				+ fechaExpiracionContrasena + ", fechaCreacion=" + fechaCreacion + ", membresia=" + membresia
 				+ ", direcciones=" + direcciones + ", roles=" + roles + ", barrios=" + barrios + ", servicios="
-				+ servicios + ", presupuestos=" + presupuestos + "]";
+				+ servicios + ", presupuestos=" + presupuestos + ", mensajes=" + mensajes + "]";
 	}
 }

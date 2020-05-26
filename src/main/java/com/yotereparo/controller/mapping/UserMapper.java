@@ -12,7 +12,6 @@ import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
 import com.yotereparo.service.CityService;
-import com.yotereparo.service.ServiceManager;
 
 /**
  * Conversor Entidad -> DTO (y viceversa) para Usuarios.
@@ -27,10 +26,10 @@ public class UserMapper implements Mapper<User, UserDto> {
     ModelMapper modelMapper;
 	@Autowired
     CityService cityService;
-	@Autowired
-    ServiceManager serviceManager;
 	@Autowired 
-	ServiceMapper serviceConverter;
+	ServiceMapper serviceMapper;
+	@Autowired 
+	MessageMapper messageMapper;
 	
 	@Override
 	public UserDto convertToDto(User user) {
@@ -40,7 +39,7 @@ public class UserMapper implements Mapper<User, UserDto> {
 	    if (services != null && !services.isEmpty()) {
 	    	userDto.setServicios(new HashSet<ServiceDto>(0));
 	    	for (Service serv : services) {
-	    		userDto.addServicio(serviceConverter.convertToDto(serv));
+	    		userDto.addServicio(serviceMapper.convertToDto(serv));
 	    	}
 	    }
 	    return userDto;
@@ -53,13 +52,6 @@ public class UserMapper implements Mapper<User, UserDto> {
 		
 	    User user = modelMapper.map(userDto, User.class);
 	    user.setCiudad(cityService.getCityById(userDto.getCiudad()));
-	    // Obtenemos cada Servicio desde la persistencia para no omitir reglas de construcción en el modelo
-	    Set<ServiceDto> servicesDto = userDto.getServicios();
-	    if (servicesDto != null && !servicesDto.isEmpty()) {
-	    	user.setServicios(new HashSet<Service>(0));
-	    	for (ServiceDto servDto : servicesDto)
-	    		user.addServicio(serviceManager.getServiceById(servDto.getId()));
-	    }
 	    return user;
 	}
 }

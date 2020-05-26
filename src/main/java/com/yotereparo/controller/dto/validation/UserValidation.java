@@ -15,15 +15,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.controller.dto.UserPasswordChangeDto;
 import com.yotereparo.model.Address;
 import com.yotereparo.model.District;
-import com.yotereparo.model.Service;
 import com.yotereparo.service.CityService;
 import com.yotereparo.service.DistrictService;
-import com.yotereparo.service.ServiceManager;
 
 /**
  * Responsable de efectuar la validación de reglas de integridad de datos y reglas de negocio
@@ -41,8 +38,6 @@ public class UserValidation {
 	private CityService cityService;
 	@Autowired
 	private MessageSource messageSource;
-	@Autowired
-	private ServiceManager serviceManager;
 	@Autowired
 	private DistrictService districtService;
 	
@@ -75,35 +70,6 @@ public class UserValidation {
 		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
         				"Address", propertyPath, message);
 		    }
-		
-		
-		for (ServiceDto serviceDto : userDto.getServicios()) {
-			for (ConstraintViolation<ServiceDto> violation : validator.validate(serviceDto)) {
-		        String propertyPath = violation.getPropertyPath().toString();
-		        String message = violation.getMessage();
-		        result.addError(new FieldError("Service", propertyPath, message));
-		        logger.debug("Validation error in entity <{}>'s attribute <{}>, with message <{}>", 
-        				"Service", propertyPath, message);
-		    }
-			if (serviceDto.getId() != null) {
-				Service service = serviceManager.getServiceById(serviceDto.getId());
-				// Validamos existencia del servicio
-				if (service == null) {
-					result.addError(new FieldError("Service","servicios",
-							messageSource.getMessage("service.doesnt.exist", 
-									new Integer[]{serviceDto.getId()}, Locale.getDefault())));
-					logger.debug("Validation error in entity <{}>, entity does not exist.","Service");
-				}
-				else
-					// Validamos que el servicio le pertenezca al usuario siendo validado
-					if (!service.getUsuarioPrestador().getId().equals(userDto.getId())) {
-						result.addError(new FieldError("Service","servicios",
-								messageSource.getMessage("service.doesnt.belong.to.user", 
-										new Integer[]{service.getId()}, Locale.getDefault())));
-						logger.debug("Validation error in entity <{}>, service does not belong to current user.","Service");
-					}
-			}
-		}
 		
 		if (userDto.getMembresia() != null && !userDto.getMembresia().isEmpty())
 			if (userDto.getBarrios() != null && !userDto.getBarrios().isEmpty())

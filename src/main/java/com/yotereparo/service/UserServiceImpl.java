@@ -385,32 +385,6 @@ public class UserServiceImpl implements UserService {
 		return dao.getUserByEmail(email);
 	}
 	
-	public boolean isProvider(User user) {
-		logger.debug("Verifying if user's <{}> is of type PRESTADOR", user.getId());
-		for (Role role : roleService.getAllPrestadorRoles()) {
-			if (user.getRoles().contains(role))
-				return true;
-		}
-		return false;
-	}
-	
-	public boolean isCustomer(User user) {
-		logger.debug("Verifying if user's <{}> is of type FINAL", user.getId());
-		for (Role role : roleService.getAllFinalRoles()) {
-			if (user.getRoles().contains(role))
-				return true;
-		}
-		return false;
-	}
-	
-	public boolean isServiceAccountOrAdministrator(User user) {
-		logger.debug("Verifying if user's <{}> is of type CUENTA SERVICIO or ADMINISTRADOR", user.getId());
-		if (user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.serviceaccount")))
-		 || user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.administrator"))))
-			return true;
-		return false;
-	}
-	
 	/*
 	 *  Actualiza la foto y el thumbnail del Usuario haciendo un resize de la foto suscripta,
 	 *  Si el parámetro <foto> es nulo, eliminamos la foto y thumbnail actual del usuario.
@@ -462,5 +436,39 @@ public class UserServiceImpl implements UserService {
 			
 			logger.debug("No 'Foto' nor 'Thumbnail' registered for user <{}>, discarding transaction.",id);
 		}
+	}
+	
+	public boolean isProvider(User user) {
+		logger.debug("Verifying if user's <{}> is of type PRESTADOR", user.getId());
+		for (Role role : roleService.getAllPrestadorRoles()) {
+			if (user.getRoles().contains(role))
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean isCustomer(User user) {
+		logger.debug("Verifying if user's <{}> is of type FINAL", user.getId());
+		for (Role role : roleService.getAllFinalRoles()) {
+			if (user.getRoles().contains(role))
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean isServiceAccountOrAdministrator(User user) {
+		logger.debug("Verifying if user's <{}> is of type CUENTA SERVICIO or ADMINISTRADOR", user.getId());
+		if (user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.serviceaccount")))
+		 || user.getRoles().contains(roleService.getRoleById(environment.getProperty("role.id.administrator"))))
+			return true;
+		return false;
+	}
+	
+	public boolean hasMembershipAllowance(User user) {
+		logger.debug("Verifying if user's <{}> has sufficient membership allowance", user.getId());
+		int membershipServiceCreationAlowance = 
+				Integer.parseInt(environment.getProperty("membership.service.creation.allowance."+user.getMembresia().toLowerCase()));
+		int currentServiceCount = user.getServicios().size();
+		return (currentServiceCount < membershipServiceCreationAlowance);
 	}
 }
