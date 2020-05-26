@@ -129,6 +129,7 @@ public class User {
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
 	
 	@OneToMany(mappedBy = "usuarioFinal", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+	@Where(clause = "estado <> '"+Message.ARCHIVED+"'")
 	private Set<Message> mensajes = new HashSet<Message>(0);
 
 	public User() {	}

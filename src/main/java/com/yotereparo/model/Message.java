@@ -21,11 +21,13 @@ public class Message {
 	public static final String AWAITING_RESPONSE = "ESPERANDO_RESPUESTA";
 	public static final String CLOSED = "CERRADO";
 	public static final String EXPIRED = "EXPIRADO";
+	public static final String ARCHIVED = "ARCHIVADO";
 	
 	public static final String STATUS_LIST_REGEXP =
 			AWAITING_RESPONSE + "|" +
 			CLOSED + "|" +
-			EXPIRED;
+			EXPIRED + "|" +
+			ARCHIVED;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

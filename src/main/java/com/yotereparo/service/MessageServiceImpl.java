@@ -1,10 +1,7 @@
 package com.yotereparo.service;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -12,11 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yotereparo.dao.MessageDaoImpl;
 import com.yotereparo.model.Message;
+import com.yotereparo.model.Service;
+import com.yotereparo.model.User;
 import com.yotereparo.util.error.CustomResponseError;
 
 /**
@@ -29,16 +27,11 @@ import com.yotereparo.util.error.CustomResponseError;
  * @author Rodrigo Yanis
  * 
  */
-@Service("messageService")
+@org.springframework.stereotype.Service("messageService")
 @Transactional
 public class MessageServiceImpl implements MessageService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
-	
-	Set<String> transitionalStates = new HashSet<String>(
-			Arrays.asList(Message.AWAITING_RESPONSE));
-	Set<String> finalStates = new HashSet<String>(
-			Arrays.asList(Message.CLOSED, Message.EXPIRED));
 	
 	@Autowired
 	private MessageDaoImpl dao;
@@ -72,15 +65,34 @@ public class MessageServiceImpl implements MessageService {
 	public void refreshMessageStatus(Message message) {
 		if (message != null) {
 			logger.trace("Refreshing status of message <{}>", message.getId());
-			if (message.getEstado().equals(Message.AWAITING_RESPONSE)) 
+			Boolean messageWasUpdated = false;
+			int timeoffsetArchiving = Integer.parseInt(environment.getProperty("message.archiving.timeoffset.days"));
+			if (message.getEstado().equals(Message.AWAITING_RESPONSE)) {
 				// Los mensajes tienen un tiempo de vida de N días
 				if (message.getFechaConsulta().isAfter(
 					new DateTime().plusDays(Integer.parseInt(environment.getProperty("message.expiration.timeoffset.days"))))) {
 					
-					logger.debug("Status of message <{}> has been updated", message.getId());
 					message.setEstado(Message.EXPIRED);
 					dao.saveOrUpdate(message);
+					messageWasUpdated = true;
 				}
+			}
+			else if (message.getEstado().equals(Message.CLOSED)) {
+				if (message.getFechaRespuesta().plusDays(timeoffsetArchiving).isBeforeNow()) {
+					message.setEstado(Message.ARCHIVED);
+					dao.saveOrUpdate(message);
+					messageWasUpdated = true;
+				}
+			}
+			else if (message.getEstado().equals(Message.EXPIRED)) {
+				if (message.getFechaConsulta().plusDays(timeoffsetArchiving).isBeforeNow()) {
+					message.setEstado(Message.ARCHIVED);
+					dao.saveOrUpdate(message);
+					messageWasUpdated = true;
+				}
+			}
+			if (messageWasUpdated)
+				logger.debug("Status of message <{}> has been updated", message.getId());
 		}
 	}
 
@@ -150,7 +162,7 @@ public class MessageServiceImpl implements MessageService {
 	public Message getMessageById(Integer id) {
 		logger.debug("Fetching message by id <{}>", id);
 		Message message = dao.getMessageById(id);
-		if (message != null && transitionalStates.contains(message.getEstado()))
+		if (message != null)
 			refreshMessageStatus(message);
 		return message;
 	}
@@ -159,10 +171,17 @@ public class MessageServiceImpl implements MessageService {
 		logger.debug("Fetching all messages");
 		List<Message> messages = dao.getAllMessages();
 		if (messages != null)
-			messages.forEach(message -> {
-				if (transitionalStates.contains(message.getEstado()))
-					refreshMessageStatus(message);
-			});
+			messages.forEach(message -> refreshMessageStatus(message));
 		return messages;
+	}
+	
+	public boolean wasServiceRecentlyMessagedByUser(Service service, User user) {
+		logger.debug("Verifying if user <{}> has recently messaged service <{}>.", user.getId(), service.getId());
+		int timeoffsetNewMessageCooldown = 
+				Integer.parseInt(environment.getProperty("message.newMessageCooldown.timeoffset.minutes"));
+		for (Message message : user.getMensajes()) 
+			if (message.getFechaConsulta().plusMinutes(timeoffsetNewMessageCooldown).isAfterNow())
+				return true;
+		return false;
 	}
 }

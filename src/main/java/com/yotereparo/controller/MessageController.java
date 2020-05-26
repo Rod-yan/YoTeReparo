@@ -34,6 +34,7 @@ import com.yotereparo.model.Message;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
 import com.yotereparo.service.MessageService;
+import com.yotereparo.service.ServiceManager;
 import com.yotereparo.service.UserService;
 import com.yotereparo.util.MiscUtils;
 import com.yotereparo.util.error.CustomResponseError;
@@ -53,6 +54,8 @@ public class MessageController {
     MessageService messageService;
 	@Autowired
     UserService userService;
+	@Autowired
+    ServiceManager serviceManager;
 	@Autowired
     MessageSource messageSource;
 	@Autowired
@@ -190,14 +193,24 @@ public class MessageController {
 			// Setteamos el usuario final de acuerdo al usuario autenticado que está registrando el request.
 			clientInput.setUsuarioFinal(authenticatedUsername);
 			if (!messageValidation.validateRequest(clientInput, result).hasErrors()) {
-				Message message = messageMapper.convertToEntity(clientInput);
-				messageService.createMessage(message);
-				
-				HttpHeaders headers = new HttpHeaders();
-		        headers.setLocation(ucBuilder.path("/messages/{id}").buildAndExpand(message.getId()).toUri());
-		        
-		        logger.info("CreateMessage - POST - Exiting method, providing response resource to client.");
-				return new ResponseEntity<>(headers, HttpStatus.CREATED);
+				Service service = serviceManager.getServiceById(clientInput.getServicio());
+				User user = userService.getUserById(authenticatedUsername);
+				if (!messageService.wasServiceRecentlyMessagedByUser(service, user)) {
+					Message message = messageMapper.convertToEntity(clientInput);
+					messageService.createMessage(message);
+					
+					HttpHeaders headers = new HttpHeaders();
+			        headers.setLocation(ucBuilder.path("/messages/{id}").buildAndExpand(message.getId()).toUri());
+			        
+			        logger.info("CreateMessage - POST - Exiting method, providing response resource to client.");
+					return new ResponseEntity<>(headers, HttpStatus.CREATED);
+				}
+				else {
+					logger.warn("CreateMessage - POST - Request failed - Violation of cooldown restrictions for new messages.");
+					FieldError error = new FieldError("Message","error",
+							messageSource.getMessage("too.many.requests", null, Locale.getDefault()));
+					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.TOO_MANY_REQUESTS);
+				}
 			}
 			else {
 				logger.warn("CreateMessage - POST - Request failed - Input validation error(s) detected.");
