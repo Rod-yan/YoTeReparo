@@ -180,8 +180,9 @@ public class MessageServiceImpl implements MessageService {
 		int timeoffsetNewMessageCooldown = 
 				Integer.parseInt(environment.getProperty("message.newMessageCooldown.timeoffset.minutes"));
 		for (Message message : user.getMensajes()) 
-			if (message.getFechaConsulta().plusMinutes(timeoffsetNewMessageCooldown).isAfterNow())
-				return true;
+			if (message.getServicio().getId().equals(service.getId()))
+				if (message.getFechaConsulta().plusMinutes(timeoffsetNewMessageCooldown).isAfterNow())
+					return true;
 		return false;
 	}
 }
