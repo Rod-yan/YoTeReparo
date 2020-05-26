@@ -11,6 +11,8 @@ import ResourceNotFound from "../Errors/ResourceNotFound";
 import Loading from "../Loading/Loading";
 import ModalServicio from "./ModalServicio";
 import { convertToStars } from "../Utils/RateService";
+import Mensajes from "../Mensajes/Mensajes";
+import { locationsAreEqual } from "history";
 
 const Servicio = (props) => {
   const location = useLocation();
@@ -32,6 +34,7 @@ const Servicio = (props) => {
         averagePrice: location.state.averagePrice,
         id: location.state.id,
         valoracionPromedio: location.state.valoracionPromedio,
+        mensajes: location.state.mensajes,
       });
       setLoading(false);
     } else {
@@ -69,6 +72,7 @@ const Servicio = (props) => {
             averagePrice: resp.data.precioPromedio,
             id: resp.data.id,
             valoracionPromedio: resp.data.valoracionPromedio,
+            mensajes: resp.data.mensajes,
           });
         }
       });
@@ -151,6 +155,7 @@ const Servicio = (props) => {
               </div>
             </div>
           </ElementContainer>
+          <Mensajes content={properties.mensajes} />
           <ModalServicio
             toggle={toggle}
             modal={modal}

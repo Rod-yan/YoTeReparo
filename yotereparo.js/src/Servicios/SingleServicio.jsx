@@ -7,6 +7,7 @@ const SingleServicio = (props) => {
   let history = useHistory();
 
   const handleClick = (data) => {
+    console.log(data);
     history.push({
       pathname: "/servicio/" + data.id,
       state: {
@@ -18,6 +19,7 @@ const SingleServicio = (props) => {
         estimateTime: data.horasEstimadasEjecucion,
         averagePrice: data.precioPromedio,
         valoracionPromedio: data.valoracionPromedio,
+        mensajes: data.mensajes,
       },
     });
   };
