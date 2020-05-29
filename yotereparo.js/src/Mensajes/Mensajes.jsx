@@ -31,7 +31,6 @@ function Mensajes(props) {
 
   const CreateMensaje = (mensaje) => {
     ResetTextArea();
-
     Axios.post(
       "http://localhost:8080/YoTeReparo/messages",
       mensaje,
