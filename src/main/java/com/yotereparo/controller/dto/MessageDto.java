@@ -96,7 +96,8 @@ public class MessageDto {
 	public void setRespuesta(String respuesta) {
 		this.respuesta = respuesta;
 	}
-
+	
+	@JsonIgnore
 	public String getEstado() {
 		return estado;
 	}
