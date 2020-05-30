@@ -34,4 +34,5 @@ public class User_ {
 	public static volatile SetAttribute<User, District> barrios;
 	public static volatile SetAttribute<User, Service> servicios;
 	public static volatile SetAttribute<User, Quote> presupuestos;
+	public static volatile SetAttribute<User, Message> mensajes;
 }
