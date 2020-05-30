@@ -17,13 +17,17 @@ function MensajesForm(props) {
               rows="2"
               style={{ resize: "none" }}
               onChange={props.onChange}
-              onKeyDown={props.onSubmit}
               maxLength={200}
             />
           </FormGroup>
           <div className="row">
             <div className="col-6">
-              <Button type="button" size="sm" color="danger">
+              <Button
+                type="button"
+                size="sm"
+                onClick={props.onSubmit}
+                color="danger"
+              >
                 Enviar Mensaje
               </Button>
             </div>

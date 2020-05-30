@@ -6,22 +6,31 @@ import { useEffect } from "react";
 import Axios from "axios";
 import { useContext } from "react";
 import { SessionContext } from "../Utils/SessionManage";
+import Mensaje from "./Mensaje";
+import ModalRespuestaMensaje from "./ModalRespuestaMensaje";
 
 function Mensajes(props) {
   const [comentario, setComentario] = useState("");
+  const [respuesta, setRespuesta] = useState("");
+  const [idPregunta, setIdPregunta] = useState(null);
   const [mensajes, setMensajes] = useState([]);
   const [activeForm, setActiveForm] = useState(false);
+  const [errorsValidation, setErrorsValidation] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { session } = useContext(SessionContext);
   const [reload, setReload] = useState(false);
+  const [isReplyModalOpen, SetIsReplyModalOpen] = useState(false);
+
+  var isFormEmpleador = session.security.roles.length > 1 ? true : false;
 
   let requestConfig = {
     headers: {
       "Access-Control-Allow-Origin": "*",
-      Authorization: "Bearer " + session.security.accessToken,
+      Authorization: "Bearer " + session.security?.accessToken,
     },
   };
 
-  const handleSubmitForm = (event) => {
+  const handleSubmitForm = () => {
     let mensajeTemp = {
       servicio: props.contentService,
       consulta: comentario.trim(),
@@ -31,6 +40,7 @@ function Mensajes(props) {
 
   const CreateMensaje = (mensaje) => {
     ResetTextArea();
+    setLoading(true);
     Axios.post(
       "http://localhost:8080/YoTeReparo/messages",
       mensaje,
@@ -42,6 +52,30 @@ function Mensajes(props) {
         } else {
           console.log("200 OK");
           setReload(!reload);
+          ActiveTextArea();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const CreateRespuesta = (respuesta) => {
+    var temp = mensajes.filter((x) => x.id == idPregunta);
+    temp[0].state = "loading";
+
+    Axios.put(
+      `http://localhost:8080/YoTeReparo/messages/${idPregunta}`,
+      respuesta,
+      requestConfig
+    )
+      .then((response) => {
+        if (response.status === 400) {
+          console.log(response.json);
+        } else {
+          console.log("200 OK");
+          setReload(!reload);
+          temp[0].state = "ready";
         }
       })
       .catch((error) => {
@@ -53,8 +87,39 @@ function Mensajes(props) {
     setComentario(event.target.value);
   };
 
+  const handleModalReplyText = (event) => {
+    setRespuesta(event.target.value);
+  };
+
+  const handleReply = (idPregunta) => {
+    showReplyForm();
+    setIdPregunta(idPregunta);
+  };
+
+  const onModalReply = () => {
+    if (respuesta.length < 1) {
+      setErrorsValidation(true);
+    } else {
+      let tempObject = {
+        respuesta: respuesta,
+      };
+      CreateRespuesta(tempObject);
+      SetIsReplyModalOpen(false);
+      setLoading(false);
+    }
+  };
+
+  function showReplyForm() {
+    SetIsReplyModalOpen(!isReplyModalOpen);
+  }
+
   function ResetTextArea() {
     setActiveForm(true);
+    setComentario("");
+  }
+
+  function ActiveTextArea() {
+    setActiveForm(false);
     setComentario("");
   }
 
@@ -74,7 +139,13 @@ function Mensajes(props) {
     ).then((resp) => {
       if (resp.response != null) {
       } else {
-        setMensajes(resp.data.mensajes);
+        var mensajesWithState = [];
+        resp.data.mensajes.map((x) => {
+          let temp = { id: x.id, data: x, state: "ready" };
+          mensajesWithState.push(temp);
+        });
+        setMensajes(mensajesWithState);
+        setLoading(false);
       }
     });
   }, [reload]);
@@ -84,30 +155,62 @@ function Mensajes(props) {
       <div className="mt-4">
         <ElementContainer>
           <div className="lead text-center font-weight-bold">Mensajes</div>
-          <hr></hr>
-          <MensajesForm
-            onSubmit={handleSubmitForm}
-            onChange={handleChangeForm}
-            numberCharLeft={200 - comentario.length}
-            disableForm={activeForm}
-            mensaje={comentario}
+          <ModalRespuestaMensaje
+            isReplyModalOpen={isReplyModalOpen}
+            openReplyModal={showReplyForm}
+            onModalReply={onModalReply}
+            isErrors={errorsValidation}
+            onChangeText={handleModalReplyText}
+            textRespuesta={respuesta}
           />
+          {!isFormEmpleador && (
+            <>
+              <hr></hr>
+              <MensajesForm
+                onSubmit={handleSubmitForm}
+                onChange={handleChangeForm}
+                numberCharLeft={200 - comentario.length}
+                disableForm={activeForm}
+                mensaje={comentario}
+              />
+            </>
+          )}
+
           <hr></hr>
           <div className="row">
             {!(mensajes.length > 0) ? (
-              <div className="col-12">
-                <div className="lead text-center">
-                  No hay mensajes actualmente para este servicio
+              loading === true ? (
+                <div className="col-12 text-center">
+                  <div className="spinner-border" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="col-12">
+                  <div className="lead text-center">
+                    No hay mensajes actualmente para este servicio
+                  </div>
+                </div>
+              )
             ) : (
               <>
                 <div className="col-12 lead">
-                  <div>
+                  <>
                     {mensajes.map((x) => {
-                      return <div key={x.id}>{x.consulta}</div>;
+                      return (
+                        <div key={x.id}>
+                          <Mensaje
+                            onReply={handleReply}
+                            esPrestador={isFormEmpleador}
+                            content={{
+                              object: x.data,
+                              loading: x.state,
+                            }}
+                          />
+                        </div>
+                      );
                     })}
-                  </div>
+                  </>
                 </div>
               </>
             )}

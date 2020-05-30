@@ -155,7 +155,7 @@ const Servicio = (props) => {
               </div>
             </div>
           </ElementContainer>
-          <Mensajes contentService={properties.id} />
+          <Mensajes contentService={props.match.params.id} />
           <ModalServicio
             toggle={toggle}
             modal={modal}
