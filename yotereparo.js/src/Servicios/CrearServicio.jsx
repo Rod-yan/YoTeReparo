@@ -13,6 +13,7 @@ import Axios from "axios";
 import { useRef } from "react";
 import Errors from "../Errors/Errors";
 import { useHistory } from "react-router-dom";
+import NotAuth from "../Errors/NotAuth";
 
 // -> GET: /YoTeReparo/requirements
 // -> GET: /YoTeReparo/requirements/{id}
@@ -39,6 +40,7 @@ const CrearServicio = (props) => {
   const refMediosDePago = useRef([React.createRef()]);
   const history = useHistory();
   const { session } = useContext(SessionContext);
+  const [auth, setAuth] = useState(false);
 
   //We use this object in the handleSubmit in order to cross over all the data
   let [service, setService] = useState({
@@ -205,8 +207,14 @@ const CrearServicio = (props) => {
       "http://localhost:8080/YoTeReparo/requirements",
       setRequerimientos
     );
+    if (session.security.roles.length <= 0) {
+      setAuth(false);
+    } else {
+      setAuth(true);
+    }
   }, []);
 
+  if (auth){
   return (
     <div className="registercentered card-center-form">
       <div className="row">
@@ -519,6 +527,10 @@ const CrearServicio = (props) => {
       </div>
     </div>
   );
+  }
+  return(
+    <NotAuth></NotAuth>
+  )
 };
 
 export default CrearServicio;

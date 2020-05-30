@@ -205,7 +205,7 @@ function TablePresupuestos(props) {
         `http://localhost:8080/YoTeReparo/quotes?userRole=customer`,
         setTableDataCustomer
       );
-      if (session.security.roles.length <= 1) {
+      if (session.security.roles.length <= 0) {
         setAuth(false);
       } else {
         setAuth(true);
