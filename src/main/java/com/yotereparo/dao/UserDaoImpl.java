@@ -23,6 +23,10 @@ public class UserDaoImpl extends AbstractDao<String, User> implements UserDao {
 		return getByKey(id);
 	}
 	
+	public User getUserByEmail(String email) {
+		return getSession().bySimpleNaturalId(User.class).load(email);
+	}
+	
 	public void createUser(User user) {
 		persist(user);
 	}

@@ -12,10 +12,10 @@ function CardContent(props) {
             <Lottie options={props.animation} height={150} width={200} />
           ) : (
             <>
-              <span class="fa-stack fa-2x">
-                <i class="fas fa-circle fa-stack-2x"></i>
+              <span className="fa-stack fa-2x">
+                <i className="fas fa-circle fa-stack-2x"></i>
                 <i
-                  class={`fas ${props.cardIcon} fa-stack-1x home-icon-color`}
+                  className={`fas ${props.cardIcon} fa-stack-1x home-icon-color`}
                 ></i>
               </span>
               <hr></hr>

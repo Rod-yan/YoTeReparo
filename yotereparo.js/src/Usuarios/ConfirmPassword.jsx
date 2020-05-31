@@ -12,7 +12,7 @@ function ConfirmPassword(props) {
         </ModalHeader>
         <ModalBody>
           {props.errors ? (
-            <ResourceNotFound errorMessage="La contraseña que estas intentando ingresar caduco o no es                     valida"></ResourceNotFound>
+            <ResourceNotFound errorMessage="La contraseña que estas intentando ingresar caduco o no es valida"></ResourceNotFound>
           ) : (
             <input
               type="password"

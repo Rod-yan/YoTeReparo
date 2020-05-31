@@ -97,141 +97,184 @@ public class UserDto {
 	public String getId() {
 		return id;
 	}
+	
 	public void setId(String id) {
 		this.id = (id != null && !id.isEmpty()) ? id.toLowerCase() : null;
 	}
+	
 	public String getNombre() {
 		return nombre;
 	}
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+	
 	public String getApellido() {
 		return apellido;
 	}
+	
 	public void setApellido(String apellido) {
 		this.apellido = apellido;
 	}
+	
 	public String getEmail() {
 		return email;
 	}
+	
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
 	public LocalDate getFechaNacimiento() {
 		return fechaNacimiento;
 	}
+	
 	public void setFechaNacimiento(LocalDate fechaNacimiento) {
 		this.fechaNacimiento = fechaNacimiento;
 	}
+	
 	public String getTelefonoPrincipal() {
 		return telefonoPrincipal;
 	}
+	
 	public void setTelefonoPrincipal(String telefonoPrincipal) {
 		this.telefonoPrincipal = telefonoPrincipal;
 	}
+	
 	public String getTelefonoAlternativo() {
 		return telefonoAlternativo;
 	}
+	
 	public void setTelefonoAlternativo(String telefonoAlternativo) {
 		this.telefonoAlternativo = telefonoAlternativo;
 	}
+	
 	public String getCiudad() {
 		return ciudad;
 	}
+	
 	public void setCiudad(String ciudad) {
 		this.ciudad = ciudad;
 	}
+	
 	@JsonIgnore
 	public String getContrasena() {
 		return contrasena;
 	}
+	
 	public void setContrasena(String contrasena) {
 		this.contrasena = contrasena;
 	}
+	
 	public String getDescripcion() {
 		return descripcion;
 	}
+	
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+	
 	@JsonIgnore
 	public String getEstado() {
 		return estado;
 	}
+	
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+	
 	@JsonIgnore
 	public int getIntentosIngreso() {
 		return intentosIngreso;
 	}
+	
 	public void setIntentosIngreso(int intentosIngreso) {
 		this.intentosIngreso = intentosIngreso;
 	}
+	
 	@JsonIgnore
 	public DateTime getFechaUltimoCambioContrasena() {
 		return fechaUltimoCambioContrasena;
 	}
+	
 	public void setFechaUltimoCambioContrasena(DateTime fechaUltimoCambioContrasena) {
 		this.fechaUltimoCambioContrasena = fechaUltimoCambioContrasena;
 	}
+	
 	@JsonIgnore
 	public DateTime getFechaUltimoIngreso() {
 		return fechaUltimoIngreso;
 	}
+	
 	public void setFechaUltimoIngreso(DateTime fechaUltimoIngreso) {
 		this.fechaUltimoIngreso = fechaUltimoIngreso;
 	}
+	
 	@JsonIgnore
 	public DateTime getFechaExpiracionContrasena() {
 		return fechaExpiracionContrasena;
 	}
+	
 	public void setFechaExpiracionContrasena(DateTime fechaExpiracionContrasena) {
 		this.fechaExpiracionContrasena = fechaExpiracionContrasena;
 	}
+	
 	@JsonIgnore
 	public DateTime getFechaCreacion() {
 		return fechaCreacion;
 	}
+	
 	public void setFechaCreacion(DateTime fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
 	}
+	
 	public String getMembresia() {
 		return membresia;
 	}
+	
 	public void setMembresia(String membresia) {
 		this.membresia = (membresia != null && !membresia.isEmpty()) ? membresia.toUpperCase() : null;
 	}
+	
 	@JsonIgnore
 	public Set<Role> getRoles() {
 		return roles;
 	}
+	
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+	
 	public Set<Address> getDirecciones() {
 		return direcciones;
 	}
+	
 	public void setDirecciones(Set<Address> direcciones) {
 		this.direcciones = direcciones;
 	}
+	
 	public Set<District> getBarrios() {
 		return barrios;
 	}
+	
 	public void setBarrios(Set<District> barrios) {
 		this.barrios = barrios;
 	}
+	
 	@JsonIgnore
 	public Set<ServiceDto> getServicios() {
 		return servicios;
 	}
+	
 	public void setServicios(Set<ServiceDto> servicios) {
 		this.servicios = servicios;
 	}
+	
 	public void addServicio(ServiceDto servicio) {
 		this.servicios.add(servicio);
 	}
+	
 	public void removeServicio(ServiceDto servicio) {
 		this.servicios.remove(servicio);
 	}
@@ -263,6 +306,7 @@ public class UserDto {
 		result = prime * result + ((telefonoPrincipal == null) ? 0 : telefonoPrincipal.hashCode());
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -376,6 +420,7 @@ public class UserDto {
 			return false;
 		return true;
 	}
+	
 	@Override
 	public String toString() {
 		return "UserDto [id=" + id + ", nombre=" + nombre + ", apellido=" + apellido + ", email=" + email

@@ -112,6 +112,10 @@ public class Service {
 	@OneToMany(mappedBy = "servicio", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
 	@Where(clause = "estado <> '"+Quote.ARCHIVED+"'")
 	private Set<Quote> presupuestos = new HashSet<Quote>(0);
+	
+	@OneToMany(mappedBy = "servicio", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
+	@Where(clause = "estado <> '"+Message.ARCHIVED+"'")
+	private Set<Message> mensajes = new HashSet<Message>(0);
 		
 	public Service() { }
 	
@@ -295,6 +299,19 @@ public class Service {
     	presupuestos.remove(presupuesto);
     }
 
+	public Set<Message> getMensajes() {
+		return mensajes;
+	}
+	public void setMensajes(Set<Message> mensajes) {
+		this.mensajes = mensajes;
+	}
+	public void addMensaje(Message mensaje) {
+		mensajes.add(mensaje);
+    }
+    public void removeMensaje(Message mensaje) {
+    	mensajes.remove(mensaje);
+    }
+
 	public boolean similarTo(Service service) {
 		if (service == null)
 			return false;
@@ -400,6 +417,11 @@ public class Service {
 				return false;
 		} else if (!presupuestos.equals(other.presupuestos))
 			return false;
+		if (mensajes == null) {
+			if (other.mensajes != null)
+				return false;
+		} else if (!mensajes.equals(other.mensajes))
+			return false;
 		if (!Arrays.equals(thumbnail, other.thumbnail))
 			return false;
 		if (tipoServicio == null) {
@@ -430,6 +452,6 @@ public class Service {
 				+ cantidadTrabajadores + ", facturaEmitida=" + facturaEmitida + ", imagen=" + Arrays.toString(imagen)
 				+ ", thumbnail=" + Arrays.toString(thumbnail) + ", tipoServicio=" + tipoServicio + ", fechaCreacion="
 				+ fechaCreacion + ", estado=" + estado + ", mediosDePago=" + mediosDePago + ", requerimientos="
-				+ requerimientos + ", presupuestos=" + presupuestos + "]";
+				+ requerimientos + ", presupuestos=" + presupuestos + ", mensajes=" + mensajes + "]";
 	}
 }

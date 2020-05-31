@@ -72,12 +72,14 @@ const FormRegistro = (props) => {
   //For the cities and the API
   useEffect(() => {
     fetchData(`http://localhost:8080/YoTeReparo/cities`, (citiesData) => {
-      citiesData.forEach((city) => {
-        setCities((cities) => [
-          ...cities,
-          { id: city.id, desc: city.descripcion },
-        ]);
-      });
+      if (citiesData != null) {
+        citiesData.forEach((city) => {
+          setCities((cities) => [
+            ...cities,
+            { id: city.id, desc: city.descripcion },
+          ]);
+        });
+      }
     });
   }, []);
 
@@ -119,14 +121,13 @@ const FormRegistro = (props) => {
         id: account.id,
         nombre: account.nombre,
         apellido: account.apellido,
-        ciudad: account.ciudad,
+        ciudad: account.ciudad,        
+        direcciones: [direccion],
         email: account.email,
         contrasena: account.password,
         membresia: membresiaObject,
       };
     }
-
-    console.log(requestData);
 
     //TODO: SET membresia en funcion del formulario de entrada
 
@@ -219,8 +220,6 @@ const FormRegistro = (props) => {
     }
   };
 
-  console.log(account);
-
   return (
     <div className="registercentered card-center-form">
       <div className="row">
@@ -306,36 +305,8 @@ const FormRegistro = (props) => {
                   ))}
                 </Input>
               </FormGroup>
-              {isFormEmpleador ? (
-                <>
-                  <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                    <Label
-                      for="ciudadLabel"
-                      className="mr-sm-2 font-weight-bold"
-                    >
-                      BARRIOS EN LOS QUE PRESTAS SERVICIO
-                    </Label>
-                    <Input
-                      multiple={isFormEmpleador}
-                      type="select"
-                      name="barrios"
-                      id="barriosLabel"
-                      onChange={(e) => {
-                        handleChange(e);
-                      }}
-                      disabled={hoodsDisabled}
-                    >
-                      <option value="" disabled hidden>
-                        Selecciona un barrio
-                      </option>
-                      {hoods.map((hood) => (
-                        <option key={hood.id} value={hood.id}>
-                          {hood.descripcion}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                  <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+
+              <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                     <div className="row">
                       <div className="col-md-6">
                         <Label
@@ -357,25 +328,6 @@ const FormRegistro = (props) => {
                         />
                       </div>
                       <div className="col-md-2">
-                        <Label
-                          for="direccionLabelPiso"
-                          className="mr-sm-2 font-weight-bold"
-                        >
-                          PISO
-                        </Label>
-                        <Input
-                          type="text"
-                          name="piso"
-                          id="piso"
-                          onChange={(e) => {
-                            setDireccion({
-                              ...direccion,
-                              [e.target.name]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>
-                      <div className="col-md-2">
                         {" "}
                         <Label
                           for="direccionLabelaltura"
@@ -387,6 +339,25 @@ const FormRegistro = (props) => {
                           type="number"
                           name="altura"
                           id="altura"
+                          onChange={(e) => {
+                            setDireccion({
+                              ...direccion,
+                              [e.target.name]: e.target.value,
+                            });
+                          }}
+                        />
+                      </div>                      
+                      <div className="col-md-2">
+                        <Label
+                          for="direccionLabelPiso"
+                          className="mr-sm-2 font-weight-bold"
+                        >
+                          PISO
+                        </Label>
+                        <Input
+                          type="text"
+                          name="piso"
+                          id="piso"
                           onChange={(e) => {
                             setDireccion({
                               ...direccion,
@@ -423,7 +394,7 @@ const FormRegistro = (props) => {
                           for="direccionLabeldescripcion"
                           className="mr-sm-2 font-weight-bold"
                         >
-                          DESCRIPCION
+                          DESCRIPCION DIRECCIÓN
                         </Label>
                         <Input
                           type="text"
@@ -438,6 +409,35 @@ const FormRegistro = (props) => {
                         />
                       </div>
                     </div>
+                  </FormGroup>              
+              {isFormEmpleador ? (
+                <>
+                  <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                    <Label
+                      for="ciudadLabel"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      BARRIOS EN LOS QUE PRESTAS SERVICIO
+                    </Label>
+                    <Input
+                      multiple={isFormEmpleador}
+                      type="select"
+                      name="barrios"
+                      id="barriosLabel"
+                      onChange={(e) => {
+                        handleChange(e);
+                      }}
+                      disabled={hoodsDisabled}
+                    >
+                      <option value="" disabled hidden>
+                        Selecciona un barrio
+                      </option>
+                      {hoods.map((hood) => (
+                        <option key={hood.id} value={hood.id}>
+                          {hood.descripcion}
+                        </option>
+                      ))}
+                    </Input>
                   </FormGroup>
                 </>
               ) : (

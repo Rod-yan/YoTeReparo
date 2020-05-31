@@ -18,10 +18,12 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.yotereparo.controller.dto.ContractDto;
+import com.yotereparo.controller.dto.MessageDto;
 import com.yotereparo.controller.dto.QuoteDto;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.controller.dto.UserDto;
 import com.yotereparo.model.Contract;
+import com.yotereparo.model.Message;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.User;
@@ -103,6 +105,16 @@ public class AppConfig implements WebMvcConfigurer {
 		// Contract -> ContractDto
 		modelMapper.createTypeMap(Contract.class, ContractDto.class).addMappings(mapper -> {
 			mapper.map(src -> src.getPresupuesto().getId(), ContractDto::setPresupuesto);
+		});
+		// MessageDto -> Message
+		modelMapper.createTypeMap(MessageDto.class, Message.class).addMappings(mapper -> {
+			mapper.skip(Message::setUsuarioFinal);
+			mapper.skip(Message::setServicio);
+		});
+		// Message -> MessageDto
+		modelMapper.createTypeMap(Message.class, MessageDto.class).addMappings(mapper -> {
+			mapper.map(src -> src.getUsuarioFinal().getId(), MessageDto::setUsuarioFinal);
+			mapper.map(src -> src.getServicio().getId(), MessageDto::setServicio);
 		});
 	    return modelMapper;
 	}

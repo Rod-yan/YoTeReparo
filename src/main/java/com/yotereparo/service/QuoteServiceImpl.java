@@ -92,7 +92,6 @@ public class QuoteServiceImpl implements QuoteService {
 				throw new CustomResponseError("Quote","usuarioFinal",
 						messageSource.getMessage("quote.usuarioFinal.cant.change", null, Locale.getDefault()));
 			}
-			
 			if (!quote.getServicio().getId().equals(entity.getServicio().getId())) {
 				// Illegal
 				logger.debug("Quote <{}> service: <{}> can't be modified!", quote.getId(), entity.getServicio().getId());
@@ -343,7 +342,7 @@ public class QuoteServiceImpl implements QuoteService {
 	
 	@Override
 	public Boolean activeQuoteExistBetween(User user, Service service) {
-		logger.debug("Validating existance of an active quotation process between user <{}> and service <{}>", 
+		logger.debug("Validating existence of an active quotation process between user <{}> and service <{}>", 
 				user.getId(), service.getId());
 		if (user != null && service != null)
 			for (Quote presupuesto : user.getPresupuestos())
@@ -356,7 +355,7 @@ public class QuoteServiceImpl implements QuoteService {
 	
 	@Override
 	public Boolean quoteExistBetween(User user, Service service) {
-		logger.debug("Validating existance of an active quotation process between user <{}> and service <{}>", 
+		logger.debug("Validating existence of an active quotation process between user <{}> and service <{}>", 
 				user.getId(), service.getId());
 		if (user != null && service != null)
 			for (Quote presupuesto : user.getPresupuestos())

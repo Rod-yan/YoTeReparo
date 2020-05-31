@@ -31,7 +31,7 @@ function ProfileInformation(props) {
           fieldActivate={props.modify}
           fieldChange={props.handleChange}
           type="email"
-          fieldId={"email"}
+          fieldId={"email-field"}
         ></InputField>
         <InputField
           fieldTitle="Nombre"
@@ -60,6 +60,7 @@ function ProfileInformation(props) {
               modify={props.modify}
               activateOnSave={props.activateSave}
               activateOnEdit={props.activateEdit}
+              activateOnCancel={props.activateCancel}
             ></ButtonSave>
           }
         </div>
@@ -69,7 +70,7 @@ function ProfileInformation(props) {
             className="btn btn-success btn-block mt-2"
             onClick={props.modifyAddress}
           >
-            AGREGAR DIRECCIONES
+            DIRECCIONES
           </button>
         </div>
       </div>

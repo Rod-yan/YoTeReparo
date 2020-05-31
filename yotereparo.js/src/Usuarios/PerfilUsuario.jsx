@@ -10,6 +10,8 @@ import Loading from "../Loading/Loading";
 import NotAuth from "../Errors/NotAuth";
 import Direcciones from "../Servicios/Direcciones";
 import ConfirmPassword from "./ConfirmPassword";
+import ResourceNotFound from "../Errors/ResourceNotFound";
+import { useRef } from "react";
 
 const toLower = (text) => {
   return text.toLowerCase();
@@ -48,6 +50,7 @@ function PerfilUsuario(props) {
   };
 
   const toggleAddress = () => {
+    setAddressError(false);
     setAddress(!address);
   };
 
@@ -153,6 +156,7 @@ function PerfilUsuario(props) {
           console.log(response.json);
         } else {
           setUpdating(false);
+          setAddressError(false);
           history.push({
             pathname: `/perfil/${profile.id}`,
             state: { user: profile },
@@ -161,9 +165,7 @@ function PerfilUsuario(props) {
         }
       })
       .catch((error) => {
-        throw new Error(
-          "ERROR: There is a problem with the update of an User" + error
-        );
+        setAddressError(true);
       });
   };
 
@@ -172,7 +174,13 @@ function PerfilUsuario(props) {
   };
 
   const handleActivateModifications = () => {
+    setAddressError(false);
     activateModify(!modify);
+  };
+
+  const handleCancelModifications = () => {
+    activateModify(!modify);
+    setUpdating(false);
   };
 
   useEffect(() => {
@@ -198,14 +206,17 @@ function PerfilUsuario(props) {
           setAuth(true);
           setProfile(result.data);
           console.log("OK: Ingresaste correctamente");
+          setErrors(false);
         } else {
           console.log(
             "ERROR: El usuario ingresado no corresponde con la informacion de sesion"
           );
           setAuth(false);
+          setErrors(true);
         }
       } else {
         setAuth(false);
+        setErrors(true);
         console.log(
           "ERROR: Hay un error con la peticion al servidor y/o No estas autorizado para entrar aca"
         );
@@ -249,7 +260,6 @@ function PerfilUsuario(props) {
           <Direcciones
             address={address}
             toggleAddress={toggleAddress}
-            errors={errorAddress}
             addressModify={modifyAddressFields}
             profile={profile}
             handleChange={updateAddress}
@@ -262,19 +272,25 @@ function PerfilUsuario(props) {
           {profile === undefined || auth === false ? (
             <NotAuth></NotAuth>
           ) : (
-            <ProfileContext.Provider value={profile}>
-              <Usuario
-                modify={modify}
-                updatingUser={updating}
-                activateEdit={() => handleActivateModifications()}
-                activateSave={() => {
-                  toggle();
-                }}
-                modifyAddress={() => {
-                  setAddress(!address);
-                }}
-              ></Usuario>
-            </ProfileContext.Provider>
+            <>
+              {errorAddress && (
+                <ResourceNotFound errorMessage="Estas intentado ingresar una direccion erronea"></ResourceNotFound>
+              )}
+              <ProfileContext.Provider value={profile}>
+                <Usuario
+                  modify={modify}
+                  updatingUser={updating}
+                  activateEdit={() => handleActivateModifications()}
+                  activateSave={() => {
+                    toggle();
+                  }}
+                  cancelSave={handleCancelModifications}
+                  modifyAddress={() => {
+                    setAddress(!address);
+                  }}
+                ></Usuario>
+              </ProfileContext.Provider>
+            </>
           )}
         </>
       )}

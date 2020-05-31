@@ -16,11 +16,22 @@ export const ButtonSave = (props) => {
   } else {
     if (!props.modify) {
       return (
-        <MultiButton
-          action={props.activateOnSave}
-          styleButton="btn btn-success btn-block"
-          type="fas fa-save fa-2x"
-        ></MultiButton>
+        <div className="row">
+          <div className="col-md-6">
+            <MultiButton
+              action={props.activateOnCancel}
+              styleButton="btn btn-info  btn-block"
+              type="fas fa-window-close fa-2x"
+            ></MultiButton>
+          </div>
+          <div className="col-md-6">
+            <MultiButton
+              action={props.activateOnSave}
+              styleButton="btn btn-success btn-block"
+              type="fas fa-save fa-2x  "
+            ></MultiButton>
+          </div>
+        </div>
       );
     } else {
       return (

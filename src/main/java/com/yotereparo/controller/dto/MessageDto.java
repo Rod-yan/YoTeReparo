@@ -1,66 +1,43 @@
-package com.yotereparo.model;
+package com.yotereparo.controller.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity
-@Table(name="mensaje")
-public class Message {
-	// Constantes de estado
-	public static final String AWAITING_RESPONSE = "ESPERANDO_RESPUESTA";
-	public static final String CLOSED = "CERRADO";
-	public static final String EXPIRED = "EXPIRADO";
-	public static final String ARCHIVED = "ARCHIVADO";
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
+public class MessageDto {
 	
-	public static final String STATUS_LIST_REGEXP =
-			AWAITING_RESPONSE + "|" +
-			CLOSED + "|" +
-			EXPIRED + "|" +
-			ARCHIVED;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_mensaje", nullable = false)
+	@JsonProperty(access = Access.READ_ONLY)
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="id_servicio", nullable=false)
-	private Service servicio;
+	@NotNull(message = "{message.servicio.not.null}")
+	private Integer servicio;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="id_usuario_final", nullable=false)
-	private User usuarioFinal;
-
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column(name = "fecha_consulta", nullable = false)
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@JsonProperty(access = Access.READ_ONLY)
+	private String usuarioFinal;
+	
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaConsulta;
 	
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column(name = "fecha_respuesta", nullable = true)
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@JsonProperty(access = Access.READ_ONLY)
 	private DateTime fechaRespuesta;
-	
+
+	@Size(max = 255, message = "{message.consulta.too.long}")
 	private String consulta;
 	
+	@Size(max = 255, message = "{message.respuesta.too.long}")
 	private String respuesta;
 	
+	@JsonProperty(access = Access.READ_ONLY)
 	private String estado;
 	
-	public Message() { }
-
-	/* Getters & Setters */
+	public MessageDto() { }
+	
+	@JsonIgnore
 	public Integer getId() {
 		return id;
 	}
@@ -69,22 +46,24 @@ public class Message {
 		this.id = id;
 	}
 
-	public Service getServicio() {
+	public Integer getServicio() {
 		return servicio;
 	}
 
-	public void setServicio(Service servicio) {
+	public void setServicio(Integer servicio) {
 		this.servicio = servicio;
 	}
-
-	public User getUsuarioFinal() {
+	
+	@JsonIgnore
+	public String getUsuarioFinal() {
 		return usuarioFinal;
 	}
 
-	public void setUsuarioFinal(User usuarioFinal) {
+	public void setUsuarioFinal(String usuarioFinal) {
 		this.usuarioFinal = usuarioFinal;
 	}
-
+	
+	@JsonIgnore
 	public DateTime getFechaConsulta() {
 		return fechaConsulta;
 	}
@@ -92,7 +71,8 @@ public class Message {
 	public void setFechaConsulta(DateTime fechaConsulta) {
 		this.fechaConsulta = fechaConsulta;
 	}
-
+	
+	@JsonIgnore
 	public DateTime getFechaRespuesta() {
 		return fechaRespuesta;
 	}
@@ -116,13 +96,28 @@ public class Message {
 	public void setRespuesta(String respuesta) {
 		this.respuesta = respuesta;
 	}
-
+	
+	@JsonIgnore
 	public String getEstado() {
 		return estado;
 	}
 
 	public void setEstado(String estado) {
 		this.estado = estado;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((consulta == null) ? 0 : consulta.hashCode());
+		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
+		result = prime * result + ((fechaConsulta == null) ? 0 : fechaConsulta.hashCode());
+		result = prime * result + ((fechaRespuesta == null) ? 0 : fechaRespuesta.hashCode());
+		result = prime * result + ((respuesta == null) ? 0 : respuesta.hashCode());
+		result = prime * result + ((servicio == null) ? 0 : servicio.hashCode());
+		result = prime * result + ((usuarioFinal == null) ? 0 : usuarioFinal.hashCode());
+		return result;
 	}
 
 	@Override
@@ -133,7 +128,7 @@ public class Message {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Message other = (Message) obj;
+		MessageDto other = (MessageDto) obj;
 		if (consulta == null) {
 			if (other.consulta != null)
 				return false;
@@ -174,7 +169,7 @@ public class Message {
 
 	@Override
 	public String toString() {
-		return "Message [id=" + id + ", servicio=" + servicio.getId() + ", usuarioFinal=" + usuarioFinal.getId() + ", fechaConsulta="
+		return "MessageDto [id=" + id + ", servicio=" + servicio + ", usuarioFinal=" + usuarioFinal + ", fechaConsulta="
 				+ fechaConsulta + ", fechaRespuesta=" + fechaRespuesta + ", consulta=" + consulta + ", respuesta="
 				+ respuesta + ", estado=" + estado + "]";
 	}

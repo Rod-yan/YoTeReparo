@@ -47,7 +47,7 @@ export const LoginHandler = ({ history }) => {
       console.log(error.response);
     }
 
-    if (result.status >= 400 && result.status <= 500) {
+    if (result?.status >= 400 && result?.status <= 500) {
       setLoadingUser(false);
       setErrors(true);
     }
@@ -57,7 +57,7 @@ export const LoginHandler = ({ history }) => {
       setErrors(true);
     }
 
-    if (result.data && result.status === 200) {
+    if (result?.data && result?.status === 200) {
       setLoadingUser(false);
       setErrors(false);
       setSessionCokie({ username: username, security: result.data });

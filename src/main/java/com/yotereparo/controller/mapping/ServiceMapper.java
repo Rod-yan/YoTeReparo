@@ -1,13 +1,16 @@
 package com.yotereparo.controller.mapping;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.yotereparo.controller.dto.MessageDto;
 import com.yotereparo.controller.dto.ServiceDto;
 import com.yotereparo.model.Contract;
+import com.yotereparo.model.Message;
 import com.yotereparo.model.Quote;
 import com.yotereparo.model.Service;
 import com.yotereparo.model.ServiceRatingEntry;
@@ -29,12 +32,13 @@ public class ServiceMapper implements Mapper<Service, ServiceDto> {
 	UserService userService;
 	@Autowired
 	ServiceTypeService serviceTypeService;
+	@Autowired 
+	MessageMapper messageMapper;
 	
 	@Override
 	public ServiceDto convertToDto(Service service) {
 		ServiceDto serviceDto = modelMapper.map(service, ServiceDto.class);
-		// Hacemos pasar cada Presupuesto por su respectivo converter
-		// para no omitir cualquier regla que se aplique en el mismo.
+		// Cálculo de la valoración del servicio
 		Set<Quote> quotes = service.getPresupuestos();
 	    if (quotes != null && !quotes.isEmpty()) {
 	    	int ratedContracts = 0;
@@ -53,6 +57,14 @@ public class ServiceMapper implements Mapper<Service, ServiceDto> {
 	    	if (ratedContracts != 0) {
 				serviceDto.setValoracionPromedio( 
 						(float) (Math.round(((float) accumulatedRating / (float) ratedContracts) * 10.0)/10.0));
+	    	}
+	    }
+	    // Hacemos pasar cada Mensaje por su respectivo converter para no omitir cualquier regla que se aplique en el mismo.
+	    Set<Message> mensajes = service.getMensajes();
+	    if (mensajes != null && !mensajes.isEmpty()) {
+	    	serviceDto.setMensajes(new HashSet<MessageDto>(0));
+	    	for (Message msg : mensajes) {
+	    		serviceDto.addMensaje(messageMapper.convertToDto(msg));
 	    	}
 	    }
 	    return serviceDto;

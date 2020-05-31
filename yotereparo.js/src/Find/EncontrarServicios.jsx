@@ -7,10 +7,12 @@ import "../Find/EncontrarServicios.css";
 import FloatCreateButton from "../Utils/FloatCreateButton";
 import { SessionContext } from "../Utils/SessionManage";
 import { Search } from "./SearchBar";
+import ResourceNotFound from "../Errors/ResourceNotFound";
 
 function EncontrarServicios(props) {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { session } = useContext(SessionContext);
 
@@ -27,15 +29,23 @@ function EncontrarServicios(props) {
 
   useEffect(() => {
     const fetchData = async (urlToFetch) => {
-      const result = await Axios(urlToFetch, requestConfig);
-      setServices(result.data);
+      try {
+        const result = await Axios(urlToFetch, requestConfig);
+        return result;
+      } catch {
+        setError(true);
+      }
     };
     try {
       fetchData("http://localhost:8080/YoTeReparo/services/").then((resp) => {
-        setLoading(false);
+        if (resp !== undefined) {
+          setLoading(false);
+          setError(false);
+          setServices(resp.data);
+        }
       });
-    } catch (error) {
-      console.log(error);
+    } catch {
+      setError(true);
     }
   }, [loading]);
 
@@ -51,8 +61,6 @@ function EncontrarServicios(props) {
     );
   });
 
-  console.log(filteredServices);
-
   const Servicios = Hoc(ListaServicios, {
     ...ServicesData,
     services: filteredServices,
@@ -63,13 +71,19 @@ function EncontrarServicios(props) {
   };
 
   return (
-    <div className="mb-5">
-      <ElementContainer>
-        <Search terms={searchTerm} onChange={handleSearchTerm} />
-        <Servicios></Servicios>
-        <FloatCreateButton></FloatCreateButton>
-      </ElementContainer>
-    </div>
+    <>
+      {errors ? (
+        <ResourceNotFound errorMessage="Hubo un error con la conexion."></ResourceNotFound>
+      ) : (
+        <div className="mb-5">
+          <ElementContainer>
+            <Search terms={searchTerm} onChange={handleSearchTerm} />
+            <Servicios></Servicios>
+            <FloatCreateButton></FloatCreateButton>
+          </ElementContainer>
+        </div>
+      )}
+    </>
   );
 }
 
