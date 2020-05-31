@@ -144,10 +144,7 @@ function App() {
               path="/prestador/presupuestos"
               render={(props) => (
                 <Container>
-                  <TablePresupuestos
-                    prestador={true}
-                    {...props}
-                  ></TablePresupuestos>
+                  <TablePresupuestos prestador={true} {...props}></TablePresupuestos>
                 </Container>
               )}
             />

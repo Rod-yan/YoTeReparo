@@ -207,7 +207,9 @@ const CrearServicio = (props) => {
       "http://localhost:8080/YoTeReparo/requirements",
       setRequerimientos
     );
+
     if (session.security.roles.length <= 1) {
+
       setAuth(false);
     } else {
       setAuth(true);
@@ -531,6 +533,7 @@ const CrearServicio = (props) => {
 return(
   <NotAuth></NotAuth>
 )
+
 };
 
 export default CrearServicio;
