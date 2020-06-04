@@ -71,7 +71,7 @@ const FormRegistro = (props) => {
 
   //For the cities and the API
   useEffect(() => {
-    fetchData(`http://localhost:8080/YoTeReparo/cities`, (citiesData) => {
+    fetchData(`/YoTeReparo/cities`, (citiesData) => {
       if (citiesData != null) {
         citiesData.forEach((city) => {
           setCities((cities) => [
@@ -136,11 +136,7 @@ const FormRegistro = (props) => {
       },
     };
 
-    Axios.post(
-      "http://localhost:8080/YoTeReparo/auth/signup",
-      requestData,
-      requestConfig
-    )
+    Axios.post("/YoTeReparo/auth/signup", requestData, requestConfig)
       .then((response) => {
         console.log(response.status);
         if (response.status === 400) {
@@ -166,29 +162,26 @@ const FormRegistro = (props) => {
     setAccount({ ...account, [event.target.name]: event.target.value });
 
     if (event.target.name === "ciudad" && isFormEmpleador) {
-      fetchData(
-        `http://localhost:8080/YoTeReparo/cities/${account.ciudad}`,
-        (data) => {
-          let barriosXciudad = [];
+      fetchData(`/YoTeReparo/cities/${account.ciudad}`, (data) => {
+        let barriosXciudad = [];
 
-          data.barrios.forEach((barrio) => {
-            barriosXciudad.push({
-              id: barrio.id,
-              descripcion: barrio.descripcion,
-              codigoPostal: barrio.codigoPostal,
-            });
+        data.barrios.forEach((barrio) => {
+          barriosXciudad.push({
+            id: barrio.id,
+            descripcion: barrio.descripcion,
+            codigoPostal: barrio.codigoPostal,
           });
+        });
 
-          barriosXciudad.length > 0 ? toggleHoods(false) : toggleHoods(true);
+        barriosXciudad.length > 0 ? toggleHoods(false) : toggleHoods(true);
 
-          if (barriosXciudad.length > 0) {
-            account["barrios"] = barriosXciudad[0].id;
-          } else {
-          }
-
-          setHoods(barriosXciudad);
+        if (barriosXciudad.length > 0) {
+          account["barrios"] = barriosXciudad[0].id;
+        } else {
         }
-      );
+
+        setHoods(barriosXciudad);
+      });
     }
 
     if (event.target.name === "barrios") {

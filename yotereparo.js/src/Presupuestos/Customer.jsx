@@ -15,7 +15,7 @@ function Customer(props) {
   const toggle = () => setTooltipOpen(!tooltipOpen);
 
   useEffect(() => {
-    fetchData("http://localhost:8080/YoTeReparo/services", setServices);
+    fetchData("/YoTeReparo/services", setServices);
   }, []);
 
   return (

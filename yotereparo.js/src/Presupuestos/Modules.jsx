@@ -119,7 +119,7 @@ export function Acceptance(props) {
 
   useEffect(() => {
     fetchData(
-      `http://localhost:8080/YoTeReparo/services/${presupuestosContextGet.id}`,
+      `/YoTeReparo/services/${presupuestosContextGet.id}`,
       setServiceFromData
     );
   }, []);
@@ -142,10 +142,7 @@ export function Acceptance(props) {
         });
     }
 
-    result(
-      `http://localhost:8080/YoTeReparo/users/${session.username}`,
-      requestConfig
-    );
+    result(`/YoTeReparo/users/${session.username}`, requestConfig);
   }, []);
 
   const handleSubmit = () => {
@@ -204,7 +201,7 @@ export function Acceptance(props) {
   };
 
   const sendQuote = (object, config) => {
-    Axios.post("http://localhost:8080/YoTeReparo/quotes/", object, config)
+    Axios.post("/YoTeReparo/quotes/", object, config)
       .then((response) => {
         if (response.status === 400) {
           console.log(response.data);

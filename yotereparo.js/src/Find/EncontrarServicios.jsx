@@ -37,7 +37,7 @@ function EncontrarServicios(props) {
       }
     };
     try {
-      fetchData("http://localhost:8080/YoTeReparo/services/").then((resp) => {
+      fetchData("/YoTeReparo/services/").then((resp) => {
         if (resp !== undefined) {
           setLoading(false);
           setError(false);

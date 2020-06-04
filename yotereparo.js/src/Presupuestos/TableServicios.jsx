@@ -41,9 +41,7 @@ function TableServicios(props) {
       } else {
         setAuth(true);
       }
-      fetchData(
-        `http://localhost:8080/YoTeReparo/services?user=${session.username}`
-      );
+      fetchData(`/YoTeReparo/services?user=${session.username}`);
     } catch (error) {
       console.log(error.response);
     }

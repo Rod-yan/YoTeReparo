@@ -80,10 +80,7 @@ function Usuario(props) {
 
   useEffect(() => {
     const fetchData = () => {
-      Axios.get(
-        `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
-        requestConfig
-      )
+      Axios.get(`/YoTeReparo/users/${profile.id}/photo`, requestConfig)
         .then((response) => {
           if (response.status === 400) {
             setUserPicture(
@@ -91,7 +88,7 @@ function Usuario(props) {
             );
           } else {
             toDataURL(
-              `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
+              `/YoTeReparo/users/${profile.id}/photo`,
               requestConfig
             ).then((dataUrl) => {
               setUserPicture(dataUrl);
@@ -125,7 +122,7 @@ function Usuario(props) {
       };
 
       Axios.put(
-        `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
+        `/YoTeReparo/users/${profile.id}/photo`,
         requestPhoto,
         requestConfig
       )
@@ -135,7 +132,7 @@ function Usuario(props) {
           } else {
             console.log("Imagen subida correctamente");
             toDataURL(
-              `http://localhost:8080/YoTeReparo/users/${profile.id}/photo`,
+              `/YoTeReparo/users/${profile.id}/photo`,
               requestConfig
             ).then((dataUrl) => {
               setUserPicture(dataUrl);

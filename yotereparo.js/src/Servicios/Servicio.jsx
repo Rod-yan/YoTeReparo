@@ -55,27 +55,27 @@ const Servicio = (props) => {
           });
         return result;
       };
-      fetchData(
-        `http://localhost:8080/YoTeReparo/services/${props.match.params.id}`
-      ).then((resp) => {
-        setLoading(false);
-        if (resp.response != null) {
-          setErrors(resp.response.data);
-        } else {
-          console.log(resp.data);
-          setProperties({
-            body: resp.data.descripcion,
-            title: resp.data.titulo,
-            provider: resp.data.usuarioPrestador,
-            avaliable: resp.data.disponibilidad,
-            estimateTime: resp.data.horasEstimadasEjecucion,
-            averagePrice: resp.data.precioPromedio,
-            id: resp.data.id,
-            valoracionPromedio: resp.data.valoracionPromedio,
-            mensajes: resp.data.mensajes,
-          });
+      fetchData(`/YoTeReparo/services/${props.match.params.id}`).then(
+        (resp) => {
+          setLoading(false);
+          if (resp.response != null) {
+            setErrors(resp.response.data);
+          } else {
+            console.log(resp.data);
+            setProperties({
+              body: resp.data.descripcion,
+              title: resp.data.titulo,
+              provider: resp.data.usuarioPrestador,
+              avaliable: resp.data.disponibilidad,
+              estimateTime: resp.data.horasEstimadasEjecucion,
+              averagePrice: resp.data.precioPromedio,
+              id: resp.data.id,
+              valoracionPromedio: resp.data.valoracionPromedio,
+              mensajes: resp.data.mensajes,
+            });
+          }
         }
-      });
+      );
     }
   }, [location, props.match.params.id, session]); //if a loop is here check this session variable
 

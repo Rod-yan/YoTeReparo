@@ -37,7 +37,7 @@ function TablePresupuestos(props) {
   //From the customer
   const rejectQuote = (idQuote) => {
     putData(
-      `http://localhost:8080/YoTeReparo/quotes/${idQuote}/reject`,
+      `/YoTeReparo/quotes/${idQuote}/reject`,
       requestConfig,
       callbackToRender
     );
@@ -46,7 +46,7 @@ function TablePresupuestos(props) {
   //From the customer
   const acceptQuote = (idQuote) => {
     putData(
-      `http://localhost:8080/YoTeReparo/quotes/${idQuote}/accept`,
+      `/YoTeReparo/quotes/${idQuote}/accept`,
       requestConfig,
       callbackToRender
     );
@@ -106,7 +106,7 @@ function TablePresupuestos(props) {
     }
 
     putData(
-      `http://localhost:8080/YoTeReparo/quotes/${quote.id}`,
+      `/YoTeReparo/quotes/${quote.id}`,
       requestConfig,
       callbackToRender,
       requestObject
@@ -118,10 +118,7 @@ function TablePresupuestos(props) {
   const showContract = (quoteId, isProvider) => {
     setContractModal(true);
     setIsProviderForContract(isProvider);
-    fetchData(
-      `http://localhost:8080/YoTeReparo/contracts/${quoteId}`,
-      setContrato
-    );
+    fetchData(`/YoTeReparo/contracts/${quoteId}`, setContrato);
   };
 
   const onQuoteChange = (event) => {
@@ -148,7 +145,7 @@ function TablePresupuestos(props) {
   //From the provider
   const archiveQuote = (idQuote) => {
     putData(
-      `http://localhost:8080/YoTeReparo/quotes/${idQuote}/archive`,
+      `/YoTeReparo/quotes/${idQuote}/archive`,
       requestConfig,
       callbackToRender
     );
@@ -156,7 +153,7 @@ function TablePresupuestos(props) {
 
   const rateContract = (idContract, rateObject) => {
     putData(
-      `http://localhost:8080/YoTeReparo/contracts/${idContract}`,
+      `/YoTeReparo/contracts/${idContract}`,
       requestConfig,
       callbackToRender,
       rateObject
@@ -165,7 +162,7 @@ function TablePresupuestos(props) {
 
   const cancelContract = (idContract) => {
     putData(
-      `http://localhost:8080/YoTeReparo/contracts/${idContract}/cancel`,
+      `/YoTeReparo/contracts/${idContract}/cancel`,
       requestConfig,
       callbackToRender
     );
@@ -174,7 +171,7 @@ function TablePresupuestos(props) {
 
   const finalizeContract = (idContract) => {
     putData(
-      `http://localhost:8080/YoTeReparo/contracts/${idContract}/finish`,
+      `/YoTeReparo/contracts/${idContract}/finish`,
       requestConfig,
       callbackToRender
     );
@@ -194,15 +191,9 @@ function TablePresupuestos(props) {
   useEffect(() => {
     try {
       if (props.prestador === true || location.state?.prestador === true) {
-        fetchData(
-          `http://localhost:8080/YoTeReparo/quotes?userRole=provider`,
-          setTableDataProvider
-        );
+        fetchData(`/YoTeReparo/quotes?userRole=provider`, setTableDataProvider);
       }
-      fetchData(
-        `http://localhost:8080/YoTeReparo/quotes?userRole=customer`,
-        setTableDataCustomer
-      );
+      fetchData(`/YoTeReparo/quotes?userRole=customer`, setTableDataCustomer);
     } catch (error) {
       console.log(error.response);
     }

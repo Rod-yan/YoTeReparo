@@ -29,7 +29,7 @@ export const LoginHandler = ({ history }) => {
     try {
       setLoadingUser(true);
       await Axios.post(
-        `http://localhost:8080/YoTeReparo/auth/signin`,
+        `/YoTeReparo/auth/signin`,
         {
           username: username,
           password: password,

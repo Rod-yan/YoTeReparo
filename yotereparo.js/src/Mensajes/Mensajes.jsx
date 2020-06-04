@@ -41,11 +41,7 @@ function Mensajes(props) {
   const CreateMensaje = (mensaje) => {
     ResetTextArea();
     setLoading(true);
-    Axios.post(
-      "http://localhost:8080/YoTeReparo/messages",
-      mensaje,
-      requestConfig
-    )
+    Axios.post("/YoTeReparo/messages", mensaje, requestConfig)
       .then((response) => {
         if (response.status === 400) {
           console.log(response.json);
@@ -64,11 +60,7 @@ function Mensajes(props) {
     var temp = mensajes.filter((x) => x.id == idPregunta);
     temp[0].state = "loading";
 
-    Axios.put(
-      `http://localhost:8080/YoTeReparo/messages/${idPregunta}`,
-      respuesta,
-      requestConfig
-    )
+    Axios.put(`/YoTeReparo/messages/${idPregunta}`, respuesta, requestConfig)
       .then((response) => {
         if (response.status === 400) {
           console.log(response.json);
@@ -134,9 +126,7 @@ function Mensajes(props) {
         });
       return result;
     };
-    fetchData(
-      `http://localhost:8080/YoTeReparo/services/${props.contentService}`
-    ).then((resp) => {
+    fetchData(`/YoTeReparo/services/${props.contentService}`).then((resp) => {
       if (resp.response != null) {
       } else {
         var mensajesWithState = [];

@@ -70,7 +70,7 @@ function PerfilUsuario(props) {
     let result;
     try {
       await Axios.post(
-        `http://localhost:8080/YoTeReparo/auth/signin`,
+        `/YoTeReparo/auth/signin`,
         {
           username: toLower(profile.id),
           password: password,
@@ -146,11 +146,7 @@ function PerfilUsuario(props) {
 
     setUpdating(true);
 
-    Axios.put(
-      `http://localhost:8080/YoTeReparo/users/${profile.id}`,
-      requestData,
-      requestConfig
-    )
+    Axios.put(`/YoTeReparo/users/${profile.id}`, requestData, requestConfig)
       .then((response) => {
         if (response.status === 400) {
           console.log(response.json);
@@ -223,9 +219,7 @@ function PerfilUsuario(props) {
       }
     };
     try {
-      fetchData(
-        `http://localhost:8080/YoTeReparo/users/${props.match.params.userId}`
-      ).then(() => {
+      fetchData(`/YoTeReparo/users/${props.match.params.userId}`).then(() => {
         setLoading(false);
       });
     } catch (error) {
