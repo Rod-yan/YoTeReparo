@@ -195,68 +195,52 @@ function TablePresupuestos(props) {
       if (props.prestador === true || location.state?.prestador === true) {
         fetchData(`/YoTeReparo/quotes?userRole=provider`, setTableDataProvider);
       }
-<<<<<<< HEAD
       fetchData(`/YoTeReparo/quotes?userRole=customer`, setTableDataCustomer);
-=======
-      fetchData(
-        `http://localhost:8080/YoTeReparo/quotes?userRole=customer`,
-        setTableDataCustomer
-      );
-      if (session.security.roles.length <= 0) {
-        setAuth(false);
-      } else {
-        setAuth(true);
-      }
->>>>>>> b0ee2e305b0ef6fb29cb2d38d4d130ed30991906
     } catch (error) {
       console.log(error.response);
     }
   }, [session.username, props.match.params.userId, loading]);
 
-  if (auth){
-  return (
-    <>
-      <ModalRespuesta
-        responseQuoteModal={quoteModal}
-        openResponseModel={toggleQuoteModal}
-        sendResponseQuote={sendResponseQuote}
-        onQuoteChange={onQuoteChange}
-        dataQuote={quote}
-      />
-      <ModalContrato
-        isOpen={contractModal}
-        cancelModal={handleContractModal}
-        contrato={contrato}
-        finalizeContract={finalizeContract}
-        isProvider={isProviderForContract}
-        cancelContract={cancelContract}
-        rateContract={rateContract}
-      />
-      <Customer
-        acceptQuote={acceptQuote}
-        rejectQuote={rejectQuote}
-        showContract={showContract}
-        tableDataCustomer={tableDataCustomer}
-      ></Customer>
-      {props.prestador === true || location.state?.prestador === true ? (
-        <Provider
-          responseQuote={responseQuote}
-          archiveQuote={archiveQuote}
+  if (auth) {
+    return (
+      <>
+        <ModalRespuesta
+          responseQuoteModal={quoteModal}
+          openResponseModel={toggleQuoteModal}
+          sendResponseQuote={sendResponseQuote}
+          onQuoteChange={onQuoteChange}
+          dataQuote={quote}
+        />
+        <ModalContrato
+          isOpen={contractModal}
+          cancelModal={handleContractModal}
+          contrato={contrato}
+          finalizeContract={finalizeContract}
+          isProvider={isProviderForContract}
+          cancelContract={cancelContract}
+          rateContract={rateContract}
+        />
+        <Customer
+          acceptQuote={acceptQuote}
           rejectQuote={rejectQuote}
           showContract={showContract}
-          tableDataProvider={tableDataProvider}
-        ></Provider>
-      ) : (
-        <></>
-      )}
-    </>
-  );
+          tableDataCustomer={tableDataCustomer}
+        ></Customer>
+        {props.prestador === true || location.state?.prestador === true ? (
+          <Provider
+            responseQuote={responseQuote}
+            archiveQuote={archiveQuote}
+            rejectQuote={rejectQuote}
+            showContract={showContract}
+            tableDataProvider={tableDataProvider}
+          ></Provider>
+        ) : (
+          <></>
+        )}
+      </>
+    );
   }
-  return(
-    <NotAuth></NotAuth>
-  )
+  return <NotAuth></NotAuth>;
 }
-
-
 
 export default TablePresupuestos;
