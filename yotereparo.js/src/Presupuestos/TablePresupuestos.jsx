@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 import { putData } from "../Utils/SessionHandlers";
 import ModalRespuesta from "./ModalRespuesta";
 import ModalContrato from "../Contratos/ModalContrato";
+import NotAuth from "../Errors/NotAuth";
 
 function TablePresupuestos(props) {
   const { session } = useContext(SessionContext);
@@ -22,6 +23,7 @@ function TablePresupuestos(props) {
   const [quote, setQuote] = useState({});
   const [modelResponseQuote, setModelResponseQuote] = useState({});
   const [contrato, setContrato] = useState({});
+  const [auth, setAuth] = useState(false);
 
   let requestConfig = {
     headers: {
@@ -193,12 +195,25 @@ function TablePresupuestos(props) {
       if (props.prestador === true || location.state?.prestador === true) {
         fetchData(`/YoTeReparo/quotes?userRole=provider`, setTableDataProvider);
       }
+<<<<<<< HEAD
       fetchData(`/YoTeReparo/quotes?userRole=customer`, setTableDataCustomer);
+=======
+      fetchData(
+        `http://localhost:8080/YoTeReparo/quotes?userRole=customer`,
+        setTableDataCustomer
+      );
+      if (session.security.roles.length <= 0) {
+        setAuth(false);
+      } else {
+        setAuth(true);
+      }
+>>>>>>> b0ee2e305b0ef6fb29cb2d38d4d130ed30991906
     } catch (error) {
       console.log(error.response);
     }
   }, [session.username, props.match.params.userId, loading]);
 
+  if (auth){
   return (
     <>
       <ModalRespuesta
@@ -236,6 +251,12 @@ function TablePresupuestos(props) {
       )}
     </>
   );
+  }
+  return(
+    <NotAuth></NotAuth>
+  )
 }
+
+
 
 export default TablePresupuestos;
