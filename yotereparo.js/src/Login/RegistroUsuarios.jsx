@@ -103,7 +103,10 @@ const FormRegistro = (props) => {
     let requestData = {};
 
     if (isFormEmpleador) {
-      let barriosSelected = intersect(hoods, account.barrios);
+      var barriosSelected = [];
+      if (account.barrios.length > 0) {
+        barriosSelected = intersect(hoods, account.barrios);
+      }
 
       requestData = {
         id: account.id,
@@ -121,7 +124,7 @@ const FormRegistro = (props) => {
         id: account.id,
         nombre: account.nombre,
         apellido: account.apellido,
-        ciudad: account.ciudad,        
+        ciudad: account.ciudad,
         direcciones: [direccion],
         email: account.email,
         contrasena: account.password,
@@ -300,109 +303,109 @@ const FormRegistro = (props) => {
               </FormGroup>
 
               <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                    <div className="row">
-                      <div className="col-md-6">
-                        <Label
-                          for="direccionLabelCalle"
-                          className="mr-sm-2 font-weight-bold"
-                        >
-                          CALLE
-                        </Label>
-                        <Input
-                          type="text"
-                          name="calle"
-                          id="calle"
-                          onChange={(e) => {
-                            setDireccion({
-                              ...direccion,
-                              [e.target.name]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        {" "}
-                        <Label
-                          for="direccionLabelaltura"
-                          className="mr-sm-2 font-weight-bold"
-                        >
-                          ALTURA
-                        </Label>
-                        <Input
-                          type="number"
-                          name="altura"
-                          id="altura"
-                          onChange={(e) => {
-                            setDireccion({
-                              ...direccion,
-                              [e.target.name]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>                      
-                      <div className="col-md-2">
-                        <Label
-                          for="direccionLabelPiso"
-                          className="mr-sm-2 font-weight-bold"
-                        >
-                          PISO
-                        </Label>
-                        <Input
-                          type="text"
-                          name="piso"
-                          id="piso"
-                          onChange={(e) => {
-                            setDireccion({
-                              ...direccion,
-                              [e.target.name]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>
-                      <div className="col-md-2">
-                        {" "}
-                        <Label
-                          for="direccionLabeldepartamento"
-                          className="mr-sm-2 font-weight-bold"
-                        >
-                          DEPARTAMENTO
-                        </Label>
-                        <Input
-                          type="text"
-                          name="departamento"
-                          id="departamento"
-                          onChange={(e) => {
-                            setDireccion({
-                              ...direccion,
-                              [e.target.name]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-12 mt-2">
-                        {" "}
-                        <Label
-                          for="direccionLabeldescripcion"
-                          className="mr-sm-2 font-weight-bold"
-                        >
-                          DESCRIPCION DIRECCIÓN
-                        </Label>
-                        <Input
-                          type="text"
-                          name="descripcion"
-                          id="descripcion"
-                          onChange={(e) => {
-                            setDireccion({
-                              ...direccion,
-                              [e.target.name]: e.target.value,
-                            });
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </FormGroup>              
+                <div className="row">
+                  <div className="col-md-6">
+                    <Label
+                      for="direccionLabelCalle"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      CALLE
+                    </Label>
+                    <Input
+                      type="text"
+                      name="calle"
+                      id="calle"
+                      onChange={(e) => {
+                        setDireccion({
+                          ...direccion,
+                          [e.target.name]: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    {" "}
+                    <Label
+                      for="direccionLabelaltura"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      ALTURA
+                    </Label>
+                    <Input
+                      type="number"
+                      name="altura"
+                      id="altura"
+                      onChange={(e) => {
+                        setDireccion({
+                          ...direccion,
+                          [e.target.name]: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    <Label
+                      for="direccionLabelPiso"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      PISO
+                    </Label>
+                    <Input
+                      type="text"
+                      name="piso"
+                      id="piso"
+                      onChange={(e) => {
+                        setDireccion({
+                          ...direccion,
+                          [e.target.name]: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="col-md-2">
+                    {" "}
+                    <Label
+                      for="direccionLabeldepartamento"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      DEPARTAMENTO
+                    </Label>
+                    <Input
+                      type="text"
+                      name="departamento"
+                      id="departamento"
+                      onChange={(e) => {
+                        setDireccion({
+                          ...direccion,
+                          [e.target.name]: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12 mt-2">
+                    {" "}
+                    <Label
+                      for="direccionLabeldescripcion"
+                      className="mr-sm-2 font-weight-bold"
+                    >
+                      DESCRIPCION DIRECCIÓN
+                    </Label>
+                    <Input
+                      type="text"
+                      name="descripcion"
+                      id="descripcion"
+                      onChange={(e) => {
+                        setDireccion({
+                          ...direccion,
+                          [e.target.name]: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </FormGroup>
               {isFormEmpleador ? (
                 <>
                   <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
