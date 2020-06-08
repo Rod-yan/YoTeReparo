@@ -20,6 +20,7 @@ import { deleteSessionCookie } from "../Utils/SessionManage";
 import { processErrors } from "../Utils/Errors";
 import { intersect } from "../Utils/ArrayUtils";
 import Errors from "../Errors/Errors";
+import { useRef } from "react";
 
 const FormRegistro = (props) => {
   let isFormEmpleador = props.type === "empleador" ? true : false;
@@ -220,6 +221,28 @@ const FormRegistro = (props) => {
     }
   };
 
+  const clearAll = () => {
+    var elements = document.getElementsByTagName("input");
+
+    for (var ii = 0; ii < elements.length; ii++) {
+      if (elements[ii].type === "text") {
+        elements[ii].value = "";
+      } else if (elements[ii].type === "number") {
+        elements[ii].value = 0;
+      }
+    }
+
+  };
+
+  const refBarrios = useRef([React.createRef()]);
+
+  const clearBarrios = () => {
+    var elements = refBarrios.current.options;
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].selected = false;
+    }
+  };
+
   return (
     <div className="registercentered card-center-form">
       <div className="row">
@@ -228,10 +251,13 @@ const FormRegistro = (props) => {
             <div className="text-center">
               <div className="lead mb-2">
                 {isFormEmpleador ? (
-                  <strong>REGISTRARSE COMO PRESTADOR</strong>
+                  <strong>REGISTRARSE COMO PRESTADOR </strong>
                 ) : (
-                  <strong>REGISTRARSE COMO CLIENTE</strong>
+                  <strong>REGISTRARSE COMO CLIENTE </strong>
                 )}
+                <Button size="sm" color="info" onClick={clearAll}>
+                   Limpiar Seleccion
+                </Button>                
               </div>
             </div>
             <Errors formErrors={formErrors}></Errors>
@@ -412,16 +438,31 @@ const FormRegistro = (props) => {
                   </FormGroup>              
               {isFormEmpleador ? (
                 <>
-                  <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                    <Label
-                      for="ciudadLabel"
-                      className="mr-sm-2 font-weight-bold"
-                    >
+                <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
+                <div className="row">
+                  <div className="col-6">
+                    <div className="float-left">
+                    <Label for="ciudadLabel" className="mr-sm-2 font-weight-bold">
                       BARRIOS EN LOS QUE PRESTAS SERVICIO
                     </Label>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <div className="float-right">
+                      <Button
+                        size="sm"
+                        color="link"
+                        onClick={clearBarrios}
+                      >
+                        Limpiar Seleccion
+                      </Button>
+                      </div>
+                  </div>
+                </div>                   
                     <Input
                       multiple={isFormEmpleador}
                       type="select"
+                      innerRef={refBarrios}
                       name="barrios"
                       id="barriosLabel"
                       onChange={(e) => {
