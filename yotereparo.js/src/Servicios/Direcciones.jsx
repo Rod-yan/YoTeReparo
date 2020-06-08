@@ -80,9 +80,6 @@ function Direcciones(props) {
                     fieldActivate={props.addressModify}
                     fieldChange={props.onChangeNewAddress}
                     fieldId={"calle"}
-                    type="number"
-                    max={9999}
-                    min={0}
                   ></InputField>
                   <InputField
                     fieldTitle="Altura"
