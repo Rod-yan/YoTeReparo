@@ -196,6 +196,11 @@ function TablePresupuestos(props) {
         fetchData(`/YoTeReparo/quotes?userRole=provider`, setTableDataProvider);
       }
       fetchData(`/YoTeReparo/quotes?userRole=customer`, setTableDataCustomer);
+      if (session.security.roles.length <= 0) {
+        setAuth(false);
+      } else {
+        setAuth(true);
+      }
     } catch (error) {
       console.log(error.response);
     }
