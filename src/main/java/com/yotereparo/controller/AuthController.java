@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.HeadersBuilder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -65,6 +66,7 @@ public class AuthController {
 			method = RequestMethod.POST)
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 		logger.info("AuthenticateUser - POST - Processing request for user <{}>.", loginRequest.getUsername());
+		ResponseEntity<?> response = ResponseEntity.noContent().build();
 		try {
 			User user = userService.getUserById(loginRequest.getUsername());
 			if (user != null) {
@@ -91,7 +93,7 @@ public class AuthController {
 							
 							logger.info("AuthenticateUser - POST - Successful Authentication for user <{}>.", 
 									loginRequest.getUsername());
-							return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), roles));
+							response = ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), roles));
 						}
 						catch (BadCredentialsException e) {
 							// Si el usuario se autenticó incorrectamente, registramos este evento.
@@ -100,21 +102,21 @@ public class AuthController {
 							logger.warn("AuthenticateUser - POST - Request failed - Bad credentials.");
 							FieldError error = new FieldError("Authentication","error",
 									messageSource.getMessage("bad.credentials", null, Locale.getDefault()));
-							return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+							response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(miscUtils.getFormatedResponseError(error));
 						}
 					}
 					else {
 						logger.warn("AuthenticateUser - POST - Request failed - User is not an active user.");
 						FieldError error = new FieldError("Authentication","error",
 								messageSource.getMessage("user.not.active", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
-						return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+						response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(miscUtils.getFormatedResponseError(error));
 					}
 				}
 				else {
 					logger.warn("AuthenticateUser - POST - Request failed - Password is expired.");
 					FieldError error = new FieldError("Authentication","error",
 							messageSource.getMessage("user.password.expired", null, Locale.getDefault()));
-					return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.UNAUTHORIZED);
+					response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(miscUtils.getFormatedResponseError(error));
 				}
 			}
 			else {
@@ -122,14 +124,16 @@ public class AuthController {
 						loginRequest.getUsername());
 				FieldError error = new FieldError("Authentication","error",
 						messageSource.getMessage("user.doesnt.exist", new String[]{loginRequest.getUsername()}, Locale.getDefault()));
-				return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.NOT_FOUND);
+				response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(miscUtils.getFormatedResponseError(error));
 			}
 		}
 		catch (Exception e) {
 			logger.error("AuthenticateUser - POST - Request failed - Error procesing request: ", e);
 			FieldError error = new FieldError("Authentication","error",
 					messageSource.getMessage("server.error", null, Locale.getDefault()));
-			return new ResponseEntity<>(miscUtils.getFormatedResponseError(error), HttpStatus.INTERNAL_SERVER_ERROR);
+			response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(miscUtils.getFormatedResponseError(error));
 		}
+		
+		return response;
 	}
 }
