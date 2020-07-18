@@ -268,7 +268,7 @@ public class UserServiceImpl implements UserService {
 		if (user.getMembresia() != null) {
 			user.getBarrios().removeAll(cityService.getInvalidDistricts(user.getCiudad(), user.getBarrios()));
 			if (user.getBarrios().isEmpty()) {
-				logger.debug("User district: user districts can't be emptied - user is of type PRESTADOR (not null membership).");
+				logger.debug("User district: there's no valid districts in the request, user must select districts from selected city.");
 				throw new CustomResponseError("User","barrios",
 						messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
 			}
