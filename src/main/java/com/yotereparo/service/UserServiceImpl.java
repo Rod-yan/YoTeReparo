@@ -255,9 +255,11 @@ public class UserServiceImpl implements UserService {
 		if (entity.getDirecciones().size() == 0 
 		 && user.getMembresia() != null 
 		 && (user.getServicios() != null 
-		 && user.getServicios().size() != 0))
+		 && user.getServicios().size() != 0)) {
+			logger.debug("User address: user addresses can't be emptied if the user has registered services.");
 			throw new CustomResponseError("User","direcciones",
 					messageSource.getMessage("user.direcciones.not.empty", null, Locale.getDefault()));
+		}
 		
 		/* Si el usuario es prestador (su membresía no es nula), validamos y procesamos los barrios, de lo contrario
 		 * descartamos los barrios del usuario.
@@ -265,7 +267,8 @@ public class UserServiceImpl implements UserService {
 		 */
 		if (user.getMembresia() != null) {
 			user.getBarrios().removeAll(cityService.getInvalidDistricts(user.getCiudad(), user.getBarrios()));
-			if (user.getBarrios().size() == 0) {
+			if (user.getBarrios().isEmpty()) {
+				logger.debug("User district: user districts can't be emptied - user is of type PRESTADOR (not null membership).");
 				throw new CustomResponseError("User","barrios",
 						messageSource.getMessage("user.barrios.not.empty", null, Locale.getDefault()));
 			}
@@ -276,7 +279,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		else {
-			if (entity.getBarrios().size() != 0) {
+			if (!entity.getBarrios().isEmpty()) {
 				logger.debug("Clearing all districts from user <{}>", user.getId());
 				entity.getBarrios().clear();
 			}
@@ -327,14 +330,18 @@ public class UserServiceImpl implements UserService {
 					user.setEstado(User.ACTIVE);
 				}
 			}
-			else
+			else {
+				logger.debug("User password: new password can't be the same as old password.");
 				throw new CustomResponseError("User","contrasena",
 						messageSource.getMessage("user.contrasena.must.be.different.from.current",
 								null, Locale.getDefault()));
+			}
 		}
-		else
+		else {
+			logger.debug("User password: password does not match.");
 			throw new CustomResponseError("User","contrasena",
 					messageSource.getMessage("user.contrasena.not.equals.current", null, Locale.getDefault()));
+		}
 	}
 	
 	public void registerSuccessfulLoginAttempt(User user) {
