@@ -187,6 +187,7 @@ function Usuario(props) {
                                     handleChange={handleChange}
                                     modify={props.modify}
                                     modifyAddress={props.modifyAddress}
+                                    modifyMembership={props.modifyMembership}                                    
                                     activateSave={props.activateSave}
                                     activateEdit={props.activateEdit}
                                     activateCancel={props.cancelSave}

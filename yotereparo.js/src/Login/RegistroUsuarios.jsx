@@ -102,13 +102,12 @@ const FormRegistro = (props) => {
     setIsCreatingUser(true);
 
     let requestData = {};
+    var barriosSelected = [];
+    if (account.barrios.length > 0) {
+      barriosSelected = intersect(hoods, account.barrios);
+    }
 
     if (isFormEmpleador) {
-      var barriosSelected = [];
-      if (account.barrios.length > 0) {
-        barriosSelected = intersect(hoods, account.barrios);
-      }
-
       requestData = {
         id: account.id,
         nombre: account.nombre,
@@ -166,7 +165,7 @@ const FormRegistro = (props) => {
 
     setAccount({ ...account, [event.target.name]: event.target.value });
 
-    if (event.target.name === "ciudad" && isFormEmpleador) {
+    if (event.target.name === "ciudad") {
       fetchData(`/YoTeReparo/cities/${account.ciudad}`, (data) => {
         let barriosXciudad = [];
 
@@ -579,7 +578,7 @@ const FormRegistro = (props) => {
               <div className="text-center">
                 <Button color="primary" size="lg" block className="mt-4">
                   {!isCreatingUser ? (
-                    "INGRESAR"
+                    "REGISTRATE"
                   ) : (
                     <div className="spinner-border" role="status">
                       <span className="sr-only">Creando Usuario...</span>

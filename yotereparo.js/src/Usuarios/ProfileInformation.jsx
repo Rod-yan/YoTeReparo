@@ -68,10 +68,25 @@ function ProfileInformation(props) {
           <button
             type="button"
             className="btn btn-success btn-block mt-2"
-            onClick={props.modifyAddress}
-          >
+            onClick={props.modifyAddress}>
             DIRECCIONES
           </button>
+        </div>
+        <div className="text-center">
+        {props.profile.membresia ? (
+            <button
+              type="button"
+              className="btn btn-success btn-block mt-2"
+              onClick={props.modifyMembership}>
+              GESTION DE MEMBRESIA
+            </button>) : (
+            <button
+              type="button"
+              className="btn btn-success btn-block mt-2"
+              onClick={props.modifyMembership}>
+              CONVIERTETE EN PRESTADOR
+            </button>)
+        }
         </div>
       </div>
     </>

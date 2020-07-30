@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import Loading from "../Loading/Loading";
 import NotAuth from "../Errors/NotAuth";
 import Direcciones from "../Servicios/Direcciones";
+import Membresia from "./Membresia"; 
 import ConfirmPassword from "./ConfirmPassword";
 import ResourceNotFound from "../Errors/ResourceNotFound";
 import { useRef } from "react";
@@ -16,6 +17,9 @@ import { useRef } from "react";
 const toLower = (text) => {
   return text.toLowerCase();
 };
+
+var newMembership = null;
+var b = 0;
 
 function PerfilUsuario(props) {
   const history = useHistory();
@@ -31,6 +35,8 @@ function PerfilUsuario(props) {
   const [errors, setErrors] = useState(false);
   const [errorAddress, setAddressError] = useState(false);
   const [modifyAddressFields, setModifyAddress] = useState(true);
+  const [modifyMembership, setmodifyMembership] = useState(true);
+  const [membership, setMembership] = useState(false);
 
   const [newAddress, setNewAddress] = useState({
     calle: 0,
@@ -40,8 +46,37 @@ function PerfilUsuario(props) {
     descripcion: "No definido",
   });
 
+  const [newBarrio] = useState([{
+    id: 37,
+    descripcion: "Alberto Olmedo",
+    codigoPostal: 2000
+  }]);
+
   const onChangeNewAddress = (event) => {
     setNewAddress({ ...newAddress, [event.target.id]: event.target.value });
+  };
+
+  const onChangeMembresia = (event) => {
+    switch (event.target.value) {
+      case "2":
+        newMembership = "GRATUITA";
+        b = 1;
+        break;
+      case "3":
+        newMembership = "PLATA";
+        b = 1;
+        break;
+      case "4":
+        newMembership = "ORO";
+        b = 1;
+        break;
+      default:
+        newMembership = null
+        b = 2;
+        break;
+    }
+    console.log("INFO: Membresia:", newMembership);
+    console.log("INFO: Barrio:", newBarrio);
   };
 
   const toggle = () => {
@@ -52,6 +87,10 @@ function PerfilUsuario(props) {
   const toggleAddress = () => {
     setAddressError(false);
     setAddress(!address);
+  };
+
+  const toggleMembership = () => {
+    setMembership(!membership);
   };
 
   if (!session.security) {
@@ -99,6 +138,7 @@ function PerfilUsuario(props) {
     if (result.data && result.status === 200) {
       updateProfile();
       activateModify(true);
+      setmodifyMembership(true);
       setModifyAddress(true);
       setAddress(false);
       toggle();
@@ -107,13 +147,19 @@ function PerfilUsuario(props) {
     }
   };
 
+
+
   const updateProfile = () => {
+    console.log("INFO: Membresia:", newMembership, profile.membresia);
     let requestDataPrestador = {
       id: profile.id,
       nombre: profile.nombre,
       apellido: profile.apellido,
       ciudad: profile.ciudad,
-      barrios: profile.barrios,
+      barrios:
+        profile.barrios.length == 0
+        ? newBarrio 
+        : profile.barrios,   
       email: profile.email,
       direcciones:
         profile.direcciones.length > 0
@@ -122,7 +168,9 @@ function PerfilUsuario(props) {
           ? []
           : [newAddress],
       contrasena: password,
-      membresia: profile.membresia,
+      membresia:
+        newMembership == null  ? profile.membresia
+        : newMembership,
     };
 
     let requestDataUsuario = {
@@ -140,23 +188,28 @@ function PerfilUsuario(props) {
       contrasena: password,
     };
 
-    let requestData = profile.membresia
-      ? requestDataPrestador
-      : requestDataUsuario;
+    let requestData = null;
+
+    {(profile.membresia !=  null | b == 1) ? (requestData = requestDataPrestador)
+      : (requestData = requestDataUsuario)} 
 
     setUpdating(true);
+
+    console.log(requestData);
 
     Axios.put(`/YoTeReparo/users/${profile.id}`, requestData, requestConfig)
       .then((response) => {
         if (response.status === 400) {
           console.log(response.json);
+          console.log("ERROR: Membresia:", newMembership, profile.membresia);
         } else {
           setUpdating(false);
           setAddressError(false);
           history.push({
-            pathname: `/perfil/${profile.id}`,
+            pathname: `/`,
             state: { user: profile },
           });
+          console.log("INFO: Membresia actualizada:", profile.membresia);
           console.log("INFO: Usuario actualizado correctamente");
         }
       })
@@ -167,6 +220,10 @@ function PerfilUsuario(props) {
 
   const updateAddress = (event) => {
     profile.direcciones[0][event.target.id] = event.target.value;
+  };
+
+  const updateMembresia = (event) => {
+    profile.membresia[event.target.id] = event.target.value;
   };
 
   const handleActivateModifications = () => {
@@ -202,6 +259,7 @@ function PerfilUsuario(props) {
           setAuth(true);
           setProfile(result.data);
           console.log("OK: Ingresaste correctamente");
+          console.log("INFO: ", profile.membresia);
           setErrors(false);
         } else {
           console.log(
@@ -262,7 +320,17 @@ function PerfilUsuario(props) {
               modifyAddressFields === false ? toggle() : toggleAddress()
             }
             ModifyOne={() => setModifyAddress(!modifyAddressFields)}
-          ></Direcciones>
+          ></Direcciones> 
+          <Membresia
+            membership={membership}
+            toggleMembership={toggleMembership}
+            membershipModify={modifyMembership}
+            profile={profile}
+            handleChange={updateMembresia}
+            onChangeMembresia={onChangeMembresia}
+            CreateCallback2 = {() => modifyMembership === false ? toggle() : toggleMembership()}
+            ModifyOne2 ={() => setmodifyMembership(!modifyMembership)}
+          ></Membresia>             
           {profile === undefined || auth === false ? (
             <NotAuth></NotAuth>
           ) : (
@@ -275,17 +343,14 @@ function PerfilUsuario(props) {
                   modify={modify}
                   updatingUser={updating}
                   activateEdit={() => handleActivateModifications()}
-                  activateSave={() => {
-                    toggle();
-                  }}
+                  activateSave={() => {toggle();}}
                   cancelSave={handleCancelModifications}
-                  modifyAddress={() => {
-                    setAddress(!address);
-                  }}
+                  modifyAddress={() => {setAddress(!address);}}
+                  modifyMembership={() => {setMembership(!membership);}}
                 ></Usuario>
               </ProfileContext.Provider>
             </>
-          )}
+          )}  
         </>
       )}
     </>
