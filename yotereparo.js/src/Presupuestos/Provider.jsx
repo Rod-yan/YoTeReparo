@@ -2,8 +2,18 @@ import React from "react";
 import ElementContainer from "../Container/ElementContainer";
 import { Table, UncontrolledTooltip } from "reactstrap";
 import { renderQuoteState, getStates } from "../Utils/EstadosPresupuesto";
+import { getTitleService } from "../Utils/GetFromService";
+import { useEffect } from "react";
+import { useState } from "react";
+import { fetchData } from "../Utils/SessionHandlers";
 
 function Provider(props) {
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    fetchData("/YoTeReparo/services", setServices);
+  }, []);
+
   return (
     <div className="mt-4 mb-5">
       <ElementContainer>
@@ -20,6 +30,7 @@ function Provider(props) {
           <Table>
             <thead className="text-left thead-dark">
               <tr>
+                <th className="text-center">Servicio</th>
                 <th className="text-center">Usuario Final</th>
                 <th className="text-center">Descripcion</th>
                 <th className="text-center">Respuesta</th>
@@ -43,6 +54,9 @@ function Provider(props) {
 
                   return (
                     <tr key={idx}>
+                      <td className="text-center bg-info">
+                        {getTitleService(item.servicio, services)}
+                      </td>
                       <td className="text-center bg-info">
                         {item.usuarioFinal}
                       </td>
