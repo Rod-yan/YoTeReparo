@@ -78,7 +78,7 @@ public class UserController {
 		logger.info("ListUsers - GET - Processing request for a list with all existing users.");
         try {
 			List<User> users = userService.getAllUsers();
-	        		
+			
 			if (users != null && !users.isEmpty()) {
 				
 				List<UserDto> usersDto = users.stream()
